@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './Register.css';
 
 const Register = () => {
   const navigate = useNavigate();
-  
+
   // Form state
   const [formData, setFormData] = useState({
     firstName: '',
@@ -14,14 +14,14 @@ const Register = () => {
     confirmPassword: '',
     role: ''
   });
-  
+
   // Password visibility state
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+
   // Error state
   const [errors, setErrors] = useState({});
-  
+
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,54 +37,54 @@ const Register = () => {
       }));
     }
   };
-  
+
   // Validate form
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.firstName.trim()) {
       newErrors.firstName = 'First name is required';
     }
-    
+
     if (!formData.lastName.trim()) {
       newErrors.lastName = 'Last name is required';
     }
-    
+
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Email is invalid';
     }
-    
+
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
     }
-    
+
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = 'Please confirm your password';
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
-    
+
     if (!formData.role) {
       newErrors.role = 'Please select a role';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  
+
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       // Role-based navigation logic
       // TODO: Replace with actual backend API call for registration
       // This is a mock implementation for frontend-only demonstration
-      
+
       const roleRoutes = {
         'Startup Founder': '/dashboard/founder',
         'Investor': '/dashboard/investor',
@@ -92,22 +92,22 @@ const Register = () => {
         'Business Advisor': '/dashboard/advisor',
         'Admin': '/dashboard/admin'
       };
-      
+
       const dashboardRoute = roleRoutes[formData.role];
-      
+
       if (dashboardRoute) {
         // In production, this would:
         // 1. Send registration data to backend API
         // 2. Receive authentication token
         // 3. Store token in localStorage/sessionStorage
         // 4. Navigate to role-specific dashboard
-        
+
         console.log('Registration data:', formData);
         navigate(dashboardRoute);
       }
     }
   };
-  
+
   // Eye icon SVG for password visibility toggle
   const EyeIcon = ({ show }) => (
     <svg
@@ -133,12 +133,12 @@ const Register = () => {
       )}
     </svg>
   );
-  
+
   return (
     <div className="register-container">
       {/* Left Side - Gradient Background */}
       <div className="register-left"></div>
-      
+
       {/* Right Side - Registration Form */}
       <div className="register-right">
         <div className="register-form-container">
@@ -148,7 +148,7 @@ const Register = () => {
             <h2>Welcome</h2>
             <p>Register in to access your dashboard.</p>
           </div>
-          
+
           {/* Registration Form */}
           <form className="register-form" onSubmit={handleSubmit}>
             {/* Role Selection */}
@@ -170,7 +170,7 @@ const Register = () => {
               </select>
               {errors.role && <span className="error-message">{errors.role}</span>}
             </div>
-            
+
             {/* First Name and Last Name */}
             <div className="form-row">
               <div className="form-group">
@@ -186,7 +186,7 @@ const Register = () => {
                 />
                 {errors.firstName && <span className="error-message">{errors.firstName}</span>}
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="lastName">Last Name</label>
                 <input
@@ -201,7 +201,7 @@ const Register = () => {
                 {errors.lastName && <span className="error-message">{errors.lastName}</span>}
               </div>
             </div>
-            
+
             {/* Email Address */}
             <div className="form-group">
               <label htmlFor="email">Email Address</label>
@@ -216,7 +216,7 @@ const Register = () => {
               />
               {errors.email && <span className="error-message">{errors.email}</span>}
             </div>
-            
+
             {/* Password */}
             <div className="form-group">
               <label htmlFor="password">Password</label>
@@ -241,7 +241,7 @@ const Register = () => {
               </div>
               {errors.password && <span className="error-message">{errors.password}</span>}
             </div>
-            
+
             {/* Confirm Password */}
             <div className="form-group">
               <label htmlFor="confirmPassword">Confirm Password</label>
@@ -266,16 +266,16 @@ const Register = () => {
               </div>
               {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
             </div>
-            
+
             {/* Register Button */}
             <button type="submit" className="register-button">
               Register
             </button>
           </form>
-          
+
           {/* Footer */}
           <div className="register-footer">
-            Don't have an account? <a href="/signup">Sign up</a>
+            Already have an account? <Link to="/login">Log in</Link>
           </div>
         </div>
       </div>

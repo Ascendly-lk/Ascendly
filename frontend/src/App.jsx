@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardPlaceholder from './pages/DashboardPlaceholder';
 
@@ -6,8 +7,11 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Default route redirects to register */}
-        <Route path="/" element={<Navigate to="/register" replace />} />
+        {/* Default route redirects to login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
+        {/* Login page */}
+        <Route path="/login" element={<Login />} />
 
         {/* Register page */}
         <Route path="/register" element={<Register />} />
@@ -19,8 +23,8 @@ function App() {
         <Route path="/dashboard/advisor" element={<DashboardPlaceholder />} />
         <Route path="/dashboard/admin" element={<DashboardPlaceholder />} />
 
-        {/* Catch all - redirect to register */}
-        <Route path="*" element={<Navigate to="/register" replace />} />
+        {/* Catch all - redirect to login */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );
