@@ -1,7 +1,10 @@
 .register-container {
     display: flex;
     min-height: 100vh;
+    background: linear-gradient(135deg, #050B14 0%, #0B1220 100%);
     width: 100%;
+    overflow: hidden;
+    position: relative;
 }
 
 /* Left Side - Gradient Background with Diagonal Slant */
@@ -11,7 +14,7 @@
     position: relative;
     overflow: hidden;
     /* More aggressive diagonal slant for stronger visual identity */
-    clip-path: polygon(0 0, 100% 0, 75% 100%, 0 100%);
+    clip-path: polygon(0 0, 100% 0, 65% 100%, 0 100%);
     /* Subtle glow on the diagonal edge */
     filter: drop-shadow(2px 0 8px rgba(0, 229, 204, 0.4));
 }
@@ -30,7 +33,6 @@
 /* Right Side - Form */
 .register-right {
     flex: 1;
-    background-color: var(--dark-bg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -48,7 +50,7 @@
 }
 
 .register-header h1 {
-    font-size: 16px;
+    font-size: 35px;
     font-weight: 700;
     color: #00FFE5;
     margin-bottom: 8px;
@@ -56,7 +58,7 @@
 }
 
 .register-header h2 {
-    font-size: 36px;
+    font-size: 30px;
     font-weight: 700;
     color: var(--text-white);
     margin-bottom: 6px;
