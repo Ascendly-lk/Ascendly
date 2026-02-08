@@ -164,7 +164,7 @@ const Register = () => {
                 <option value="">Select Role</option>
                 <option value="Startup Founder">Startup Founder</option>
                 <option value="Investor">Investor</option>
-                <option value="Marketing Partner">Marketing Partner</option>
+                <option value="Marketing Agency">Marketing Agency</option>
                 <option value="Business Advisor">Business Advisor</option>
                 <option value="Admin">Admin</option>
               </select>

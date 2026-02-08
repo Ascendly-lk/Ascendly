@@ -8,7 +8,7 @@ const DashboardPlaceholder = () => {
     const roleDisplayNames = {
         'founder': 'Startup Founder',
         'investor': 'Investor',
-        'marketing': 'Marketing Partner',
+        'marketing': 'Marketing Agency',
         'advisor': 'Business Advisor',
         'admin': 'Admin'
     };
