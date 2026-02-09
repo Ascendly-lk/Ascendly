@@ -1,0 +1,121 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-lg) var(--spacing-xl);
+    background: var(--color-bg-dark);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.header-welcome {
+    flex: 1;
+}
+
+.header-title {
+    font-family: 'Poppins', sans-serif; 
+    font-weight: 700;
+    font-style: normal; 
+    font-size: 34px;
+    line-height: 42px;
+    letter-spacing: -0.02em;
+    color: #00D9C9;
+  }
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: var(--color-bg-main);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    min-width: 300px;
+}
+
+.search-icon {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    font-size: 16px;
+    color: #00d9c9;
+}
+
+.search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--color-text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+}
+
+.search-input::placeholder {
+    color: var(--color-text-muted);
+}
+
+.icon-button {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-main);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    font-size: 1.25rem;
+    font-size: 18px;
+    color: #333;
+}
+
+.icon-button:hover {
+    background: var(--color-bg-tertiary);
+    transform: translateY(-1px);
+    color: #00d9c9;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #00d9c9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    color: #0f1419;
+}
+
+
+
+
+
+@media (max-width: 768px) {
+    .header {
+        padding: var(--spacing-md);
+    }
+
+    .search-box {
+        min-width: 200px;
+    }
+
+    .header-title {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .search-box {
+        display: none;
+    }
+}

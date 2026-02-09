@@ -1,0 +1,218 @@
+.metric-card {
+    background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+
+  font-family: 'DM Sans', sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 28px;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.9);
+   
+}
+
+.metric-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;   /* ⬅ tighter spacing */
+  }
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.metric-card.primary {
+    background: linear-gradient(135deg, #00D9C9 0%, #00B8AA 100%);
+    padding: 14px 16px;  
+    min-height: 78px;
+
+    background: linear-gradient(
+        135deg,
+        #00FFEF 0%,
+        #009E95 55%,
+        rgba(15, 23, 32, 0.98) 100%
+      ) !important;
+ 
+}
+
+.metric-card.primary .metric-title {
+    font-size: 13px;      /* reduced */
+    line-height: 16px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    
+}
+.metric-card.primary .metric-value {
+    color: var(--color-bg-main);
+    font-size: 28px;
+    font-weight: 700;
+    margin-top: 4px;
+    color: #ffffff;
+}
+
+.metric-icon {
+    width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    #00FFEF 0%,
+    #009E95 60%,
+    rgba(15, 23, 32, 0.98) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  font-size: 18px;
+  color: #ffffff;
+}
+.metric-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+.metric-card.primary .metric-icon {
+    background: linear-gradient(
+        135deg,
+        #00FFEF 0%,
+        #009E95 55%,
+        rgba(15, 23, 32, 0.98) 100%
+      );
+}
+
+.metric-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.metric-title {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 28px;
+    letter-spacing: -0.02em;
+    color: rgba(255, 255, 255, 0.95);
+    color: rgba(0, 255, 239, 1);
+    
+}
+
+.metric-value {
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: -2px;
+    color: #8b949e
+}
+
+.metric-trend {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.metric-trend.up {
+    color: var(--color-success);
+}
+
+.metric-trend.down {
+    color: var(--color-error);
+}
+
+.metric-card.primary .metric-trend {
+    color: var(--color-bg-main);
+    opacity: 0.9;
+}
+
+.trend-icon {
+    font-size: 1rem;
+}
+
+.trend-value {
+    font-weight: 600;
+}
+
+.metric-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+  
+  .metric-title {
+    font-size: 14px;    /* ⬅ smaller label */
+    line-height: 18px;
+    margin: 0;
+   
+  }
+  
+  .metric-value {
+    font-size: 22px;    /* ⬅ smaller number */
+    margin-top: 2px;
+  }
+
+  .metric-card.growth-card {
+    background: linear-gradient(
+      135deg,
+      #00FFEF 0%,
+      #009E95 55%,
+      rgba(15, 23, 32, 0.98) 100%
+    );
+    padding: 14px 16px;
+    min-height: 78px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .metric-card.growth-card .metric-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .metric-card.growth-card .metric-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: -0.02em;
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  .metric-card.growth-card .metric-value {
+    font-size: 22px;
+    font-weight: 700;
+    margin-top: 2px;
+    color: #ffffff;
+  }
+
+  .metric-card.growth-card .mini-chart {
+    width: 60px;
+  }
+
+  .metric-card.growth-card .mini-chart svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .metric-card.growth-card .metric-title {
+    color: #000000;
+  }
+
+  .metric-card.primary .metric-value {
+    font-size: 24px;  
+}
+  
+  
+
+
+
+  
+  
