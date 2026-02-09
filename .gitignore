@@ -1,0 +1,23 @@
+# =====================
+# Node / Frontend
+# =====================
+node_modules/
+dist/
+build/
+.env
+
+# =====================
+# Python / Backend
+# =====================
+venv/
+__pycache__/
+*.pyc
+.env
+
+# =====================
+# OS / Editor junk
+# =====================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
