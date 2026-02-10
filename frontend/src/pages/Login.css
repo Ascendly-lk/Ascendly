@@ -225,7 +225,11 @@
     right: 0;
     width: 100%;
     height: 100%;
+<<<<<<< HEAD
     background: linear-gradient(135deg, #00FFEF 3%, #0E817A 37%, #1A1A1A 94%);
+=======
+    background: linear-gradient(135deg, #1A8B7E 0%, #00E5CC 100%);
+>>>>>>> 8b1584d3cbea69e3312d37f89b0af3b5897a61e4
     /* Diagonal wedge: starts at ~35% from left at top, ~55% at bottom */
     clip-path: polygon(40% 0, 100% 0, 100% 100%, 60% 100%);
     z-index: 1;
