@@ -44,10 +44,10 @@ out/
 # macOS
 .DS_Store
 
-# Claude
 claude.md
 IMPLEMENTATION_PLAN.md
-.claude-session
+.claude-sessions/
+
 
 # IDE
 .idea/
