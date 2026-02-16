@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+psycopg2-binary
+supabase
+python-dotenv
+pydantic[email]
+pandas
+crewai
+crewai-tools
+statsmodels
+python-multipart
+litellm
