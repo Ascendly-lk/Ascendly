@@ -5,34 +5,35 @@ GET  /api/datasets/{dataset_id}/insights — retrieve saved insights for a datas
 GET  /api/insights/{insight_id}          — get a single insight
 """
 import uuid
-from fastapi import APIRouter, HTTPException
-from database.supabase_client import get_records, insert_record, update_record
+from fastapi import APIRouter, HTTPException, Depends
+from database.supabase_client import get_records, insert_record, update_record, require_auth
 from ai_engine.crew import run_dataset_analysis
 
 router = APIRouter(prefix="/api", tags=["Insights"])
 
 
+def _check_dataset_ownership(dataset_id: str, user_id: str):
+    """Raise 403 if the dataset does not belong to the user."""
+    response = get_records("datasets", {"id": dataset_id})
+    if not response.data:
+        raise HTTPException(status_code=404, detail=f"Dataset {dataset_id} not found.")
+    if str(response.data[0].get("user_id")) != user_id:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+
 @router.post("/datasets/{dataset_id}/analyze")
-async def analyze_dataset(dataset_id: str):
+async def analyze_dataset(dataset_id: str, current_user=Depends(require_auth)):
     """
     Trigger CrewAI analysis on a dataset stored in Supabase.
     Saves results to the ai_insights table and returns them.
     """
-    # Verify the dataset exists
-    try:
-        ds_response = get_records("datasets", {"id": dataset_id})
-        if not ds_response.data:
-            raise HTTPException(status_code=404, detail=f"Dataset {dataset_id} not found.")
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+    _check_dataset_ownership(dataset_id, str(current_user.id))
 
     # Run the AI pipeline
     try:
         result = run_dataset_analysis(dataset_id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="Analysis failed. Please try again.")
 
     if result.get("status") != "success":
         raise HTTPException(status_code=500, detail="Analysis did not complete successfully.")
@@ -43,9 +44,9 @@ async def analyze_dataset(dataset_id: str):
     # Save each insight type to ai_insights table
     saved_insights = []
     insight_types = [
-        ("summary",        "Data Summary",          data.get("historical")),
-        ("trend",          "Revenue Forecast",       data.get("forecast")),
-        ("recommendation", "Strategic Advice",       data.get("strategic_advice")),
+        ("summary",        "Data Summary",     data.get("historical")),
+        ("trend",          "Revenue Forecast",  data.get("forecast")),
+        ("recommendation", "Strategic Advice",  data.get("strategic_advice")),
     ]
 
     for insight_type, title, content_data in insight_types:
@@ -91,20 +92,23 @@ async def analyze_dataset(dataset_id: str):
 
 
 @router.get("/datasets/{dataset_id}/insights")
-async def get_dataset_insights(dataset_id: str):
+async def get_dataset_insights(dataset_id: str, current_user=Depends(require_auth)):
     """
     Retrieve all saved AI insights for a dataset.
     """
+    _check_dataset_ownership(dataset_id, str(current_user.id))
     try:
         response = get_records("ai_insights", {"dataset_id": dataset_id})
         insights = response.data if response and response.data else []
         return {"dataset_id": dataset_id, "insights": insights, "count": len(insights)}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch insights: {str(e)}")
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=500, detail="Failed to fetch insights.")
 
 
 @router.get("/insights/{insight_id}")
-async def get_insight(insight_id: str):
+async def get_insight(insight_id: str, current_user=Depends(require_auth)):
     """
     Retrieve a single insight by its ID.
     """
@@ -112,8 +116,11 @@ async def get_insight(insight_id: str):
         response = get_records("ai_insights", {"id": insight_id})
         if not response.data:
             raise HTTPException(status_code=404, detail=f"Insight {insight_id} not found.")
-        return response.data[0]
+        insight = response.data[0]
+        # Verify the insight belongs to a dataset owned by the current user
+        _check_dataset_ownership(insight.get("dataset_id"), str(current_user.id))
+        return insight
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch insight: {str(e)}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="Failed to fetch insight.")

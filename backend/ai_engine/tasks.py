@@ -73,6 +73,7 @@ def run_analysis(file_path: str) -> dict:
     if not analyst_output:
         print("[Ascendly] Analyst agent failed. Running tools directly as fallback...")
         from ai_engine.tools.data_tools import csv_reader, growth_calculator
+        csv_result = ""
         try:
             csv_result = csv_reader.run(file_path)
             growth_result = growth_calculator.run(csv_result)

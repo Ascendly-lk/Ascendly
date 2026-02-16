@@ -8,7 +8,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from database import get_db, get_supabase_client
-from database.supabase_client import sign_up, sign_in, sign_out
+from database.supabase_client import sign_up, sign_in, sign_out, require_auth
 from app.api.endpoints.analysis import router as analysis_router
 from app.api.insights import router as insights_router
 
@@ -69,7 +69,7 @@ def db_health_check(db: Session = Depends(get_db)):
 async def register(user: UserAuth):
     """Register a new user"""
     try:
-        response = await sign_up(user.email, user.password)
+        response = sign_up(user.email, user.password)
         if response.user:
             return UserResponse(
                 id=str(response.user.id),
@@ -77,15 +77,17 @@ async def register(user: UserAuth):
                 message="User created successfully. Check email for verification.",
             )
         raise HTTPException(status_code=400, detail="Registration failed")
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=400, detail="Registration failed. Please try again.")
 
 
 @app.post("/auth/signin")
 async def login(user: UserAuth):
     """Sign in existing user"""
     try:
-        response = await sign_in(user.email, user.password)
+        response = sign_in(user.email, user.password)
         if response.user:
             return {
                 "user": {
@@ -96,18 +98,20 @@ async def login(user: UserAuth):
                 "token_type": "bearer",
             }
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    except Exception as e:
-        raise HTTPException(status_code=401, detail=str(e))
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
 
 
 @app.post("/auth/signout")
 async def logout():
     """Sign out current user"""
     try:
-        await sign_out()
+        sign_out()
         return {"message": "Signed out successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    except Exception:
+        raise HTTPException(status_code=400, detail="Sign out failed. Please try again.")
 
 
 # ============ RUN SERVER ============
