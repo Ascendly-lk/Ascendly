@@ -5,6 +5,7 @@ import DashboardPlaceholder from './pages/DashboardPlaceholder';
 import StartupDashboard from './pages/dashboard/StartupDashboard';
 import AIAnalyticsDashboard from './pages/aianalytics/AIAnalyticsDashboard';
 import UploadData from './pages/aianalytics/UploadData';
+import AIAssistant from './pages/aianalytics/AIAssistant';
 
 function App() {
   return (
@@ -27,6 +28,9 @@ function App() {
 
         {/* AI Analytics — Upload Your Data */}
         <Route path="/dashboard/ai-analytics/upload" element={<UploadData />} />
+
+        {/* AI Analytics — AI Assistant */}
+        <Route path="/dashboard/ai-analytics/assistant" element={<AIAssistant />} />
 
         {/* Role-based dashboard routes (placeholders) */}
         <Route path="/dashboard/founder" element={<DashboardPlaceholder />} />
