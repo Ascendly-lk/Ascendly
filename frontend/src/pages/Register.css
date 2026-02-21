@@ -10,7 +10,7 @@
 /* Left Side - Gradient Background with Diagonal Slant */
 .register-left {
     flex: 1;
-    background: linear-gradient(135deg, #1A8B7E 0%, #00E5CC 100%);
+    background: linear-gradient(200deg, #00FFE5 0%, #23A7B4 45%, #0B1220 100%);
     position: relative;
     overflow: hidden;
     /* More aggressive diagonal slant for stronger visual identity */
@@ -178,7 +178,7 @@
     width: 100%;
     padding: 12px;
     /* Gradient background for enhanced visual appeal */
-    background: linear-gradient(135deg, #00E5CC 0%, #00CCB8 100%);
+    background: #00FFE5;
     color: var(--dark-bg);
     font-size: 15px;
     font-weight: 600;

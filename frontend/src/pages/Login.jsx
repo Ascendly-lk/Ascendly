@@ -57,20 +57,8 @@ const Login = () => {
         e.preventDefault();
 
         if (validateForm()) {
-            // TODO: Replace with actual backend API call for authentication
-            // This is a placeholder for frontend-only demonstration
-
-            // In production, this would:
-            // 1. Send login credentials to backend API
-            // 2. Receive authentication token and user role
-            // 3. Store token in localStorage/sessionStorage
-            // 4. Navigate to role-specific dashboard based on user's role
-
-            console.log('Login data:', formData);
-
-            // Placeholder: navigate to a default dashboard
-            // In real implementation, this would be based on the user's role from backend
-            navigate('/dashboard/founder');
+            // Temporary: navigate to dashboard for any valid credentials
+            navigate('/dashboard/startup');
         }
     };
 

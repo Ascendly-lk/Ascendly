@@ -1,0 +1,147 @@
+.ai-forecast-card {
+    background: #0F172A;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+    transition: all 0.2s ease-out;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.ai-forecast-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0, 229, 255, 0.25);
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.70), 0 10px 30px rgba(0, 229, 255, 0.14);
+}
+
+.ai-forecast-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.ai-forecast-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin: 0;
+}
+
+.ai-forecast-dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.ai-forecast-dropdown select {
+    appearance: none;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 8px;
+    padding: 8px 32px 8px 12px;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ai-forecast-dropdown select:hover {
+    border-color: #00E5FF;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.ai-forecast-dropdown svg {
+    position: absolute;
+    right: 10px;
+    color: #94A3B8;
+    pointer-events: none;
+}
+
+.ai-forecast-chips {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.ai-forecast-chip {
+    flex: 1;
+    background: linear-gradient(135deg, #1A8B7E 0%, #00E5CC 100%);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.ai-forecast-chip-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: #FFFFFF;
+    opacity: 0.9;
+    margin-bottom: 8px;
+}
+
+.ai-forecast-chip-value {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ai-forecast-value-main {
+    font-size: 20px;
+    font-weight: 700;
+    color: #FFFFFF;
+}
+
+.ai-forecast-pill {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.ai-forecast-pill-positive {
+    background: rgba(34, 197, 94, 0.25);
+    color: #22C55E;
+}
+
+.ai-forecast-pill-negative {
+    background: rgba(239, 68, 68, 0.25);
+    color: #EF4444;
+}
+
+/* ── Chart container: NO overflow:hidden so glow filter isn't clipped ─── */
+.ai-forecast-chart {
+    flex: 1;
+    min-height: 180px;
+    width: 100%;
+    background: #0A0F1A;
+    border-radius: 16px;
+    padding: 16px 16px 8px 16px;
+    position: relative;
+    overflow: visible;
+    /* was hidden — clipped the glow effect */
+}
+
+.ai-forecast-chart::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60%;
+    border-radius: 0 0 16px 16px;
+    background: radial-gradient(ellipse at bottom, rgba(0, 229, 255, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.ai-forecast-chart svg {
+    width: 100%;
+    height: 100%;
+    min-height: 160px;
+    display: block;
+    position: relative;
+    z-index: 1;
+}

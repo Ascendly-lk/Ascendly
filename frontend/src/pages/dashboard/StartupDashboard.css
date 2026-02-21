@@ -1,0 +1,90 @@
+/* ─── App Shell ─────────────────────────────────────────────────────────── */
+/* Sidebar is position:fixed (280px). Main area shifts right by that amount. */
+.startup-dashboard {
+    min-height: 100vh;
+    width: 100%;
+    background: #020817;
+    overflow-x: hidden;
+}
+
+/* ─── Main Content Area ─────────────────────────────────────────────────── */
+.dashboard-main {
+    margin-left: 280px;
+    width: calc(100% - 280px);
+    /* ✅ IMPORTANT */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* ─── Content Padding ───────────────────────────────────────────────────── */
+.dashboard-content {
+    padding: 24px 28px 32px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ─── Stat Cards Row (4 equal columns) ─────────────────────────────────── */
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    width: 100%;
+}
+
+/* ─── Two-column rows (AI Forecast / Advisors, Promo / Revenue) ─────────── */
+.dashboard-row-2,
+.dashboard-row-3 {
+    display: grid;
+    gap: 20px;
+    width: 100%;
+}
+
+.dashboard-row-2 {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+}
+
+.dashboard-row-3 {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+}
+
+/* ─── Responsive ────────────────────────────────────────────────────────── */
+@media (max-width: 1280px) {
+    .dashboard-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .dashboard-main {
+        margin-left: 72px;
+        width: calc(100% - 72px);
+        /* ✅ IMPORTANT */
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-main {
+        margin-left: 0;
+    }
+
+    .dashboard-content {
+        padding: 16px 16px 24px 16px;
+        gap: 16px;
+    }
+
+    .dashboard-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+    }
+}

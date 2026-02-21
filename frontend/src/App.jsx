@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardPlaceholder from './pages/DashboardPlaceholder';
+import StartupDashboard from './pages/dashboard/StartupDashboard';
+import AIAnalyticsDashboard from './pages/aianalytics/AIAnalyticsDashboard';
 
 function App() {
   return (
@@ -15,6 +17,12 @@ function App() {
 
         {/* Register page */}
         <Route path="/register" element={<Register />} />
+
+        {/* Startup Dashboard (Full Implementation) */}
+        <Route path="/dashboard/startup" element={<StartupDashboard />} />
+
+        {/* AI Analytics Dashboard */}
+        <Route path="/dashboard/ai-analytics" element={<AIAnalyticsDashboard />} />
 
         {/* Role-based dashboard routes (placeholders) */}
         <Route path="/dashboard/founder" element={<DashboardPlaceholder />} />
