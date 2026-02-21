@@ -1,0 +1,105 @@
+.stat-card {
+    border-radius: 24px;
+    padding: 20px 24px;
+    transition: all 0.2s ease-out;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Dark Variant */
+.stat-card-dark {
+    background: #0F172A;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+}
+
+.stat-card-dark:hover {
+    border-color: rgba(0, 229, 255, 0.25);
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.70), 0 10px 30px rgba(0, 229, 255, 0.14);
+}
+
+/* Gradient Variant */
+.stat-card-gradient {
+    background: linear-gradient(135deg, #1A8B7E 0%, #00E5CC 100%);
+    border: none;
+    box-shadow: 0 18px 50px rgba(0, 229, 204, 0.18);
+}
+
+.stat-card-gradient:hover {
+    box-shadow: 0 18px 60px rgba(0, 229, 204, 0.26), 0 10px 30px rgba(0, 229, 255, 0.14);
+    filter: brightness(1.05);
+}
+
+.stat-card-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+}
+
+.stat-card-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    color: #FFFFFF;
+    flex-shrink: 0;
+}
+
+.stat-card-gradient .stat-card-icon {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.stat-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stat-card-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: #FFFFFF;
+    opacity: 0.85;
+    letter-spacing: 0.3px;
+}
+
+.stat-card-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #FFFFFF;
+    line-height: 1;
+}
+
+.stat-card-decoration {
+    position: relative;
+    opacity: 0.6;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stat-card {
+        padding: 18px 20px;
+        height: 90px;
+    }
+
+    .stat-card-value {
+        font-size: 24px;
+    }
+}

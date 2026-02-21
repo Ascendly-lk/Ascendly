@@ -86,9 +86,9 @@ const Register = () => {
       // This is a mock implementation for frontend-only demonstration
 
       const roleRoutes = {
-        'Startup Founder': '/dashboard/founder',
+        'Startup Founder': '/dashboard/startup',
         'Investor': '/dashboard/investor',
-        'Marketing Partner': '/dashboard/marketing',
+        'Marketing Agency': '/dashboard/marketing',
         'Business Advisor': '/dashboard/advisor',
         'Admin': '/dashboard/admin'
       };

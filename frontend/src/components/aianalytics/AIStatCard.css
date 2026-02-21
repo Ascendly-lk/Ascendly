@@ -1,0 +1,119 @@
+.ai-stat-card {
+    flex: 1;
+    min-width: 0;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ai-stat-card:hover {
+    transform: translateY(-2px);
+}
+
+/* ── Dark variant (first 3 cards) ── */
+.ai-stat-card--dark {
+    background: #0d1628;
+    /* border: 1px solid rgba(0, 229, 255, 0.15); */
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.ai-stat-card--dark:hover {
+    box-shadow: 0 8px 32px rgba(0, 229, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* ── Highlight variant (4th card) ── */
+.ai-stat-card--highlight {
+    background: linear-gradient(150deg, #00FFE5 0%, #23A7B4 45%, #0B1220 100%);
+    /* border: 1px solid rgba(0, 229, 204, 0.4); */
+    /* box-shadow: 0 4px 32px rgba(0, 200, 177, 0.35); */
+}
+
+.ai-stat-card--highlight:hover {
+    box-shadow: 0 8px 40px rgb(0, 255, 229, 0.3)
+}
+
+/* ── Top row (icon + change badge) ── */
+.ai-stat-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ai-stat-card__icon-wrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(0, 229, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00FFE5;
+}
+
+.ai-stat-card--highlight .ai-stat-card__icon-wrap {
+    background: rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+}
+
+.ai-stat-card__icon-wrap svg {
+    width: 20px;
+    height: 20px;
+}
+
+.ai-stat-card__change {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 999px;
+}
+
+.ai-stat-card__change.positive {
+    background: rgba(16, 185, 129, 0.15);
+    color: #00FFE5;
+}
+
+.ai-stat-card--highlight .ai-stat-card__change.positive {
+    background: rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+}
+
+.ai-stat-card__change.negative {
+    background: rgba(239, 68, 68, 0.15);
+    color: #EF4444;
+}
+
+/* ── Body ── */
+.ai-stat-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ai-stat-card__title {
+    font-size: 12px;
+    font-weight: 500;
+    color: #94A3B8;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+.ai-stat-card--highlight .ai-stat-card__title {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.ai-stat-card__value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #F1F5F9;
+    margin: 0;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+}
+
+.ai-stat-card--highlight .ai-stat-card__value {
+    color: #ffffff;
+}
