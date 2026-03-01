@@ -6,6 +6,7 @@ import StartupDashboard from './pages/dashboard/StartupDashboard';
 import AIAnalyticsDashboard from './pages/aianalytics/AIAnalyticsDashboard';
 import UploadData from './pages/aianalytics/UploadData';
 import AIAssistant from './pages/aianalytics/AIAssistant';
+import LogisticsPage from './pages/dashboard/LogisticsPage';
 
 function App() {
   return (
@@ -22,6 +23,9 @@ function App() {
 
         {/* Startup Dashboard (Full Implementation) */}
         <Route path="/dashboard/startup" element={<StartupDashboard />} />
+
+        {/* Logistics Page */}
+        <Route path="/dashboard/logistics" element={<LogisticsPage />} />
 
         {/* AI Analytics Dashboard */}
         <Route path="/dashboard/ai-analytics" element={<AIAnalyticsDashboard />} />
