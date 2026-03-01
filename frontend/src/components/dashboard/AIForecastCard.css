@@ -1,21 +1,29 @@
+/* ─── Card Shell ─────────────────────────────────────────────────────────── */
 .ai-forecast-card {
-    background: #0F172A;
-    border: 1px solid rgba(148, 163, 184, 0.1);
-    border-radius: 24px;
-    padding: 28px;
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
-    transition: all 0.2s ease-out;
+    background: linear-gradient(160deg, #0f172a 0%, #0c1527 100%);
+    border: 1px solid rgba(148, 163, 184, 0.08);
+    border-radius: 22px;
+    padding: 26px 28px 22px;
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.3),
+        0 20px 60px rgba(0, 0, 0, 0.55);
+    transition: transform 0.2s ease-out, border-color 0.2s ease, box-shadow 0.2s ease;
     display: flex;
     flex-direction: column;
     height: 100%;
+    min-width: 0;
 }
 
 .ai-forecast-card:hover {
     transform: translateY(-2px);
-    border-color: rgba(0, 229, 255, 0.25);
-    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.70), 0 10px 30px rgba(0, 229, 255, 0.14);
+    border-color: rgba(0, 255, 239, 0.22);
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.3),
+        0 20px 60px rgba(0, 0, 0, 0.7),
+        0 8px 32px rgba(0, 255, 239, 0.12);
 }
 
+/* ─── Header ─────────────────────────────────────────────────────────────── */
 .ai-forecast-header {
     display: flex;
     align-items: center;
@@ -24,12 +32,15 @@
 }
 
 .ai-forecast-header h3 {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 600;
-    color: #FFFFFF;
+    color: #ffffff;
     margin: 0;
+    letter-spacing: 0.01em;
+    user-select: none;
 }
 
+/* ─── Dropdown ───────────────────────────────────────────────────────────── */
 .ai-forecast-dropdown {
     position: relative;
     display: flex;
@@ -38,110 +49,166 @@
 
 .ai-forecast-dropdown select {
     appearance: none;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(148, 163, 184, 0.15);
-    border-radius: 8px;
-    padding: 8px 32px 8px 12px;
-    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 10px;
+    padding: 7px 32px 7px 12px;
+    color: rgba(255, 255, 255, 0.9);
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
 }
 
-.ai-forecast-dropdown select:hover {
-    border-color: #00E5FF;
-    background: rgba(255, 255, 255, 0.08);
+.ai-forecast-dropdown select:hover,
+.ai-forecast-dropdown select:focus {
+    border-color: rgba(0, 255, 239, 0.55);
+    background: rgba(255, 255, 255, 0.09);
+    box-shadow: 0 0 0 3px rgba(0, 255, 239, 0.08);
 }
 
-.ai-forecast-dropdown svg {
+/* Dropdown option colors for dark mode */
+.ai-forecast-dropdown select option {
+    background: #0f172a;
+    color: #ffffff;
+}
+
+.dropdown-chevron {
     position: absolute;
     right: 10px;
-    color: #94A3B8;
+    color: rgba(148, 163, 184, 0.75);
     pointer-events: none;
+    flex-shrink: 0;
 }
 
+/* ─── Chip cards ─────────────────────────────────────────────────────────── */
 .ai-forecast-chips {
     display: flex;
-    gap: 16px;
+    gap: 14px;
     margin-bottom: 20px;
+    align-items: stretch;
 }
 
 .ai-forecast-chip {
     flex: 1;
-    background: linear-gradient(135deg, #1A8B7E 0%, #00E5CC 100%);
-    border-radius: 12px;
-    padding: 16px;
+    min-width: 0;
+    background: linear-gradient(135deg, #0a6e63 0%, #00c9ba 100%);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 80px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .ai-forecast-chip-label {
     display: block;
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 500;
-    color: #FFFFFF;
-    opacity: 0.9;
-    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.78);
+    margin-bottom: 10px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .ai-forecast-chip-value {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: nowrap;
+    min-width: 0;
 }
 
 .ai-forecast-value-main {
     font-size: 20px;
     font-weight: 700;
-    color: #FFFFFF;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .ai-forecast-pill {
-    padding: 4px 8px;
+    padding: 3px 8px;
     border-radius: 6px;
     font-size: 11px;
     font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 0.01em;
 }
 
 .ai-forecast-pill-positive {
-    background: rgba(34, 197, 94, 0.25);
-    color: #22C55E;
+    background: rgba(34, 197, 94, 0.35);
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
 .ai-forecast-pill-negative {
-    background: rgba(239, 68, 68, 0.25);
-    color: #EF4444;
+    background: rgba(239, 68, 68, 0.35);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
-/* ── Chart container: NO overflow:hidden so glow filter isn't clipped ─── */
+/* ─── Chart area ─────────────────────────────────────────────────────────── */
 .ai-forecast-chart {
     flex: 1;
-    min-height: 180px;
     width: 100%;
-    background: #0A0F1A;
+    min-height: 180px;
     border-radius: 16px;
-    padding: 16px 16px 8px 16px;
+    background: linear-gradient(180deg, rgba(2, 8, 23, 0.7) 0%, rgba(2, 8, 23, 0.35) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     position: relative;
+    /* overflow visible so glow filter is not clipped */
     overflow: visible;
-    /* was hidden — clipped the glow effect */
 }
 
-.ai-forecast-chart::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 60%;
-    border-radius: 0 0 16px 16px;
-    background: radial-gradient(ellipse at bottom, rgba(0, 229, 255, 0.08) 0%, transparent 70%);
-    pointer-events: none;
-}
-
-.ai-forecast-chart svg {
+.ai-forecast-svg {
+    display: block;
     width: 100%;
     height: 100%;
-    min-height: 160px;
-    display: block;
+    min-height: 180px;
     position: relative;
     z-index: 1;
+    /* clip content inside rounded rect but let filters escape */
+    overflow: visible;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .ai-forecast-card {
+        padding: 18px 18px 16px;
+        border-radius: 18px;
+    }
+
+    .ai-forecast-chips {
+        flex-direction: column;
+    }
+
+    .ai-forecast-chip {
+        min-height: 72px;
+    }
+
+    .ai-forecast-chart {
+        min-height: 160px;
+        border-radius: 14px;
+    }
+
+    .ai-forecast-value-main {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ai-forecast-chip-label {
+        font-size: 11px;
+    }
+
+    .ai-forecast-value-main {
+        font-size: 17px;
+    }
 }
