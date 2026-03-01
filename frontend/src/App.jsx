@@ -6,6 +6,7 @@ import StartupDashboard from './pages/dashboard/StartupDashboard';
 import AIAnalyticsDashboard from './pages/aianalytics/AIAnalyticsDashboard';
 import UploadData from './pages/aianalytics/UploadData';
 import AIAssistant from './pages/aianalytics/AIAssistant';
+import Projects from './pages/marketing-agency/Projects';
 
 function App() {
   return (
@@ -31,6 +32,9 @@ function App() {
 
         {/* AI Analytics — AI Assistant */}
         <Route path="/dashboard/ai-analytics/assistant" element={<AIAssistant />} />
+
+        {/* Marketing Agency Projects */}
+        <Route path="/marketing-agency/projects" element={<Projects />} />
 
         {/* Role-based dashboard routes (placeholders) */}
         <Route path="/dashboard/founder" element={<DashboardPlaceholder />} />

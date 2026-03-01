@@ -88,7 +88,7 @@ const Register = () => {
       const roleRoutes = {
         'Startup Founder': '/dashboard/startup',
         'Investor': '/dashboard/investor',
-        'Marketing Agency': '/dashboard/marketing',
+        'Marketing Agency': '/marketing-agency/Projects',
         'Business Advisor': '/dashboard/advisor',
         'Admin': '/dashboard/admin'
       };
