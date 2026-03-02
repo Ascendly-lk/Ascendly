@@ -1,0 +1,80 @@
+.marketing-projects-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--bg-primary, #0B0E14);
+    color: var(--text-primary, #FFFFFF);
+}
+
+.marketing-main-content {
+    flex: 1;
+    margin-left: 280px;
+    /* Offset for the sidebar */
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    overflow-y: auto;
+}
+
+.projects-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.search-bar {
+    background: rgba(255, 255, 255, 0.05);
+    /* Match image top right search */
+    border-radius: 8px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 300px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.search-bar svg {
+    width: 16px;
+    height: 16px;
+    color: var(--primary-color, #00FFEF);
+}
+
+.search-bar input {
+    background: transparent;
+    border: none;
+    color: #FFFFFF;
+    font-size: 14px;
+    outline: none;
+    width: 100%;
+}
+
+.search-bar input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.stats-row {
+    display: flex;
+    gap: 47px;
+}
+
+.stats-row>* {
+    flex: 1;
+    /* Make cards stretch evenly */
+    max-width: 200px;
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    /* gap: 54px */
+    /* padding-bottom: 40px; */
+    row-gap: 54px;
+    column-gap: 0px;
+}
