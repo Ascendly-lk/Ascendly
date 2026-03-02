@@ -87,6 +87,10 @@ const LogisticsSidebar = () => {
                             e.preventDefault();
                             if (item.name === 'Dashboard') navigate('/dashboard/startup');
                             if (item.name === 'AI Analytics') navigate('/dashboard/ai-analytics');
+                            if (item.name === 'Patent') navigate('/dashboard/patent');
+                            if (item.name === 'Investors') navigate('/dashboard/investors');
+                            if (item.name === 'Tiers') navigate('/dashboard/tiers');
+                            if (item.name === 'Business Advisors') navigate('/dashboard/advisors');
                         }}
                     >
                         {icons[item.icon]}
