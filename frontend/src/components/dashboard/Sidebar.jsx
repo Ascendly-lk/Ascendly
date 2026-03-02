@@ -42,7 +42,11 @@ const Sidebar = () => {
                         key={index}
                         href="#"
                         className={`sidebar-nav-item ${item.active ? 'active' : ''}`}
-                        onClick={item.name === 'AI Analytics' ? (e) => { e.preventDefault(); navigate('/dashboard/ai-analytics'); } : undefined}
+                        onClick={
+                            item.name === 'AI Analytics' ? (e) => { e.preventDefault(); navigate('/dashboard/ai-analytics'); } :
+                                item.name === 'Logistics' ? (e) => { e.preventDefault(); navigate('/dashboard/logistics'); } :
+                                    undefined
+                        }
                     >
                         {getIcon(item.icon)}
                         <span>{item.name}</span>

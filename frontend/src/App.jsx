@@ -8,6 +8,7 @@ import UploadData from './pages/aianalytics/UploadData';
 import AIAssistant from './pages/aianalytics/AIAssistant';
 import Projects from './pages/marketing-agency/Projects';
 import Feedbacks from './pages/marketing-agency/Feedbacks';
+import LogisticsPage from './pages/dashboard/LogisticsPage';
 
 function App() {
   return (
@@ -24,6 +25,9 @@ function App() {
 
         {/* Startup Dashboard (Full Implementation) */}
         <Route path="/dashboard/startup" element={<StartupDashboard />} />
+
+        {/* Logistics Page */}
+        <Route path="/dashboard/logistics" element={<LogisticsPage />} />
 
         {/* AI Analytics Dashboard */}
         <Route path="/dashboard/ai-analytics" element={<AIAnalyticsDashboard />} />

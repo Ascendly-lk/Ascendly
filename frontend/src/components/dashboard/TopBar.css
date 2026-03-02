@@ -1,5 +1,5 @@
 .top-bar {
-    background: #000000;
+    background: #080e1a;
     padding: 24px 32px;
     display: flex;
     align-items: center;
@@ -15,7 +15,7 @@
 }
 
 .top-bar-welcome span {
-    color: #00E5FF;
+    color: #00FFEF;
 }
 
 .top-bar-right {
@@ -33,7 +33,7 @@
     padding: 10px 16px 10px 40px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(148, 163, 184, 0.15);
-    border-radius: 12px;
+    border-radius: 50px;
     color: #FFFFFF;
     font-size: 14px;
     transition: all 0.2s ease;
@@ -45,7 +45,7 @@
 
 .top-bar-search input:focus {
     outline: none;
-    border-color: #00E5FF;
+    border-color: #00FFEF;
     background: rgba(255, 255, 255, 0.08);
 }
 
@@ -80,9 +80,9 @@
 }
 
 .top-bar-icon:hover {
-    background: rgba(0, 229, 255, 0.1);
-    border-color: #00E5FF;
-    color: #00E5FF;
+    background: rgba(0, 255, 239, 0.1);
+    border-color: #00FFEF;
+    color: #00FFEF;
     transform: scale(1.05);
 }
 
