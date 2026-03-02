@@ -14,7 +14,8 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 # Whitelist of tables allowed for CRUD operations (prevents SQL injection via table names)
 ALLOWED_TABLES = {
     "financial_records", "ai_logs", "ai_insights",
-    "datasets", "data_rows", "benchmarks", "profiles"
+    "datasets", "data_rows", "benchmarks", "profiles",
+    "uploaded_files"
 }
 
 supabase: Client = None

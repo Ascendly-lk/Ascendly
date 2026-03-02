@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { setToken, setUser } from '../api';
 import './Login.css';
 
 const Login = () => {
@@ -52,13 +53,36 @@ const Login = () => {
         return Object.keys(newErrors).length === 0;
     };
 
+    const [isLoading, setIsLoading] = useState(false);
+
     // Handle form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (validateForm()) {
-            // Temporary: navigate to dashboard for any valid credentials
-            navigate('/dashboard/startup');
+        if (!validateForm()) return;
+
+        setIsLoading(true);
+        try {
+            const res = await fetch('http://localhost:8000/auth/signin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: formData.email, password: formData.password }),
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                setErrors({ email: err.detail || 'Invalid credentials' });
+                return;
+            }
+
+            const data = await res.json();
+            setToken(data.access_token);
+            setUser(data.user);
+            navigate('/dashboard/ai-analytics');
+        } catch {
+            setErrors({ email: 'Unable to connect to server' });
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -157,8 +181,8 @@ const Login = () => {
                         </div>
 
                         {/* Login Button */}
-                        <button type="submit" className="login-button">
-                            Log In
+                        <button type="submit" className="login-button" disabled={isLoading}>
+                            {isLoading ? 'Signing in...' : 'Log In'}
                         </button>
                     </form>
 

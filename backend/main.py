@@ -10,6 +10,8 @@ from sqlalchemy.orm import Session
 from database import get_db, get_supabase_client
 from database.supabase_client import sign_up, sign_in, sign_out, require_auth
 from app.api.endpoints.analysis import router as analysis_router
+from app.api.endpoints.dashboard import router as dashboard_router
+from app.api.endpoints.chat import router as chat_router
 from app.api.insights import router as insights_router
 
 app = FastAPI(
@@ -21,7 +23,7 @@ app = FastAPI(
 # CORS - Allow frontend to connect
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Next.js dev server
+    allow_origins=["http://localhost:3000", "http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -30,6 +32,8 @@ app.add_middleware(
 
 # ============ ROUTERS ============
 app.include_router(analysis_router)
+app.include_router(dashboard_router)
+app.include_router(chat_router)
 app.include_router(insights_router)
 
 

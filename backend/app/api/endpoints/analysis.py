@@ -1,18 +1,21 @@
 """
-Analysis API Endpoint — POST /api/analyze
-Accepts CSV upload, validates, runs AI pipeline, returns results.
+Analysis API Endpoints — file upload, analysis, and file listing.
 """
 import os
 import uuid
 import shutil
 import tempfile
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends
-from database.supabase_client import insert_record, require_auth
+from datetime import datetime, timezone
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends, Query
+from database.supabase_client import insert_record, get_records, require_auth, get_supabase_client
 from ai_engine.tasks import run_analysis
 
 router = APIRouter(prefix="/api", tags=["Analysis"])
 
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+MAX_UPLOAD_SIZE = 50 * 1024 * 1024  # 50MB
+ALLOWED_EXTENSIONS = {".csv", ".xlsx", ".xls", ".json", ".pdf", ".txt"}
+UPLOADS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "uploads")
 
 
 @router.post("/analyze")
@@ -90,3 +93,101 @@ async def analyze_financial_data(
     result.pop("request_id", None)
 
     return result
+
+
+@router.post("/upload")
+async def upload_file(
+    file: UploadFile = File(...),
+    current_user=Depends(require_auth),
+):
+    """
+    Upload a dataset file (CSV, XLSX, XLS, JSON, PDF, TXT). Max 50MB.
+    Saves file to disk and metadata to datasets table.
+    """
+    user_id = str(current_user.id)
+
+    # 1. Validate file extension
+    safe_filename = os.path.basename(file.filename)
+    _, ext = os.path.splitext(safe_filename)
+    if ext.lower() not in ALLOWED_EXTENSIONS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported file type. Allowed: {', '.join(ALLOWED_EXTENSIONS)}"
+        )
+
+    # 2. Read and check size
+    contents = await file.read()
+    if len(contents) > MAX_UPLOAD_SIZE:
+        raise HTTPException(status_code=413, detail="File too large. Maximum size is 50MB.")
+
+    # 3. Save file to uploads directory
+    file_id = str(uuid.uuid4())
+    stored_filename = f"{file_id}{ext.lower()}"
+    os.makedirs(UPLOADS_DIR, exist_ok=True)
+    file_path = os.path.join(UPLOADS_DIR, stored_filename)
+
+    try:
+        with open(file_path, "wb") as f:
+            f.write(contents)
+    except Exception:
+        raise HTTPException(status_code=500, detail="Failed to save uploaded file.")
+
+    # 4. Save metadata to datasets table
+    now = datetime.now(timezone.utc).isoformat()
+    try:
+        insert_record("uploaded_files", {
+            "id": file_id,
+            "user_id": user_id,
+            "filename": safe_filename,
+            "file_size": len(contents),
+            "file_type": ext.lower().lstrip("."),
+            "status": "uploaded",
+            "uploaded_at": now,
+        })
+    except Exception:
+        os.remove(file_path)
+        raise HTTPException(status_code=500, detail="Failed to save file metadata.")
+
+    return {
+        "file_id": file_id,
+        "filename": safe_filename,
+        "size_bytes": len(contents),
+        "uploaded_at": now,
+        "status": "uploaded",
+    }
+
+
+@router.get("/files/recent")
+async def get_recent_files(
+    current_user=Depends(require_auth),
+    limit: int = Query(default=10, le=50),
+):
+    """
+    Get the current user's recently uploaded files, newest first.
+    """
+    user_id = str(current_user.id)
+
+    try:
+        client = get_supabase_client()
+        response = (
+            client.table("uploaded_files")
+            .select("id, filename, file_size, file_type, status, uploaded_at")
+            .eq("user_id", user_id)
+            .order("uploaded_at", desc=True)
+            .limit(limit)
+            .execute()
+        )
+        files = [
+            {
+                "file_id": row["id"],
+                "name": row["filename"],
+                "size_bytes": row.get("file_size", 0),
+                "file_type": row.get("file_type", ""),
+                "status": row.get("status", "uploaded"),
+                "uploaded_at": row.get("uploaded_at", ""),
+            }
+            for row in (response.data or [])
+        ]
+        return {"files": files, "count": len(files)}
+    except Exception:
+        return {"files": [], "count": 0}

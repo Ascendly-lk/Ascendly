@@ -1,14 +1,24 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import AIAnalyticsSidebar from '../../components/aianalytics/AIAnalyticsSidebar';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
+import { apiFetch } from '../../api';
 import './UploadData.css';
 
-/* ── Recent uploads list ── */
-const RECENT_FILES = [
-    { name: 'sales_data_2024.csv', meta: '2 hours ago • 2.4 MB' },
-    { name: 'customer_analysis.xlsx', meta: '5 hours ago • 1.8 MB' },
-    { name: 'quarterly_report.pdf', meta: '1 day ago • 890 KB' },
-];
+function formatBytes(bytes) {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function timeAgo(dateStr) {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins} min ago`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours} hours ago`;
+    const days = Math.floor(hours / 24);
+    return `${days} day${days > 1 ? 's' : ''} ago`;
+}
 
 /* ── Icons ── */
 const FileIcon = () => (
@@ -38,7 +48,50 @@ const UploadIcon = () => (
 /* ── Page ── */
 const UploadData = () => {
     const [isDragging, setIsDragging] = useState(false);
+    const [recentFiles, setRecentFiles] = useState([]);
+    const [uploading, setUploading] = useState(false);
+    const [uploadMsg, setUploadMsg] = useState('');
     const fileInputRef = useRef(null);
+
+    const fetchRecentFiles = useCallback(() => {
+        apiFetch('/api/files/recent?limit=3')
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.files) {
+                    setRecentFiles(data.files.map((f) => ({
+                        name: f.name,
+                        meta: `${timeAgo(f.uploaded_at)} • ${formatBytes(f.size_bytes)}`,
+                    })));
+                }
+            })
+            .catch(() => {});
+    }, []);
+
+    useEffect(() => { fetchRecentFiles(); }, [fetchRecentFiles]);
+
+    const uploadFiles = useCallback(async (files) => {
+        if (!files || files.length === 0) return;
+        setUploading(true);
+        setUploadMsg('');
+        try {
+            for (const file of files) {
+                const formData = new FormData();
+                formData.append('file', file);
+                const res = await apiFetch('/api/upload', { method: 'POST', body: formData });
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    setUploadMsg(`Failed: ${err.detail || 'Upload error'}`);
+                    return;
+                }
+            }
+            setUploadMsg(`${files.length} file(s) uploaded successfully!`);
+            fetchRecentFiles();
+        } catch {
+            setUploadMsg('Upload failed. Please try again.');
+        } finally {
+            setUploading(false);
+        }
+    }, [fetchRecentFiles]);
 
     const handleDragOver = useCallback((e) => {
         e.preventDefault();
@@ -53,8 +106,8 @@ const UploadData = () => {
     const handleDrop = useCallback((e) => {
         e.preventDefault();
         setIsDragging(false);
-        // Files available at e.dataTransfer.files — wired for future backend
-    }, []);
+        uploadFiles(e.dataTransfer.files);
+    }, [uploadFiles]);
 
     return (
         <div className="upload-page">
@@ -85,14 +138,18 @@ const UploadData = () => {
                                 <UploadIcon />
                             </button>
 
-                            <p className="upload-drop-text">Drop your files here, or browse</p>
+                            <p className="upload-drop-text">
+                                {uploading ? 'Uploading...' : 'Drop your files here, or browse'}
+                            </p>
                             <p className="upload-drop-sub">Supports: CSV, Excel, PDF, JSON, TXT (Max 50MB)</p>
+                            {uploadMsg && <p className="upload-drop-sub" style={{ color: uploadMsg.startsWith('Failed') ? '#ef4444' : '#10b981' }}>{uploadMsg}</p>}
 
                             <button
                                 className="upload-select-btn"
                                 onClick={() => fileInputRef.current?.click()}
+                                disabled={uploading}
                             >
-                                Select Files
+                                {uploading ? 'Uploading...' : 'Select Files'}
                             </button>
 
                             {/* Hidden file input */}
@@ -102,7 +159,7 @@ const UploadData = () => {
                                 multiple
                                 accept=".csv,.xlsx,.xls,.pdf,.json,.txt"
                                 className="upload-file-input"
-                                onChange={(e) => { /* hook up to backend later */ }}
+                                onChange={(e) => { uploadFiles(e.target.files); e.target.value = ''; }}
                             />
                         </div>
                     </div>
@@ -113,7 +170,7 @@ const UploadData = () => {
                         <div className="upload-recent-card">
                             <h3 className="upload-recent-title">Recent Uploads</h3>
                             <ul className="upload-recent-list">
-                                {RECENT_FILES.map((file, i) => (
+                                {recentFiles.map((file, i) => (
                                     <li key={i} className="upload-recent-item">
                                         <div className="upload-recent-icon">
                                             <FileIcon />
