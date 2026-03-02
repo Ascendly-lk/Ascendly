@@ -45,7 +45,11 @@ const Sidebar = () => {
                         onClick={
                             item.name === 'AI Analytics' ? (e) => { e.preventDefault(); navigate('/dashboard/ai-analytics'); } :
                                 item.name === 'Logistics' ? (e) => { e.preventDefault(); navigate('/dashboard/logistics'); } :
-                                    undefined
+                                    item.name === 'Patent' ? (e) => { e.preventDefault(); navigate('/dashboard/patent'); } :
+                                        item.name === 'Investors' ? (e) => { e.preventDefault(); navigate('/dashboard/investors'); } :
+                                            item.name === 'Tiers' ? (e) => { e.preventDefault(); navigate('/dashboard/tiers'); } :
+                                                item.name === 'Business Advisors' ? (e) => { e.preventDefault(); navigate('/dashboard/advisors'); } :
+                                                    undefined
                         }
                     >
                         {getIcon(item.icon)}
