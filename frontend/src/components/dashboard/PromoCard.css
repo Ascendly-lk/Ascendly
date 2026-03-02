@@ -1,8 +1,8 @@
 .promo-card {
-    background: linear-gradient(135deg, #0D7A6E 0%, #0EA88F 40%, #00FFEF 100%);
+    background: linear-gradient(150deg, #00FFE5 0%, #23A7B4 45%, #0B1220 100%);
     border-radius: 24px;
     padding: 32px;
-    box-shadow: 0 18px 50px rgba(0, 255, 239, 0.22);
+    /* box-shadow: 0 18px 50px rgba(0, 255, 239, 0.22); */
     display: flex;
     align-items: stretch;
     gap: 24px;
@@ -14,7 +14,7 @@
 
 .promo-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 24px 60px rgba(0, 255, 239, 0.32);
+    box-shadow: 0 9px 20px rgba(0, 255, 239, 0.32);
 }
 
 /* Subtle glow orb in background */
@@ -35,30 +35,43 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    gap: 0;
+    /* use individual margins below for precise spacing */
     position: relative;
     z-index: 1;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .promo-content h2 {
     font-size: 26px;
     font-weight: 700;
     color: #FFFFFF;
-    margin: 0 0 12px 0;
+    margin: 0 0 10px 0;
+    /* tighter, uniform bottom gap */
     line-height: 1.25;
+    padding: 0;
+    /* no stray indent */
 }
 
 .promo-content p {
     font-size: 14px;
     color: rgba(255, 255, 255, 0.85);
-    margin: 0 0 24px 0;
+    margin: 0 0 20px 0;
+    /* same left as h2 */
     line-height: 1.5;
     font-style: italic;
+    padding: 0;
+    /* flush left */
 }
 
 .promo-buttons {
     display: flex;
-    align-items: center;
-    gap: 16px;
+    align-items: baseline;
+    /* baseline-align button text across both buttons */
+    gap: 12px;
+    padding: 0;
+    /* no left indent */
 }
 
 .promo-button-primary {

@@ -26,7 +26,7 @@ const StartupDashboard = () => {
 
     const miniBars = (
         <svg width="60" height="30" viewBox="0 0 60 30">
-            <rect x="0" y="15" width="8" height="15" rx="2" fill="#00FFEF" opacity="0.7" />
+            <rect x="0" y="15" width="8" height="15" rx="2" fill="#00FFEF" opacity="2" />
             <rect x="13" y="10" width="8" height="20" rx="2" fill="#00FFEF" opacity="0.8" />
             <rect x="26" y="5" width="8" height="25" rx="2" fill="#00FFEF" opacity="0.9" />
             <rect x="39" y="12" width="8" height="18" rx="2" fill="#00FFEF" opacity="0.8" />
@@ -50,7 +50,7 @@ const StartupDashboard = () => {
                 <div className="dashboard-content">
                     {/* Row 1: Stat Cards */}
                     <div className="dashboard-row dashboard-stats">
-                        <StatCard title="Active users" value="1892" icon={userIcon} variant="gradient" />
+                        <StatCard title="Active users" value="1892" icon={userIcon} variant="dark" />
 
                         <StatCard title="Monthly Revenue" value="$18,500" icon={null} variant="dark" decoration={miniBars} />
 

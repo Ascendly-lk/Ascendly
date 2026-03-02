@@ -1,6 +1,6 @@
 /* ─── Card Shell ─────────────────────────────────────────────────────────── */
 .revenue-trend-card {
-    background: linear-gradient(160deg, #0f172a 0%, #0c1527 100%);
+    background: #0d1628;
     border: 1px solid rgba(148, 163, 184, 0.08);
     border-radius: 22px;
     padding: 26px 28px 22px;
@@ -16,7 +16,7 @@
 
 .revenue-trend-card:hover {
     transform: translateY(-2px);
-    border-color: rgba(0, 255, 239, 0.22);
+    /* border-color: rgba(0, 255, 239, 0.22); */
     box-shadow:
         0 4px 6px rgba(0, 0, 0, 0.3),
         0 20px 60px rgba(0, 0, 0, 0.7),
@@ -28,7 +28,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 18px;
+    margin-bottom: 14px;
+    /* consistent gap to value below */
+    gap: 8px;
 }
 
 .revenue-trend-header h3 {
@@ -49,11 +51,11 @@
 
 .revenue-trend-dropdown select {
     appearance: none;
-    background: rgba(255, 255, 255, 0.06);
+    background: #0B1220;
     border: 1px solid rgba(148, 163, 184, 0.18);
     border-radius: 10px;
     padding: 7px 32px 7px 12px;
-    color: rgba(255, 255, 255, 0.9);
+    color: #00FFE5;
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
@@ -83,7 +85,9 @@
 
 /* ─── Value ──────────────────────────────────────────────────────────────── */
 .revenue-trend-value {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    padding: 0;
+    /* no stray left padding */
 }
 
 .revenue-trend-value h2 {
@@ -91,6 +95,9 @@
     font-weight: 700;
     color: #ffffff;
     margin: 0;
+    padding: 0;
+    /* flush left with header title */
+    line-height: 1.1;
     letter-spacing: -0.03em;
 }
 
@@ -106,7 +113,11 @@
     font-size: 12px;
     font-weight: 600;
     color: #4ade80;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
+    margin-left: 0;
+    /* flush with left edge */
+    align-self: flex-start;
+    /* don't stretch full width */
 }
 
 .revenue-trend-status svg {

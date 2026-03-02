@@ -1,6 +1,6 @@
 /* ─── Card Shell ─────────────────────────────────────────────────────────── */
 .advisors-card {
-    background: linear-gradient(160deg, #0f172a 0%, #0c1527 100%);
+    background: #0d1628;
     border: 1px solid rgba(148, 163, 184, 0.08);
     border-radius: 22px;
     padding: 26px 28px 22px;
@@ -16,7 +16,7 @@
 
 .advisors-card:hover {
     transform: translateY(-2px);
-    border-color: rgba(0, 255, 239, 0.22);
+    /* border-color: rgba(0, 255, 239, 0.22); */
     box-shadow:
         0 4px 6px rgba(0, 0, 0, 0.3),
         0 20px 60px rgba(0, 0, 0, 0.7),
@@ -41,7 +41,8 @@
 .advisors-list {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
+    /* consistent vertical spacing between rows */
     flex: 1;
 }
 
@@ -49,13 +50,18 @@
 .advisor-item {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 12px 10px;
+    justify-content: space-between;
+    /* locks rating badge to right edge */
+    gap: 12px;
+    padding: 10px 8px;
+    /* uniform padding all rows */
     border-radius: 12px;
     border: 1px solid transparent;
     transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
     cursor: default;
     min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .advisor-item:hover {
@@ -68,12 +74,14 @@
 .advisor-avatar {
     width: 44px;
     height: 44px;
+    min-width: 44px;
+    /* prevent avatar from squeezing */
     border-radius: 50%;
-    background: linear-gradient(135deg, #0a6e63 0%, #00bfa8 100%);
+    background: rgba(0, 229, 255, 0.12);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255, 255, 255, 0.92);
+    color: #00FFE5;
     flex-shrink: 0;
     box-shadow: 0 0 0 2px rgba(0, 255, 239, 0.2), 0 2px 8px rgba(0, 0, 0, 0.35);
     transition: box-shadow 0.2s ease;
@@ -119,6 +127,10 @@
     border-radius: 8px;
     color: #00FFEF;
     flex-shrink: 0;
+    white-space: nowrap;
+    /* keep rating on one line */
+    align-self: center;
+    /* vertically centred in row */
 }
 
 .advisor-rating svg {

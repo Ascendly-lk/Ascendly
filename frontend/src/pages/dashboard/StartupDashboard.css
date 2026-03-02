@@ -2,7 +2,7 @@
 .startup-dashboard {
     min-height: 100vh;
     width: 100%;
-    background: #020817;
+    background: linear-gradient(135deg, #050B14 0%, #0B1220 100%);
     overflow-x: hidden;
 }
 
