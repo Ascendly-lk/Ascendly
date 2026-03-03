@@ -152,7 +152,6 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-left: 280px;
     overflow-x: hidden;
 }
 
@@ -484,26 +483,7 @@
 
 /* ══ RESPONSIVE ═════════════════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
-    .ip-main {
-        padding-left: 72px;
-    }
-
-    .ip-sidebar {
-        width: 72px;
-    }
-
-    .ip-sidebar-subtitle,
-    .ip-sidebar-nav-item span,
-    .ip-sidebar-upgrade,
-    .ip-sidebar-help span {
-        display: none;
-    }
-
-    .ip-sidebar-nav-item,
-    .ip-sidebar-help {
-        justify-content: center;
-        padding: 12px;
-    }
+    /* sidebar responsive handled by DashboardLayout / Sidebar.css */
 
     .ip-stats-row {
         grid-template-columns: repeat(2, 1fr);

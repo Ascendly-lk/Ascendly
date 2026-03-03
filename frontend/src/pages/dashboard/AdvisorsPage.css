@@ -152,7 +152,6 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-left: 280px;
     overflow-x: hidden;
 }
 
@@ -450,26 +449,7 @@
 }
 
 @media (max-width: 1024px) {
-    .ap-main {
-        padding-left: 72px;
-    }
-
-    .ap-sidebar {
-        width: 72px;
-    }
-
-    .ap-sidebar-subtitle,
-    .ap-sidebar-nav-item span,
-    .ap-sidebar-upgrade,
-    .ap-sidebar-help span {
-        display: none;
-    }
-
-    .ap-sidebar-nav-item,
-    .ap-sidebar-help {
-        justify-content: center;
-        padding: 12px;
-    }
+    /* sidebar responsive handled by DashboardLayout / Sidebar.css */
 }
 
 @media (max-width: 640px) {

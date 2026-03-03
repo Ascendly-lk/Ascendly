@@ -3,6 +3,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardPlaceholder from './pages/DashboardPlaceholder';
 import AccountPage from './pages/AccountPage';
+import DashboardLayout from './pages/DashboardLayout';
 import StartupDashboard from './pages/dashboard/StartupDashboard';
 import AIAnalyticsDashboard from './pages/aianalytics/AIAnalyticsDashboard';
 import UploadData from './pages/aianalytics/UploadData';
@@ -19,59 +20,57 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Default route redirects to login */}
+        {/* Default → login */}
         <Route path="/" element={<Navigate to="/login" replace />} />
 
-        {/* Login page */}
+        {/* Auth pages (no dashboard layout) */}
         <Route path="/login" element={<Login />} />
-
-        {/* Account page */}
-        <Route path="/account" element={<AccountPage />} />
-
-        {/* Register page */}
         <Route path="/register" element={<Register />} />
 
-        {/* Startup Dashboard (Full Implementation) */}
-        <Route path="/dashboard/startup" element={<StartupDashboard />} />
+        {/* Account page (standalone, not inside dashboard layout) */}
+        <Route path="/account" element={<AccountPage />} />
 
-        {/* Logistics Page */}
-        <Route path="/dashboard/logistics" element={<LogisticsPage />} />
+        {/* ── Shared Dashboard Layout ─────────────────────────────────────── */}
+        {/* All /dashboard/* pages share the persistent Sidebar + TopBar       */}
+        <Route path="/dashboard" element={<DashboardLayout />}>
 
-        {/* Patent Page */}
-        <Route path="/dashboard/patent" element={<PatentPage />} />
+          {/* Default sub-path */}
+          <Route index element={<Navigate to="startup" replace />} />
 
-        {/* Investors Page */}
-        <Route path="/dashboard/investors" element={<InvestorsPage />} />
+          {/* Main dashboard */}
+          <Route path="startup" element={<StartupDashboard />} />
 
-        {/* Tiers / Pricing Page */}
-        <Route path="/dashboard/tiers" element={<TiersPage />} />
+          {/* Feature pages */}
+          <Route path="logistics" element={<LogisticsPage />} />
+          <Route path="patent" element={<PatentPage />} />
+          <Route path="investors" element={<InvestorsPage />} />
+          <Route path="tiers" element={<TiersPage />} />
+          <Route path="advisors" element={<AdvisorsPage />} />
 
-        {/* Business Advisors Page */}
-        <Route path="/dashboard/advisors" element={<AdvisorsPage />} />
 
-        {/* AI Analytics Dashboard */}
+          {/* Marketing Agency */}
+          <Route path="marketing-agency/projects" element={<Projects />} />
+          <Route path="marketing-agency/feedbacks" element={<Feedbacks />} />
+
+          {/* Role placeholders */}
+          <Route path="founder" element={<DashboardPlaceholder />} />
+          <Route path="investor" element={<DashboardPlaceholder />} />
+          <Route path="marketing" element={<DashboardPlaceholder />} />
+          <Route path="advisor" element={<DashboardPlaceholder />} />
+          <Route path="admin" element={<DashboardPlaceholder />} />
+        </Route>
+
+        {/* ── AI Analytics (standalone — has its own AIAnalyticsSidebar) ─────── */}
+        {/* These are outside DashboardLayout to avoid double sidebar.          */}
         <Route path="/dashboard/ai-analytics" element={<AIAnalyticsDashboard />} />
-
-        {/* AI Analytics — Upload Your Data */}
         <Route path="/dashboard/ai-analytics/upload" element={<UploadData />} />
-
-        {/* AI Analytics — AI Assistant */}
         <Route path="/dashboard/ai-analytics/assistant" element={<AIAssistant />} />
 
-        {/* Marketing Agency Projects */}
+        {/* Marketing Agency standalone routes (kept for backwards compat) */}
         <Route path="/marketing-agency/projects" element={<Projects />} />
-
-        {/* Marketing Agency Feedbacks */}
         <Route path="/marketing-agency/feedbacks" element={<Feedbacks />} />
 
-        {/* Role-based dashboard routes (placeholders) */}
-        <Route path="/dashboard/founder" element={<DashboardPlaceholder />} />
-        <Route path="/dashboard/investor" element={<DashboardPlaceholder />} />
-        <Route path="/dashboard/marketing" element={<DashboardPlaceholder />} />
-        <Route path="/dashboard/advisor" element={<DashboardPlaceholder />} />
-        <Route path="/dashboard/admin" element={<DashboardPlaceholder />} />
-
-        {/* Catch all - redirect to login */}
+        {/* Catch-all */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>

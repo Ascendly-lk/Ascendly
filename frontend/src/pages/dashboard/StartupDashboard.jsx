@@ -1,10 +1,9 @@
-import Sidebar from "../../components/dashboard/Sidebar";
-import TopBar from "../../components/dashboard/TopBar";
 import StatCard from "../../components/dashboard/StatCard";
 import AIForecastCard from "../../components/dashboard/AIForecastCard";
 import AdvisorsCard from "../../components/dashboard/AdvisorsCard";
 import PromoCard from "../../components/dashboard/PromoCard";
 import RevenueTrendCard from "../../components/dashboard/RevenueTrendCard";
+import TopBar from "../../components/dashboard/TopBar";
 import "./StartupDashboard.css";
 
 const StartupDashboard = () => {
@@ -26,7 +25,7 @@ const StartupDashboard = () => {
 
     const miniBars = (
         <svg width="60" height="30" viewBox="0 0 60 30">
-            <rect x="0" y="15" width="8" height="15" rx="2" fill="#00FFEF" opacity="2" />
+            <rect x="0" y="15" width="8" height="15" rx="2" fill="#00FFEF" opacity="0.7" />
             <rect x="13" y="10" width="8" height="20" rx="2" fill="#00FFEF" opacity="0.8" />
             <rect x="26" y="5" width="8" height="25" rx="2" fill="#00FFEF" opacity="0.9" />
             <rect x="39" y="12" width="8" height="18" rx="2" fill="#00FFEF" opacity="0.8" />
@@ -41,46 +40,41 @@ const StartupDashboard = () => {
     );
 
     return (
-        <div className="startup-dashboard">
-            <Sidebar />
+        <>
+            <TopBar />
+            <div className="dashboard-content">
+                {/* Row 1: Stat Cards */}
+                <div className="dashboard-row dashboard-stats">
+                    <StatCard title="Active users" value="1892" icon={userIcon} variant="dark" />
 
-            <div className="dashboard-main">
-                <TopBar />
+                    <StatCard title="Monthly Revenue" value="$18,500" icon={null} variant="dark" decoration={miniBars} />
 
-                <div className="dashboard-content">
-                    {/* Row 1: Stat Cards */}
-                    <div className="dashboard-row dashboard-stats">
-                        <StatCard title="Active users" value="1892" icon={userIcon} variant="dark" />
+                    <StatCard title="Engagement Score" value="81/100" icon={analyticsIcon} variant="dark" />
 
-                        <StatCard title="Monthly Revenue" value="$18,500" icon={null} variant="dark" decoration={miniBars} />
+                    <StatCard title="Growth" value="+17.4%" icon={null} variant="gradient" decoration={growthCurve} />
+                </div>
 
-                        <StatCard title="Engagement Score" value="81/100" icon={analyticsIcon} variant="dark" />
-
-                        <StatCard title="Growth" value="+17.4%" icon={null} variant="gradient" decoration={growthCurve} />
+                {/* Row 2: AI Forecast & Advisors */}
+                <div className="dashboard-row dashboard-row-2">
+                    <div className="dashboard-col-large">
+                        <AIForecastCard />
                     </div>
-
-                    {/* Row 2: AI Forecast & Advisors */}
-                    <div className="dashboard-row dashboard-row-2">
-                        <div className="dashboard-col-large">
-                            <AIForecastCard />
-                        </div>
-                        <div className="dashboard-col-small">
-                            <AdvisorsCard />
-                        </div>
+                    <div className="dashboard-col-small">
+                        <AdvisorsCard />
                     </div>
+                </div>
 
-                    {/* Row 3: Promo & Revenue Trend */}
-                    <div className="dashboard-row dashboard-row-3">
-                        <div className="dashboard-col-large">
-                            <PromoCard />
-                        </div>
-                        <div className="dashboard-col-small">
-                            <RevenueTrendCard />
-                        </div>
+                {/* Row 3: Promo & Revenue Trend */}
+                <div className="dashboard-row dashboard-row-3">
+                    <div className="dashboard-col-large">
+                        <PromoCard />
+                    </div>
+                    <div className="dashboard-col-small">
+                        <RevenueTrendCard />
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
