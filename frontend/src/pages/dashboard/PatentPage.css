@@ -156,7 +156,6 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-left: 280px;
     overflow-x: hidden;
 }
 
@@ -671,26 +670,7 @@
    RESPONSIVE
    ══════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
-    .pp-main {
-        padding-left: 72px;
-    }
-
-    .pp-sidebar {
-        width: 72px;
-    }
-
-    .pp-sidebar-subtitle,
-    .pp-sidebar-nav-item span,
-    .pp-sidebar-upgrade,
-    .pp-sidebar-help span {
-        display: none;
-    }
-
-    .pp-sidebar-nav-item,
-    .pp-sidebar-help {
-        justify-content: center;
-        padding: 12px;
-    }
+    /* sidebar responsive handled by DashboardLayout / Sidebar.css */
 
     .pp-stats-row {
         grid-template-columns: repeat(2, 1fr);

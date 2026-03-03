@@ -160,7 +160,6 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-left: 280px;
     overflow-x: hidden;
 }
 
@@ -576,27 +575,9 @@
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
-    .lp-main {
-        padding-left: 72px;
-    }
-
-    .lp-sidebar {
-        width: 72px;
-    }
-
-    .lp-sidebar-subtitle,
-    .lp-sidebar-nav-item span,
-    .lp-sidebar-upgrade,
-    .lp-sidebar-help span {
-        display: none;
-    }
-
-    .lp-sidebar-nav-item,
-    .lp-sidebar-help {
-        justify-content: center;
-        padding: 12px;
-    }
+    /* sidebar handled by DashboardLayout / Sidebar.css */
 }
+
 
 @media (max-width: 900px) {
     .lp-metrics-row {

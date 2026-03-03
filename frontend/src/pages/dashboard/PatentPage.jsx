@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import './PatentPage.css';
 
 /* ── Inline SVG helpers ───────────────────────────────────────────────────── */
@@ -7,123 +6,6 @@ const Icon = ({ d, viewBox = '0 0 24 24', size = 20 }) => (
         <path d={d} />
     </svg>
 );
-
-/* ── Sidebar (Patent-active) ─────────────────────────────────────────────── */
-const PatentSidebar = () => {
-    const navigate = useNavigate();
-
-    const menuItems = [
-        { name: 'Dashboard', icon: 'grid' },
-        { name: 'Logistics', icon: 'trending' },
-        { name: 'AI Analytics', icon: 'brain' },
-        { name: 'Patent', icon: 'shield', active: true },
-        { name: 'Marketing Agency', icon: 'briefcase' },
-        { name: 'Investors', icon: 'users' },
-        { name: 'Tiers', icon: 'layers' },
-        { name: 'Business Advisors', icon: 'user-check' },
-    ];
-
-    const icons = {
-        grid: (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
-                <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
-            </svg>
-        ),
-        trending: (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                <polyline points="17 6 23 6 23 12" />
-            </svg>
-        ),
-        brain: (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 3 3 3 3 0 0 0 3-3V5a3 3 0 0 0-3-3z" />
-                <path d="M12 12a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0v-4a3 3 0 0 0-3-3z" />
-            </svg>
-        ),
-        shield: (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            </svg>
-        ),
-        briefcase: (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-            </svg>
-        ),
-        users: (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-        ),
-        layers: (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polygon points="12 2 2 7 12 12 22 7 12 2" />
-                <polyline points="2 17 12 22 22 17" />
-                <polyline points="2 12 12 17 22 12" />
-            </svg>
-        ),
-        'user-check': (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                <circle cx="8.5" cy="7" r="4" />
-                <polyline points="17 11 19 13 23 9" />
-            </svg>
-        ),
-    };
-
-    const handleClick = (e, item) => {
-        e.preventDefault();
-        if (item.name === 'Dashboard') navigate('/dashboard/startup');
-        else if (item.name === 'Logistics') navigate('/dashboard/logistics');
-        else if (item.name === 'AI Analytics') navigate('/dashboard/ai-analytics');
-        else if (item.name === 'Investors') navigate('/dashboard/investors');
-        else if (item.name === 'Tiers') navigate('/dashboard/tiers');
-        else if (item.name === 'Business Advisors') navigate('/dashboard/advisors');
-    };
-
-    return (
-        <div className="pp-sidebar">
-            <div className="pp-sidebar-header">
-                <h1 className="pp-sidebar-logo">Ascendly</h1>
-                <p className="pp-sidebar-subtitle">STARTUPS DASHBOARD</p>
-            </div>
-
-            <nav className="pp-sidebar-nav">
-                {menuItems.map((item) => (
-                    <a
-                        key={item.name}
-                        href="#"
-                        className={`pp-sidebar-nav-item${item.active ? ' active' : ''}`}
-                        onClick={(e) => handleClick(e, item)}
-                    >
-                        {icons[item.icon]}
-                        <span>{item.name}</span>
-                    </a>
-                ))}
-            </nav>
-
-            <div className="pp-sidebar-footer">
-                <div className="pp-sidebar-upgrade">
-                    <p>Upgrade to <strong>PRO</strong> to get access to all features!</p>
-                </div>
-                <a href="#" className="pp-sidebar-help">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                        <line x1="12" y1="17" x2="12.01" y2="17" />
-                    </svg>
-                    <span>Help</span>
-                </a>
-            </div>
-        </div>
-    );
-};
 
 /* ── Filing Activity Bar Chart (pure SVG/CSS) ────────────────────────────── */
 const FilingChart = () => {
@@ -188,7 +70,7 @@ const FilingChart = () => {
     );
 };
 
-/* ── Main Patent Page ────────────────────────────────────────────────────── */
+/* ── Main Patent Page (sidebar removed — provided by DashboardLayout) ────── */
 const PatentPage = () => {
     const statCards = [
         {
@@ -266,179 +148,175 @@ const PatentPage = () => {
     ];
 
     return (
-        <div className="pp-shell">
-            <PatentSidebar />
-
-            <div className="pp-main">
-                {/* ── Top Bar ── */}
-                <div className="pp-topbar">
-                    <h2 className="pp-topbar-title">Patent Management</h2>
-                    <div className="pp-topbar-right">
-                        <div className="pp-search">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                                <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+        <div className="pp-main">
+            {/* ── Top Bar ── */}
+            <div className="pp-topbar">
+                <h2 className="pp-topbar-title">Patent Management</h2>
+                <div className="pp-topbar-right">
+                    <div className="pp-search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+                        </svg>
+                        <input type="text" placeholder="Search patents..." />
+                    </div>
+                    <div className="pp-topbar-icons">
+                        <button className="pp-icon-btn" aria-label="Notifications">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                             </svg>
-                            <input type="text" placeholder="Search patents..." />
-                        </div>
-                        <div className="pp-topbar-icons">
-                            <button className="pp-icon-btn" aria-label="Notifications">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
-                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                                </svg>
-                            </button>
-                            <button className="pp-icon-btn" aria-label="Settings">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
-                                    <circle cx="12" cy="12" r="3" />
-                                    <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24" />
-                                </svg>
-                            </button>
-                            <button className="pp-icon-btn" aria-label="Profile">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                    <circle cx="12" cy="7" r="4" />
-                                </svg>
-                            </button>
-                        </div>
+                        </button>
+                        <button className="pp-icon-btn" aria-label="Settings">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
+                                <circle cx="12" cy="12" r="3" />
+                                <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24" />
+                            </svg>
+                        </button>
+                        <button className="pp-icon-btn" aria-label="Profile">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
+            </div>
 
-                {/* ── Content ── */}
-                <div className="pp-content">
+            {/* ── Content ── */}
+            <div className="pp-content">
 
-                    {/* ── Stat Cards ── */}
-                    <div className="pp-stats-row">
-                        {statCards.map((card) => (
-                            <div key={card.label} className={`pp-stat-card pp-stat-card--${card.variant}`}>
-                                <div className="pp-stat-top">
-                                    <span className="pp-stat-icon">{card.icon}</span>
-                                    {card.badge && (
-                                        <span className={`pp-stat-badge pp-stat-badge--${card.badgeUp === true ? 'up' : card.badgeUp === false ? 'warn' : 'neutral'}`}>
-                                            {card.badgeUp === true && (
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="11" height="11">
-                                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                                                    <polyline points="17 6 23 6 23 12" />
-                                                </svg>
-                                            )}
-                                            {card.badge}
-                                        </span>
-                                    )}
-                                </div>
-                                <div className="pp-stat-value">{card.value}</div>
-                                <div className="pp-stat-label">{card.label}</div>
+                {/* ── Stat Cards ── */}
+                <div className="pp-stats-row">
+                    {statCards.map((card) => (
+                        <div key={card.label} className={`pp-stat-card pp-stat-card--${card.variant}`}>
+                            <div className="pp-stat-top">
+                                <span className="pp-stat-icon">{card.icon}</span>
+                                {card.badge && (
+                                    <span className={`pp-stat-badge pp-stat-badge--${card.badgeUp === true ? 'up' : card.badgeUp === false ? 'warn' : 'neutral'}`}>
+                                        {card.badgeUp === true && (
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="11" height="11">
+                                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                                                <polyline points="17 6 23 6 23 12" />
+                                            </svg>
+                                        )}
+                                        {card.badge}
+                                    </span>
+                                )}
                             </div>
-                        ))}
+                            <div className="pp-stat-value">{card.value}</div>
+                            <div className="pp-stat-label">{card.label}</div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* ── Middle Row: Chart + Renewals ── */}
+                <div className="pp-mid-row">
+                    {/* Filing Activity Forecast */}
+                    <div className="pp-card pp-chart-card">
+                        <div className="pp-chart-header">
+                            <h3 className="pp-card-title">Filing Activity Forecast</h3>
+                            <span className="pp-period-badge">Last 6 Months</span>
+                        </div>
+                        <div className="pp-chart-area">
+                            <FilingChart />
+                        </div>
                     </div>
 
-                    {/* ── Middle Row: Chart + Renewals ── */}
-                    <div className="pp-mid-row">
-                        {/* Filing Activity Forecast */}
-                        <div className="pp-card pp-chart-card">
-                            <div className="pp-chart-header">
-                                <h3 className="pp-card-title">Filing Activity Forecast</h3>
-                                <span className="pp-period-badge">Last 6 Months</span>
-                            </div>
-                            <div className="pp-chart-area">
-                                <FilingChart />
-                            </div>
-                        </div>
-
-                        {/* Upcoming Renewals */}
-                        <div className="pp-card pp-renewals-card">
-                            <h3 className="pp-card-title">Upcoming Renewals</h3>
-                            <div className="pp-renewal-list">
-                                {renewals.map((r) => (
-                                    <div key={r.id} className="pp-renewal-item">
-                                        <span className={`pp-renewal-icon pp-renewal-icon--${r.urgency}`}>
-                                            {r.urgency === 'high' && (
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                                                    <line x1="12" y1="9" x2="12" y2="13" />
-                                                    <line x1="12" y1="17" x2="12.01" y2="17" />
-                                                </svg>
-                                            )}
-                                            {r.urgency === 'mid' && (
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                                                    <circle cx="12" cy="12" r="10" />
-                                                    <polyline points="12 6 12 12 16 14" />
-                                                </svg>
-                                            )}
-                                            {r.urgency === 'low' && (
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                                    <line x1="16" y1="2" x2="16" y2="6" />
-                                                    <line x1="8" y1="2" x2="8" y2="6" />
-                                                    <line x1="3" y1="10" x2="21" y2="10" />
-                                                </svg>
-                                            )}
-                                        </span>
-                                        <div className="pp-renewal-info">
-                                            <div className="pp-renewal-id">{r.id}</div>
-                                            <div className={`pp-renewal-label pp-renewal-label--${r.urgency}`}>{r.label}</div>
-                                        </div>
-                                        <button className="pp-renewal-btn" />
+                    {/* Upcoming Renewals */}
+                    <div className="pp-card pp-renewals-card">
+                        <h3 className="pp-card-title">Upcoming Renewals</h3>
+                        <div className="pp-renewal-list">
+                            {renewals.map((r) => (
+                                <div key={r.id} className="pp-renewal-item">
+                                    <span className={`pp-renewal-icon pp-renewal-icon--${r.urgency}`}>
+                                        {r.urgency === 'high' && (
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                                                <line x1="12" y1="9" x2="12" y2="13" />
+                                                <line x1="12" y1="17" x2="12.01" y2="17" />
+                                            </svg>
+                                        )}
+                                        {r.urgency === 'mid' && (
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                                                <circle cx="12" cy="12" r="10" />
+                                                <polyline points="12 6 12 12 16 14" />
+                                            </svg>
+                                        )}
+                                        {r.urgency === 'low' && (
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                                <line x1="16" y1="2" x2="16" y2="6" />
+                                                <line x1="8" y1="2" x2="8" y2="6" />
+                                                <line x1="3" y1="10" x2="21" y2="10" />
+                                            </svg>
+                                        )}
+                                    </span>
+                                    <div className="pp-renewal-info">
+                                        <div className="pp-renewal-id">{r.id}</div>
+                                        <div className={`pp-renewal-label pp-renewal-label--${r.urgency}`}>{r.label}</div>
                                     </div>
-                                ))}
-                            </div>
+                                    <button className="pp-renewal-btn" />
+                                </div>
+                            ))}
                         </div>
                     </div>
-
-                    {/* ── Recent Patent Filings ── */}
-                    <div className="pp-card pp-filings-card">
-                        <div className="pp-filings-header">
-                            <h3 className="pp-card-title">Recent Patent Filings</h3>
-                            <div className="pp-filings-actions">
-                                <button className="pp-filter-btn">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
-                                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-                                    </svg>
-                                    Filter
-                                </button>
-                                <button className="pp-new-filing-btn">+ New Filing</button>
-                            </div>
-                        </div>
-
-                        <table className="pp-table">
-                            <thead>
-                                <tr>
-                                    <th>PATENT NAME / ID</th>
-                                    <th>JURISDICTION</th>
-                                    <th>FILING DATE</th>
-                                    <th>STATUS</th>
-                                    <th>ACTION</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filings.map((f) => (
-                                    <tr key={f.id}>
-                                        <td>
-                                            <div className="pp-filing-name-row">
-                                                <span className="pp-filing-icon-dot">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                                                    </svg>
-                                                </span>
-                                                <div>
-                                                    <div className="pp-filing-name">{f.name}</div>
-                                                    <div className="pp-filing-id">{f.id}</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="pp-jurisdiction">{f.jurisdiction}</td>
-                                        <td className="pp-date">{f.date}</td>
-                                        <td>
-                                            <span className={`pp-status-tag pp-status-tag--${f.statusClass}`}>{f.status}</span>
-                                        </td>
-                                        <td>
-                                            <button className="pp-action-btn" aria-label="More options">•••</button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-
                 </div>
+
+                {/* ── Recent Patent Filings ── */}
+                <div className="pp-card pp-filings-card">
+                    <div className="pp-filings-header">
+                        <h3 className="pp-card-title">Recent Patent Filings</h3>
+                        <div className="pp-filings-actions">
+                            <button className="pp-filter-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
+                                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                                </svg>
+                                Filter
+                            </button>
+                            <button className="pp-new-filing-btn">+ New Filing</button>
+                        </div>
+                    </div>
+
+                    <table className="pp-table">
+                        <thead>
+                            <tr>
+                                <th>PATENT NAME / ID</th>
+                                <th>JURISDICTION</th>
+                                <th>FILING DATE</th>
+                                <th>STATUS</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filings.map((f) => (
+                                <tr key={f.id}>
+                                    <td>
+                                        <div className="pp-filing-name-row">
+                                            <span className="pp-filing-icon-dot">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                                </svg>
+                                            </span>
+                                            <div>
+                                                <div className="pp-filing-name">{f.name}</div>
+                                                <div className="pp-filing-id">{f.id}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="pp-jurisdiction">{f.jurisdiction}</td>
+                                    <td className="pp-date">{f.date}</td>
+                                    <td>
+                                        <span className={`pp-status-tag pp-status-tag--${f.statusClass}`}>{f.status}</span>
+                                    </td>
+                                    <td>
+                                        <button className="pp-action-btn" aria-label="More options">•••</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
         </div>
     );
