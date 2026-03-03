@@ -56,7 +56,7 @@
 
 .promo-content p {
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.85);
+    color: #0B1220;
     margin: 0 0 20px 0;
     /* same left as h2 */
     line-height: 1.5;
@@ -95,7 +95,7 @@
 .promo-button-secondary {
     padding: 11px 20px;
     background: transparent;
-    color: rgba(255, 255, 255, 0.85);
+    color: #0B1220;
     border: none;
     border-radius: 50px;
     font-size: 14px;
