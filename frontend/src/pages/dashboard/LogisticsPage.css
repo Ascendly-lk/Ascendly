@@ -270,28 +270,41 @@
 }
 
 .lp-metric-card {
-    border-radius: 20px;
+    border-radius: 22px;
     padding: 24px;
     display: flex;
     flex-direction: column;
     gap: 10px;
     min-height: 160px;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease, border-color 0.2s ease;
+    cursor: pointer;
 }
 
-/* Teal gradient highlight card (cards 1 & 3) */
+.lp-metric-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Teal gradient highlight card — matches Dashboard .stat-card-gradient */
 .lp-metric-card--glow {
-    background: linear-gradient(135deg, #0a2a28 0%, #0d4a42 40%, #0a3d37 100%);
-    border: 1px solid rgba(0, 255, 239, 0.35);
-    box-shadow:
-        0 0 30px rgba(0, 255, 239, 0.08),
-        inset 0 0 40px rgba(0, 255, 239, 0.04);
+    background: linear-gradient(150deg, #00FFE5 0%, #23A7B4 45%, #0B1220 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 255, 239, 0.18);
 }
 
-/* Dark surface card (card 2) */
+.lp-metric-card--glow:hover {
+    box-shadow: 0 8px 16px rgba(0, 255, 229, 0.28);
+    filter: brightness(1.05);
+}
+
+/* Dark surface card — matches Dashboard .stat-card-dark */
 .lp-metric-card--dark {
-    background: #0c1424;
-    border: 1px solid rgba(148, 163, 184, 0.12);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    background: #0d1628;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+}
+
+.lp-metric-card--dark:hover {
+    box-shadow: 0 8px 32px rgba(0, 229, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .lp-metric-card-header {
@@ -380,7 +393,7 @@
     margin-top: 2px;
 }
 
-/* ── Main 2-column Grid ──────────────────────────────────────────────────── */
+/* ── Main 2-column Grid ─────────────────────────────────────────────────────────── */
 .lp-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -388,12 +401,24 @@
     align-items: start;
 }
 
-/* ── Generic Card Surface ────────────────────────────────────────────────── */
+/* ── Generic Card Surface — matches Dashboard AIForecastCard style ──────── */
 .lp-card {
-    background: #0c1424;
-    border: 1px solid rgba(0, 255, 239, 0.18);
-    border-radius: 20px;
+    background: linear-gradient(160deg, #0f172a 0%, #0c1527 100%);
+    border: 1px solid rgba(148, 163, 184, 0.08);
+    border-radius: 22px;
     padding: 28px;
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.3),
+        0 20px 60px rgba(0, 0, 0, 0.55);
+    transition: transform 0.2s ease-out, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lp-card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.3),
+        0 20px 60px rgba(0, 0, 0, 0.7),
+        0 8px 32px rgba(0, 255, 239, 0.12);
 }
 
 .lp-card-title {
@@ -431,8 +456,8 @@
 .lp-input,
 .lp-textarea {
     width: 100%;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(148, 163, 184, 0.15);
+    background: #0B1220;
+    border: 1px solid rgba(148, 163, 184, 0.18);
     border-radius: 10px;
     padding: 10px 14px;
     color: #E2E8F0;
@@ -445,8 +470,8 @@
 
 .lp-input:focus,
 .lp-textarea:focus {
-    border-color: rgba(0, 255, 239, 0.5);
-    box-shadow: 0 0 0 2px rgba(0, 255, 239, 0.08);
+    border-color: rgba(0, 255, 239, 0.55);
+    box-shadow: 0 0 0 3px rgba(0, 255, 239, 0.08);
 }
 
 .lp-textarea {
@@ -463,14 +488,15 @@
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s ease-out;
     margin-top: 4px;
     letter-spacing: 0.3px;
 }
 
 .lp-send-btn:hover {
     background: rgba(0, 255, 239, 0.1);
-    box-shadow: 0 0 12px rgba(0, 255, 239, 0.2);
+    box-shadow: 0 0 14px rgba(0, 255, 239, 0.25);
+    transform: translateY(-1px);
 }
 
 /* ── Right Column ────────────────────────────────────────────────────────── */
@@ -520,12 +546,13 @@
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s ease-out;
 }
 
 .lp-select-btn:hover {
-    background: rgba(0, 255, 239, 0.2);
-    box-shadow: 0 0 8px rgba(0, 255, 239, 0.2);
+    background: rgba(0, 255, 239, 0.18);
+    box-shadow: 0 0 12px rgba(0, 255, 239, 0.22);
+    transform: translateY(-1px);
 }
 
 /* ── Status Card ─────────────────────────────────────────────────────────── */

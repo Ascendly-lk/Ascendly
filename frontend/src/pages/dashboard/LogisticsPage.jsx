@@ -44,7 +44,7 @@ const LogisticsPage = () => {
                 {/* ── Metric Cards Row ── */}
                 <div className="lp-metrics-row">
                     {/* Card 1 – Active Requests (teal gradient) */}
-                    <div className="lp-metric-card lp-metric-card--glow">
+                    <div className="lp-metric-card lp-metric-card--dark">
                         <div className="lp-metric-card-header">
                             <span className="lp-metric-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
