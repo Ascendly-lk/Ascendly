@@ -88,8 +88,9 @@
     font-weight: 500;
     color: #FFFFFF;
     opacity: 0.85;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.6px;
     line-height: 1.3;
+    text-transform: uppercase;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -97,7 +98,7 @@
 }
 
 .stat-card-value {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 700;
     color: #FFFFFF;
     line-height: 1;
