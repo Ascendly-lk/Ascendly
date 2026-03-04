@@ -48,8 +48,8 @@ const InvestorsPage = () => {
 
                 {/* ── Stat Cards Row ── */}
                 <div className="ip-stats-row">
-                    {/* Card 1 – Investor views (glow) */}
-                    <div className="ip-stat-card ip-stat-card--glow">
+                    {/* Card 1 – Investor views (dark) */}
+                    <div className="ip-stat-card ip-stat-card--dark">
                         <div className="ip-stat-top">
                             <span className="ip-stat-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="22" height="22">
@@ -67,7 +67,15 @@ const InvestorsPage = () => {
                     {/* Card 2 – Intrested Investors (dark) */}
                     <div className="ip-stat-card ip-stat-card--dark">
                         <div className="ip-stat-top">
-                            <span className="ip-stat-label">Intrested Investors</span>
+                            <span className="ip-stat-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="22" height="22">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                    <circle cx="9" cy="7" r="4" />
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                </svg>
+                            </span>
+                            <span className="ip-stat-label">Interested Investors</span>
                         </div>
                         <div className="ip-stat-value">26</div>
                     </div>
@@ -82,7 +90,7 @@ const InvestorsPage = () => {
                                     <line x1="6" y1="20" x2="6" y2="14" />
                                 </svg>
                             </span>
-                            <span className="ip-stat-label">AI Macth Score</span>
+                            <span className="ip-stat-label">AI Match Score</span>
                         </div>
                         <div className="ip-stat-value">81<span className="ip-stat-denom">/100</span></div>
                     </div>
@@ -90,6 +98,13 @@ const InvestorsPage = () => {
                     {/* Card 4 – Funding Probability (glow) */}
                     <div className="ip-stat-card ip-stat-card--glow">
                         <div className="ip-stat-top">
+                            <span className="ip-stat-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="22" height="22">
+                                    <line x1="18" y1="20" x2="18" y2="10" />
+                                    <line x1="12" y1="20" x2="12" y2="4" />
+                                    <line x1="6" y1="20" x2="6" y2="14" />
+                                </svg>
+                            </span>
                             <span className="ip-stat-label">Funding Probablity</span>
                         </div>
                         <div className="ip-stat-value">63%</div>
