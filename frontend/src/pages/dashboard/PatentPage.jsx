@@ -1,4 +1,21 @@
+import { useState } from 'react';
 import './PatentPage.css';
+
+/* ── Filing Activity Datasets ────────────────────────────────────────────────────── */
+const FILING_DATASETS = {
+    Monthly: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        values: [22, 35, 42, 55, 60, 50, 78, 65, 72, 80, 85, 90],
+    },
+    Quarterly: {
+        labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+        values: [33, 55, 72, 88],
+    },
+    Yearly: {
+        labels: ['2020', '2021', '2022', '2023', '2024'],
+        values: [28, 42, 58, 70, 90],
+    },
+};
 
 /* ── Inline SVG helpers ───────────────────────────────────────────────────── */
 const Icon = ({ d, viewBox = '0 0 24 24', size = 20 }) => (
@@ -7,71 +24,145 @@ const Icon = ({ d, viewBox = '0 0 24 24', size = 20 }) => (
     </svg>
 );
 
-/* ── Filing Activity Bar Chart (pure SVG/CSS) ────────────────────────────── */
-const FilingChart = () => {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
-    const values = [22, 35, 42, 55, 60, 50, 78];
-    const max = Math.max(...values);
-    const cx = 480;
-    const ch = 160;
-    const barW = 36;
-    const gap = (cx - months.length * barW) / (months.length + 1);
+/* ── Chart constants ─────────────────────────────────────────────────────────────────── */
+const VB_W = 600;
+const VB_H = 200;
+const CHART_TOP = 12;
+const CHART_BOTTOM = 30;
+const CHART_LEFT = 40;
+const CHART_RIGHT = 10;
+const CHART_W = VB_W - CHART_LEFT - CHART_RIGHT;
+const CHART_H = VB_H - CHART_TOP - CHART_BOTTOM;
 
-    // Line path
-    const pts = values.map((v, i) => {
-        const x = gap + i * (barW + gap) + barW / 2;
-        const y = ch - (v / max) * ch * 0.9;
-        return `${x},${y}`;
+function mapPoints(values) {
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const range = max - min || 1;
+    return values.map((v, i) => ([
+        CHART_LEFT + (i / (values.length - 1)) * CHART_W,
+        CHART_TOP + CHART_H - ((v - min) / range) * CHART_H,
+    ]));
+}
+
+function buildSmoothPath(pts) {
+    if (pts.length < 2) return '';
+    let d = `M ${pts[0][0]},${pts[0][1]}`;
+    for (let i = 1; i < pts.length; i++) {
+        const prev = pts[i - 1];
+        const curr = pts[i];
+        const cpX = (prev[0] + curr[0]) / 2;
+        d += ` C ${cpX},${prev[1]} ${cpX},${curr[1]} ${curr[0]},${curr[1]}`;
+    }
+    return d;
+}
+
+function yTicks(values) {
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    return Array.from({ length: 5 }, (_, i) => {
+        const frac = i / 4;
+        const val = Math.round(min + frac * (max - min));
+        const y = CHART_TOP + CHART_H - frac * CHART_H;
+        return { val, y };
     });
-    const linePath = 'M ' + pts.join(' L ');
+}
+
+/* ── Filing Activity Chart ────────────────────────────────────────────────────── */
+const FilingChart = ({ period }) => {
+    const ds = FILING_DATASETS[period];
+    const pts = mapPoints(ds.values);
+    const linePath = buildSmoothPath(pts);
+    const lastPt = pts[pts.length - 1];
+    const areaPath = `${linePath} L ${lastPt[0]},${CHART_TOP + CHART_H} L ${CHART_LEFT},${CHART_TOP + CHART_H} Z`;
 
     return (
-        <svg viewBox={`0 0 ${cx} ${ch + 30}`} className="pp-chart-svg" preserveAspectRatio="xMidYMid meet">
+        <svg
+            viewBox={`0 0 ${VB_W} ${VB_H}`}
+            className="pp-chart-svg"
+            preserveAspectRatio="none"
+            overflow="visible"
+        >
             <defs>
-                <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#00FFEF" stopOpacity="0.8" />
-                    <stop offset="100%" stopColor="#00FFEF" stopOpacity="0.2" />
+                <filter id="pp-glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="5" result="coloredBlur" />
+                    <feMerge>
+                        <feMergeNode in="coloredBlur" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+                <filter id="pp-dot-glow" x="-100%" y="-100%" width="300%" height="300%">
+                    <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                    <feMerge>
+                        <feMergeNode in="coloredBlur" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+                <linearGradient id="pp-area-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#00FFEF" stopOpacity="0.28" />
+                    <stop offset="75%" stopColor="#00FFEF" stopOpacity="0.04" />
+                    <stop offset="100%" stopColor="#00FFEF" stopOpacity="0" />
                 </linearGradient>
-                <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#00FFEF" stopOpacity="0.6" />
-                    <stop offset="100%" stopColor="#00FFEF" stopOpacity="1" />
-                </linearGradient>
+                <pattern id="pp-grid" x="0" y="0" width="60" height="36" patternUnits="userSpaceOnUse">
+                    <line x1="0" y1="0" x2="0" y2={VB_H} stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
+                    <line x1="0" y1="0" x2={VB_W} y2="0" stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
+                </pattern>
             </defs>
 
-            {/* Bars */}
-            {values.map((v, i) => {
-                const x = gap + i * (barW + gap);
-                const barH = (v / max) * ch * 0.9;
-                const y = ch - barH;
-                return (
-                    <rect key={i} x={x} y={y} width={barW} height={barH}
-                        rx="5" fill="url(#barGrad)" />
-                );
-            })}
+            {/* Grid */}
+            <rect x="0" y="0" width={VB_W} height={VB_H} fill="url(#pp-grid)" />
 
-            {/* Trend line */}
-            <path d={linePath} stroke="url(#lineGrad)" strokeWidth="2.5" fill="none" strokeLinejoin="round" />
+            {/* Y-axis ticks */}
+            {yTicks(ds.values).map(({ val, y }, i) => (
+                <g key={i}>
+                    <line x1={CHART_LEFT - 4} y1={y} x2={CHART_LEFT} y2={y}
+                        stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+                    <text x={CHART_LEFT - 6} y={y + 3} textAnchor="end"
+                        fontSize="9" fill="rgba(255,255,255,0.35)" fontFamily="inherit">
+                        {val}
+                    </text>
+                </g>
+            ))}
 
-            {/* Dots on line */}
-            {pts.map((pt, i) => {
-                const [x, y] = pt.split(',').map(Number);
-                return <circle key={i} cx={x} cy={y} r="4" fill="#00FFEF" stroke="#0c1424" strokeWidth="2" />;
-            })}
+            {/* Y-axis label */}
+            <text x={8} y={CHART_TOP + CHART_H / 2} textAnchor="middle"
+                fontSize="9" fill="rgba(255,255,255,0.3)" fontFamily="inherit"
+                transform={`rotate(-90, 8, ${CHART_TOP + CHART_H / 2})`}>
+                Filings
+            </text>
+
+            {/* Area fill */}
+            <path d={areaPath} fill="url(#pp-area-grad)" />
+
+            {/* Glow stroke */}
+            <path d={linePath} stroke="rgba(0,255,239,0.4)" strokeWidth="10"
+                fill="none" filter="url(#pp-glow)" />
+
+            {/* Main line */}
+            <path d={linePath} stroke="#00FFEF" strokeWidth="2.5" fill="none"
+                strokeLinecap="round" strokeLinejoin="round" />
 
             {/* X-axis labels */}
-            {months.map((m, i) => {
-                const x = gap + i * (barW + gap) + barW / 2;
-                return (
-                    <text key={i} x={x} y={ch + 20} textAnchor="middle"
-                        fontSize="11" fill="#64748B" fontFamily="Inter, sans-serif">{m}</text>
-                );
-            })}
+            {pts.map((pt, i) => (
+                <text key={i} x={pt[0]} y={VB_H - 6} textAnchor="middle"
+                    fontSize="9" fill="rgba(255,255,255,0.35)" fontFamily="inherit">
+                    {ds.labels[i]}
+                </text>
+            ))}
+
+            {/* Terminal dot */}
+            <circle cx={lastPt[0]} cy={lastPt[1]} r="10"
+                fill="rgba(0,255,239,0.15)" filter="url(#pp-dot-glow)" />
+            <circle cx={lastPt[0]} cy={lastPt[1]} r="5"
+                fill="#00FFEF" stroke="#0f172a" strokeWidth="2" />
         </svg>
     );
 };
 
+
 /* ── Main Patent Page (sidebar removed — provided by DashboardLayout) ────── */
 const PatentPage = () => {
+    const [chartPeriod, setChartPeriod] = useState('Monthly');
+
     const statCards = [
         {
             label: 'TOTAL PATENTS',
@@ -215,10 +306,22 @@ const PatentPage = () => {
                     <div className="pp-card pp-chart-card">
                         <div className="pp-chart-header">
                             <h3 className="pp-card-title">Filing Activity Forecast</h3>
-                            <span className="pp-period-badge">Last 6 Months</span>
+                            <div className="pp-chart-dropdown">
+                                <select
+                                    value={chartPeriod}
+                                    onChange={(e) => setChartPeriod(e.target.value)}
+                                >
+                                    <option>Monthly</option>
+                                    <option>Quarterly</option>
+                                    <option>Yearly</option>
+                                </select>
+                                <svg className="pp-chart-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                    <polyline points="6 9 12 15 18 9" />
+                                </svg>
+                            </div>
                         </div>
                         <div className="pp-chart-area">
-                            <FilingChart />
+                            <FilingChart period={chartPeriod} />
                         </div>
                     </div>
 
@@ -255,7 +358,7 @@ const PatentPage = () => {
                                         <div className="pp-renewal-id">{r.id}</div>
                                         <div className={`pp-renewal-label pp-renewal-label--${r.urgency}`}>{r.label}</div>
                                     </div>
-                                    <button className="pp-renewal-btn" />
+                                    <button className="pp-renewal-btn">View</button>
                                 </div>
                             ))}
                         </div>
