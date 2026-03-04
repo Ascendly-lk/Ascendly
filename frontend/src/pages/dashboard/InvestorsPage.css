@@ -13,7 +13,7 @@
     display: flex;
     min-height: 100vh;
     width: 100%;
-    background: #020817;
+    background: linear-gradient(135deg, #050B14 0%, #0B1220 100%);
     font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
     color: #E2E8F0;
     overflow-x: hidden;
@@ -255,43 +255,69 @@
 }
 
 .ip-stat-card {
-    border-radius: 20px;
+    border-radius: 22px;
     padding: 22px 20px;
     display: flex;
     flex-direction: column;
     gap: 10px;
     min-height: 130px;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease, filter 0.2s ease;
+    cursor: pointer;
 }
 
-.ip-stat-card--glow {
-    background: linear-gradient(135deg, #0a2a28 0%, #0d4a42 40%, #0a3d37 100%);
-    border: 1px solid rgba(0, 255, 239, 0.35);
-    box-shadow: 0 0 30px rgba(0, 255, 239, 0.09), inset 0 0 40px rgba(0, 255, 239, 0.04);
+.ip-stat-card:hover {
+    transform: translateY(-2px);
 }
 
+/* Dark variant — matches Dashboard .stat-card-dark */
 .ip-stat-card--dark {
-    background: #0c1424;
-    border: 1px solid rgba(148, 163, 184, 0.12);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    background: #0d1628;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+}
+
+.ip-stat-card--dark:hover {
+    box-shadow: 0 8px 32px rgba(0, 229, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Gradient variant — matches Dashboard .stat-card-gradient (Funding Probability only) */
+.ip-stat-card--glow {
+    background: linear-gradient(150deg, #00FFE5 0%, #23A7B4 45%, #0B1220 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 255, 239, 0.18);
+}
+
+.ip-stat-card--glow:hover {
+    box-shadow: 0 8px 16px rgba(0, 255, 229, 0.28);
+    filter: brightness(1.05);
 }
 
 .ip-stat-top {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
 }
 
+/* Icon container — matches Dashboard .stat-card-icon */
 .ip-stat-icon {
-    color: #00FFEF;
-    filter: drop-shadow(0 0 4px rgba(0, 255, 239, 0.4));
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    background: rgba(0, 229, 255, 0.12);
+    border-radius: 50%;
+    color: #00FFE5;
+    filter: drop-shadow(0 0 4px rgba(0, 255, 239, 0.35));
+    flex-shrink: 0;
 }
 
-.ip-stat-label {
-    font-size: 13px;
-    font-weight: 500;
-    color: #94A3B8;
+/* Icon on glow card */
+.ip-stat-card--glow .ip-stat-icon {
+    background: rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+    filter: none;
 }
 
 .ip-stat-value {
@@ -299,12 +325,29 @@
     font-weight: 700;
     color: #FFFFFF;
     line-height: 1;
+    margin-top: 4px;
+}
+
+.ip-stat-card--glow .ip-stat-value {
+    color: #ffffff;
 }
 
 .ip-stat-denom {
     font-size: 22px;
     font-weight: 400;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.ip-stat-label {
+    font-size: 11px;
+    font-weight: 600;
     color: #94A3B8;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.ip-stat-card--glow .ip-stat-label {
+    color: rgba(255, 255, 255, 0.8);
 }
 
 /* ══ MAIN GRID ══════════════════════════════════════════════════════════════ */
@@ -316,11 +359,24 @@
 }
 
 /* ── Generic card ────────────────────────────────────────────────────────── */
+/* Generic card — matches Dashboard AIForecastCard */
 .ip-card {
-    background: #0c1424;
-    border: 1px solid rgba(0, 255, 239, 0.18);
-    border-radius: 20px;
+    background: linear-gradient(160deg, #0f172a 0%, #0c1527 100%);
+    border: 1px solid rgba(148, 163, 184, 0.08);
+    border-radius: 22px;
     padding: 24px;
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.3),
+        0 20px 60px rgba(0, 0, 0, 0.55);
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.ip-card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.3),
+        0 20px 60px rgba(0, 0, 0, 0.7),
+        0 8px 32px rgba(0, 255, 239, 0.12);
 }
 
 .ip-card-title {
@@ -411,20 +467,21 @@
 
 .ip-request-btn {
     padding: 7px 18px;
-    background: rgba(0, 255, 239, 0.12);
+    background: rgba(0, 255, 239, 0.1);
     border: 1px solid rgba(0, 255, 239, 0.4);
     border-radius: 8px;
     color: #00FFEF;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s ease-out;
     white-space: nowrap;
 }
 
 .ip-request-btn:hover {
-    background: rgba(0, 255, 239, 0.22);
-    box-shadow: 0 0 8px rgba(0, 255, 239, 0.2);
+    background: rgba(0, 255, 239, 0.18);
+    box-shadow: 0 0 12px rgba(0, 255, 239, 0.22);
+    transform: translateY(-1px);
 }
 
 /* ── Right column ────────────────────────────────────────────────────────── */
@@ -472,13 +529,14 @@
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s ease-out;
     text-align: center;
 }
 
 .ip-export-btn:hover {
     background: rgba(0, 255, 239, 0.1);
-    box-shadow: 0 0 12px rgba(0, 255, 239, 0.2);
+    box-shadow: 0 0 14px rgba(0, 255, 239, 0.25);
+    transform: translateY(-1px);
 }
 
 /* ══ RESPONSIVE ═════════════════════════════════════════════════════════════ */
