@@ -13,7 +13,7 @@
     display: flex;
     min-height: 100vh;
     width: 100%;
-    background: #020817;
+    background: linear-gradient(135deg, #050B14 0%, #0B1220 100%);
     font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
     color: #E2E8F0;
     overflow-x: hidden;
@@ -153,6 +153,27 @@
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 255, 239, 0.25) rgba(255, 255, 255, 0.03);
+}
+
+.ap-main::-webkit-scrollbar {
+    width: 4px;
+}
+
+.ap-main::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 99px;
+}
+
+.ap-main::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 239, 0.25);
+    border-radius: 99px;
+}
+
+.ap-main::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 255, 239, 0.45);
 }
 
 /* ── Top Bar ─────────────────────────────────────────────────────────────── */
@@ -251,7 +272,7 @@
 
 .ap-subtitle {
     font-size: 14px;
-    color: #00FFEF;
+    color: #94A3B8;
     margin: 0;
     line-height: 1.6;
 }
@@ -287,20 +308,22 @@
 .ap-request-session-btn {
     padding: 10px 20px;
     background: transparent;
-    border: 1px solid #00FFEF;
+    border: 1px solid rgba(0, 255, 239, 0.5);
     border-radius: 10px;
     color: #00FFEF;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s ease-out;
     white-space: nowrap;
     flex-shrink: 0;
 }
 
 .ap-request-session-btn:hover {
     background: rgba(0, 255, 239, 0.1);
-    box-shadow: 0 0 12px rgba(0, 255, 239, 0.2);
+    box-shadow: 0 0 14px rgba(0, 255, 239, 0.25);
+    border-color: #00FFEF;
+    transform: translateY(-1px);
 }
 
 /* ══ ADVISOR CARDS GRID ════════════════════════════════════════════════════
@@ -324,19 +347,26 @@
 .ap-advisor-card {
     width: 100%;
     min-width: 0;
-    background: #0c1424;
-    border: 1px solid rgba(0, 255, 239, 0.25);
-    border-radius: 16px;
+    background: linear-gradient(160deg, #0f172a 0%, #0c1527 100%);
+    border: 1px solid rgba(148, 163, 184, 0.08);
+    border-radius: 20px;
     padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 14px;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.3),
+        0 14px 40px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .ap-advisor-card:hover {
-    border-color: rgba(0, 255, 239, 0.5);
-    box-shadow: 0 0 16px rgba(0, 255, 239, 0.08);
+    transform: translateY(-2px);
+    border-color: rgba(0, 255, 239, 0.3);
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.3),
+        0 14px 40px rgba(0, 0, 0, 0.65),
+        0 8px 28px rgba(0, 255, 239, 0.12);
 }
 
 .ap-advisor-card-top {
@@ -361,41 +391,56 @@
     display: inline-flex;
     align-items: center;
     padding: 4px 12px;
-    background: rgba(0, 255, 239, 0.12);
-    border: 1px solid rgba(0, 255, 239, 0.3);
+    background: rgba(0, 255, 239, 0.1);
+    border: 1px solid rgba(0, 255, 239, 0.35);
     border-radius: 999px;
     font-size: 12px;
     font-weight: 700;
     color: #00FFEF;
     align-self: flex-start;
+    box-shadow: 0 0 8px rgba(0, 255, 239, 0.1);
 }
 
 .ap-request-btn {
     width: 100%;
     padding: 10px;
     background: transparent;
-    border: 1px solid #00FFEF;
+    border: 1px solid rgba(0, 255, 239, 0.45);
     border-radius: 8px;
     color: #00FFEF;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s ease-out;
     margin-top: auto;
 }
 
 .ap-request-btn:hover {
     background: rgba(0, 255, 239, 0.1);
-    box-shadow: 0 0 8px rgba(0, 255, 239, 0.2);
+    box-shadow: 0 0 12px rgba(0, 255, 239, 0.22);
+    border-color: #00FFEF;
+    transform: translateY(-1px);
 }
 
 /* ── Generic card ────────────────────────────────────────────────────────── */
 .ap-card {
-    background: #0c1424;
-    border: 1px solid rgba(0, 255, 239, 0.18);
-    border-radius: 16px;
+    background: linear-gradient(160deg, #0f172a 0%, #0c1527 100%);
+    border: 1px solid rgba(148, 163, 184, 0.08);
+    border-radius: 22px;
     padding: 24px;
     width: 100%;
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.3),
+        0 20px 60px rgba(0, 0, 0, 0.55);
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.ap-card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.3),
+        0 20px 60px rgba(0, 0, 0, 0.7),
+        0 8px 32px rgba(0, 255, 239, 0.1);
 }
 
 .ap-card-title {

@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardPlaceholder from './pages/DashboardPlaceholder';
@@ -18,62 +20,66 @@ import AdvisorsPage from './pages/dashboard/AdvisorsPage';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Default → login */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Default → login */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
 
-        {/* Auth pages (no dashboard layout) */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+          {/* Auth pages — public */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-        {/* Account page (standalone, not inside dashboard layout) */}
-        <Route path="/account" element={<AccountPage />} />
+          {/* Account page — protected */}
+          <Route path="/account" element={
+            <ProtectedRoute><AccountPage /></ProtectedRoute>
+          } />
 
-        {/* ── Shared Dashboard Layout ─────────────────────────────────────── */}
-        {/* All /dashboard/* pages share the persistent Sidebar + TopBar       */}
-        <Route path="/dashboard" element={<DashboardLayout />}>
+          {/* ── Shared Dashboard Layout — protected ──────────────────────── */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute><DashboardLayout /></ProtectedRoute>
+          }>
+            <Route index element={<Navigate to="startup" replace />} />
+            <Route path="startup" element={<StartupDashboard />} />
+            <Route path="logistics" element={<LogisticsPage />} />
+            <Route path="patent" element={<PatentPage />} />
+            <Route path="investors" element={<InvestorsPage />} />
+            <Route path="tiers" element={<TiersPage />} />
+            <Route path="advisors" element={<AdvisorsPage />} />
+            <Route path="marketing-agency/projects" element={<Projects />} />
+            <Route path="marketing-agency/feedbacks" element={<Feedbacks />} />
+            {/* Role placeholders */}
+            <Route path="founder" element={<DashboardPlaceholder />} />
+            <Route path="investor" element={<DashboardPlaceholder />} />
+            <Route path="marketing" element={<DashboardPlaceholder />} />
+            <Route path="advisor" element={<DashboardPlaceholder />} />
+            <Route path="admin" element={<DashboardPlaceholder />} />
+          </Route>
 
-          {/* Default sub-path */}
-          <Route index element={<Navigate to="startup" replace />} />
+          {/* ── AI Analytics — protected, standalone layout ─────────────── */}
+          <Route path="/dashboard/ai-analytics" element={
+            <ProtectedRoute><AIAnalyticsDashboard /></ProtectedRoute>
+          } />
+          <Route path="/dashboard/ai-analytics/upload" element={
+            <ProtectedRoute><UploadData /></ProtectedRoute>
+          } />
+          <Route path="/dashboard/ai-analytics/assistant" element={
+            <ProtectedRoute><AIAssistant /></ProtectedRoute>
+          } />
 
-          {/* Main dashboard */}
-          <Route path="startup" element={<StartupDashboard />} />
+          {/* Marketing Agency standalone routes — protected */}
+          <Route path="/marketing-agency/projects" element={
+            <ProtectedRoute><Projects /></ProtectedRoute>
+          } />
+          <Route path="/marketing-agency/feedbacks" element={
+            <ProtectedRoute><Feedbacks /></ProtectedRoute>
+          } />
 
-          {/* Feature pages */}
-          <Route path="logistics" element={<LogisticsPage />} />
-          <Route path="patent" element={<PatentPage />} />
-          <Route path="investors" element={<InvestorsPage />} />
-          <Route path="tiers" element={<TiersPage />} />
-          <Route path="advisors" element={<AdvisorsPage />} />
-
-
-          {/* Marketing Agency */}
-          <Route path="marketing-agency/projects" element={<Projects />} />
-          <Route path="marketing-agency/feedbacks" element={<Feedbacks />} />
-
-          {/* Role placeholders */}
-          <Route path="founder" element={<DashboardPlaceholder />} />
-          <Route path="investor" element={<DashboardPlaceholder />} />
-          <Route path="marketing" element={<DashboardPlaceholder />} />
-          <Route path="advisor" element={<DashboardPlaceholder />} />
-          <Route path="admin" element={<DashboardPlaceholder />} />
-        </Route>
-
-        {/* ── AI Analytics (standalone — has its own AIAnalyticsSidebar) ─────── */}
-        {/* These are outside DashboardLayout to avoid double sidebar.          */}
-        <Route path="/dashboard/ai-analytics" element={<AIAnalyticsDashboard />} />
-        <Route path="/dashboard/ai-analytics/upload" element={<UploadData />} />
-        <Route path="/dashboard/ai-analytics/assistant" element={<AIAssistant />} />
-
-        {/* Marketing Agency standalone routes (kept for backwards compat) */}
-        <Route path="/marketing-agency/projects" element={<Projects />} />
-        <Route path="/marketing-agency/feedbacks" element={<Feedbacks />} />
-
-        {/* Catch-all */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </Router>
+          {/* Catch-all */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
