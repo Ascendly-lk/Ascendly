@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
+import { apiFetch } from '../../api';
 import './AIAnalyticsChart.css';
 
-/* ── Monthly data ── */
+/* ── Fallback data ── */
 const MONTHLY_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTHLY_HEIGHTS = [40, 55, 35, 70, 50, 80, 60, 90, 65, 75, 45, 85];
 
-/* ── Yearly data (last 6 years) ── */
 const currentYear = new Date().getFullYear();
 const YEARLY_LABELS = Array.from({ length: 6 }, (_, i) => String(currentYear - 5 + i));
 const YEARLY_HEIGHTS = [38, 50, 62, 55, 78, 90];
@@ -13,10 +13,34 @@ const YEARLY_HEIGHTS = [38, 50, 62, 55, 78, 90];
 const AIAnalyticsChart = () => {
     const [period, setPeriod] = useState('Monthly');
     const [open, setOpen] = useState(false);
+    const [chartData, setChartData] = useState(null);
+    const [totalValue, setTotalValue] = useState('$682.5');
     const dropdownRef = useRef(null);
 
-    const labels = period === 'Monthly' ? MONTHLY_LABELS : YEARLY_LABELS;
-    const heights = period === 'Monthly' ? MONTHLY_HEIGHTS : YEARLY_HEIGHTS;
+    useEffect(() => {
+        const p = period.toLowerCase();
+        apiFetch(`/api/analytics/activity?period=${p}`)
+            .then((res) => {
+                if (!res.ok) throw new Error('Failed to fetch');
+                return res.json();
+            })
+            .then((data) => {
+                setChartData({ labels: data.labels, heights: data.data });
+                const val = typeof data.total_value === 'number' ? data.total_value : 0;
+                setTotalValue(`$${val.toLocaleString()}`);
+            })
+            .catch(() => {
+                setChartData(null);
+                setTotalValue('$0');
+            });
+    }, [period]);
+
+    const labels = chartData
+        ? chartData.labels
+        : period === 'Monthly' ? MONTHLY_LABELS : YEARLY_LABELS;
+    const heights = chartData
+        ? chartData.heights
+        : period === 'Monthly' ? MONTHLY_HEIGHTS : YEARLY_HEIGHTS;
 
     /* Close dropdown when clicking outside */
     useEffect(() => {
@@ -40,7 +64,7 @@ const AIAnalyticsChart = () => {
             <div className="ai-chart-header">
                 <div className="ai-chart-header-left">
                     <p className="ai-chart-label">AI Analytics Activity</p>
-                    <p className="ai-chart-value">$682.5</p>
+                    <p className="ai-chart-value">{totalValue}</p>
                 </div>
 
                 {/* Period dropdown */}

@@ -396,3 +396,60 @@ git
         max-width: 90%;
     }
 }
+
+/* ── File selector dropdown ── */
+.ai-chat-file-selector {
+    margin-left: auto;
+}
+
+.ai-chat-file-dropdown {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #e2e8f0;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    outline: none;
+    max-width: 220px;
+    text-overflow: ellipsis;
+}
+
+.ai-chat-file-dropdown:focus {
+    border-color: #10b981;
+}
+
+.ai-chat-file-dropdown option {
+    background: #0f1a2e;
+    color: #e2e8f0;
+}
+
+/* ── Suggestion chips ── */
+.ai-chat-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 20px 12px;
+}
+
+.ai-chat-chip {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    color: #10b981;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.ai-chat-chip:hover:not(:disabled) {
+    background: rgba(16, 185, 129, 0.18);
+    border-color: #10b981;
+}
+
+.ai-chat-chip:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

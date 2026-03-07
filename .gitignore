@@ -61,3 +61,10 @@ Thumbs.db
 claude.md
 IMPLEMENTATION_PLAN.md
 .claude-sessions/
+QA_PLAN.md
+
+# =====================
+# Uploads (user data)
+# =====================
+backend/uploads/
+uploads/
