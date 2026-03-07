@@ -52,15 +52,33 @@ async def _quick_response(message: str, user_id: str, dataset_id: Optional[str] 
             "suggest they upload a dataset and ask for an analysis."
         )
 
-        # If dataset_id provided, load some context
+        # If dataset_id provided, load file metadata + actual sample data
         context = ""
         if dataset_id:
             try:
                 client = get_supabase_client()
+                # Load file metadata
                 dataset = client.table("uploaded_files").select("filename, file_type, uploaded_at").eq("id", dataset_id).execute()
                 if dataset.data:
                     d = dataset.data[0]
-                    context = f"\n\nThe user has a dataset loaded: {d.get('filename', 'unknown')} ({d.get('file_type', '')}, uploaded {d.get('uploaded_at', '')})."
+                    context = f"\n\nThe user has a dataset loaded: {d.get('filename', 'unknown')} ({d.get('file_type', '')})."
+
+                # Load actual data rows (first 10 rows for context)
+                rows = (
+                    client.table("data_rows")
+                    .select("data")
+                    .eq("dataset_id", dataset_id)
+                    .order("row_index")
+                    .limit(10)
+                    .execute()
+                )
+                if rows.data:
+                    sample = [r["data"] for r in rows.data]
+                    columns = list(sample[0].keys()) if sample else []
+                    context += f"\n\nDataset columns: {', '.join(columns)}"
+                    context += f"\nTotal rows loaded: {len(rows.data)} (showing first rows)"
+                    context += f"\nSample data:\n{json.dumps(sample, indent=2, default=str)}"
+                    context += "\n\nUse this data to answer the user's question. Be specific with numbers from the data."
             except Exception:
                 pass
 

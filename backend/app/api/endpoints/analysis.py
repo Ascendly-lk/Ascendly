@@ -2,13 +2,19 @@
 Analysis API Endpoints — file upload, analysis, and file listing.
 """
 import os
+import io
+import json
 import uuid
 import shutil
 import tempfile
 from datetime import datetime, timezone
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends, Query
+import pandas as pd
 from database.supabase_client import insert_record, get_records, require_auth, get_supabase_client
 from ai_engine.tasks import run_analysis
+
+# File types that can be parsed into tabular data
+PARSEABLE_EXTENSIONS = {".csv", ".xlsx", ".xls", ".json"}
 
 router = APIRouter(prefix="/api", tags=["Analysis"])
 
@@ -132,8 +138,9 @@ async def upload_file(
     except Exception:
         raise HTTPException(status_code=500, detail="Failed to save uploaded file.")
 
-    # 4. Save metadata to datasets table
+    # 4. Save metadata to uploaded_files table
     now = datetime.now(timezone.utc).isoformat()
+    file_status = "uploaded"
     try:
         insert_record("uploaded_files", {
             "id": file_id,
@@ -141,20 +148,74 @@ async def upload_file(
             "filename": safe_filename,
             "file_size": len(contents),
             "file_type": ext.lower().lstrip("."),
-            "status": "uploaded",
+            "status": file_status,
             "uploaded_at": now,
         })
     except Exception:
         os.remove(file_path)
         raise HTTPException(status_code=500, detail="Failed to save file metadata.")
 
+    # 5. Parse tabular files and store rows in data_rows for agent pipeline
+    if ext.lower() in PARSEABLE_EXTENSIONS:
+        try:
+            df = _parse_file_to_dataframe(contents, ext.lower())
+            if df is not None and not df.empty:
+                client = get_supabase_client()
+                rows_to_insert = []
+                for idx, row in df.iterrows():
+                    row_data = {}
+                    for col in df.columns:
+                        val = row[col]
+                        # Convert pandas types to JSON-safe Python types
+                        if pd.isna(val):
+                            row_data[col] = None
+                        elif hasattr(val, 'isoformat'):
+                            row_data[col] = val.isoformat()
+                        else:
+                            row_data[col] = val if isinstance(val, (str, int, float, bool)) else str(val)
+                    rows_to_insert.append({
+                        "dataset_id": file_id,
+                        "row_index": int(idx),
+                        "data": row_data,
+                    })
+
+                # Batch insert (chunks of 100 to avoid payload limits)
+                for i in range(0, len(rows_to_insert), 100):
+                    batch = rows_to_insert[i:i + 100]
+                    client.table("data_rows").insert(batch).execute()
+
+                file_status = "processed"
+                client.table("uploaded_files").update({"status": "processed"}).eq("id", file_id).execute()
+        except Exception:
+            pass  # Don't fail upload if parsing fails — file is still saved
+
     return {
         "file_id": file_id,
         "filename": safe_filename,
         "size_bytes": len(contents),
         "uploaded_at": now,
-        "status": "uploaded",
+        "status": file_status,
     }
+
+
+def _parse_file_to_dataframe(contents: bytes, ext: str):
+    """Parse file bytes into a pandas DataFrame based on extension."""
+    try:
+        buf = io.BytesIO(contents)
+        if ext == ".csv":
+            return pd.read_csv(buf)
+        elif ext in (".xlsx", ".xls"):
+            return pd.read_excel(buf)
+        elif ext == ".json":
+            text = contents.decode("utf-8")
+            data = json.loads(text)
+            if isinstance(data, list):
+                return pd.DataFrame(data)
+            elif isinstance(data, dict):
+                return pd.DataFrame([data])
+        return None
+    except Exception:
+        return None
 
 
 @router.get("/files/recent")

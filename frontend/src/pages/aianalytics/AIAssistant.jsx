@@ -37,35 +37,70 @@ const SendIcon = () => (
     </svg>
 );
 
+/* ── Suggestion chips ── */
+const SUGGESTIONS_WITH_FILE = [
+    "Analyze revenue trends",
+    "Forecast next 3 months",
+    "Compare with industry benchmarks",
+    "Summarize this dataset",
+];
+
+const SUGGESTIONS_NO_FILE = [
+    "Upload a dataset to get started",
+    "What can you help me with?",
+    "How does the analysis work?",
+];
+
 /* ── Page Component ── */
 const AIAssistant = () => {
     const [messages, setMessages] = useState(INITIAL_MESSAGES);
     const [input, setInput] = useState('');
     const [isSending, setIsSending] = useState(false);
+    const [files, setFiles] = useState([]);
+    const [selectedFileId, setSelectedFileId] = useState(null);
+    const [showSuggestions, setShowSuggestions] = useState(true);
     const messagesEndRef = useRef(null);
     const textareaRef = useRef(null);
+
+    /* Fetch user's uploaded files */
+    useEffect(() => {
+        apiFetch('/api/files/recent?limit=20')
+            .then((res) => res.json())
+            .then((data) => {
+                const analyzableTypes = ['csv', 'xlsx', 'xls', 'json'];
+                const validFiles = (data.files || []).filter(
+                    (f) => analyzableTypes.includes(f.file_type)
+                );
+                setFiles(validFiles);
+            })
+            .catch(() => {});
+    }, []);
 
     /* Auto-scroll to latest message */
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
-    const sendMessage = useCallback(async () => {
-        const trimmed = input.trim();
+    const sendMessage = useCallback(async (overrideText) => {
+        const trimmed = (overrideText || input).trim();
         if (!trimmed || isSending) return;
 
         const userMsg = { id: Date.now(), role: 'user', text: trimmed, time: now() };
         setMessages((prev) => [...prev, userMsg]);
         setInput('');
         setIsSending(true);
+        setShowSuggestions(false);
 
         // Reset textarea height
         if (textareaRef.current) textareaRef.current.style.height = 'auto';
 
         try {
+            const body = { message: trimmed };
+            if (selectedFileId) body.dataset_id = selectedFileId;
+
             const res = await apiFetch('/api/chat', {
                 method: 'POST',
-                body: JSON.stringify({ message: trimmed }),
+                body: JSON.stringify(body),
             });
             const data = await res.json();
             setMessages((prev) => [
@@ -90,7 +125,7 @@ const AIAssistant = () => {
         } finally {
             setIsSending(false);
         }
-    }, [input, isSending]);
+    }, [input, isSending, selectedFileId]);
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -127,6 +162,21 @@ const AIAssistant = () => {
                                     <span className="ai-chat-status-dot" />
                                     Online
                                 </span>
+                            </div>
+                            {/* File selector */}
+                            <div className="ai-chat-file-selector">
+                                <select
+                                    value={selectedFileId || ''}
+                                    onChange={(e) => setSelectedFileId(e.target.value || null)}
+                                    className="ai-chat-file-dropdown"
+                                >
+                                    <option value="">No dataset selected</option>
+                                    {files.map((f) => (
+                                        <option key={f.file_id} value={f.file_id}>
+                                            {f.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
 
@@ -165,6 +215,22 @@ const AIAssistant = () => {
 
                             <div ref={messagesEndRef} />
                         </div>
+
+                        {/* Suggestion chips */}
+                        {showSuggestions && (
+                            <div className="ai-chat-suggestions">
+                                {(selectedFileId ? SUGGESTIONS_WITH_FILE : SUGGESTIONS_NO_FILE).map((s) => (
+                                    <button
+                                        key={s}
+                                        className="ai-chat-chip"
+                                        onClick={() => sendMessage(s)}
+                                        disabled={isSending}
+                                    >
+                                        {s}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
 
                         {/* Composer */}
                         <div className="ai-chat-composer">
