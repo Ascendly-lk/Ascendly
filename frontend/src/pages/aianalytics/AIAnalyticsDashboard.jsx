@@ -47,7 +47,10 @@ const AIAnalyticsDashboard = () => {
 
     useEffect(() => {
         apiFetch('/api/dashboard/metrics')
-            .then((res) => res.json())
+            .then((res) => {
+                if (!res.ok) throw new Error('Failed to fetch metrics');
+                return res.json();
+            })
             .then(setMetrics)
             .catch(() => {});
     }, []);

@@ -102,7 +102,10 @@ const AIAssistant = () => {
                 method: 'POST',
                 body: JSON.stringify(body),
             });
-            const data = await res.json();
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                throw new Error(data.detail || 'Request failed');
+            }
             setMessages((prev) => [
                 ...prev,
                 {

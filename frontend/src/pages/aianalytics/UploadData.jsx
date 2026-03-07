@@ -2,23 +2,8 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import AIAnalyticsSidebar from '../../components/aianalytics/AIAnalyticsSidebar';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
 import { apiFetch } from '../../api';
+import { formatBytes, timeAgo } from '../../utils/format';
 import './UploadData.css';
-
-function formatBytes(bytes) {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-function timeAgo(dateStr) {
-    const diff = Date.now() - new Date(dateStr).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 60) return `${mins} min ago`;
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours} hours ago`;
-    const days = Math.floor(hours / 24);
-    return `${days} day${days > 1 ? 's' : ''} ago`;
-}
 
 /* ── Icons ── */
 const FileIcon = () => (
@@ -70,7 +55,7 @@ const UploadData = () => {
     useEffect(() => { fetchRecentFiles(); }, [fetchRecentFiles]);
 
     const uploadFiles = useCallback(async (files) => {
-        if (!files || files.length === 0) return;
+        if (!files || files.length === 0 || uploading) return;
         setUploading(true);
         setUploadMsg('');
         try {
@@ -106,8 +91,8 @@ const UploadData = () => {
     const handleDrop = useCallback((e) => {
         e.preventDefault();
         setIsDragging(false);
-        uploadFiles(e.dataTransfer.files);
-    }, [uploadFiles]);
+        if (!uploading) uploadFiles(e.dataTransfer.files);
+    }, [uploadFiles, uploading]);
 
     return (
         <div className="upload-page">
@@ -132,7 +117,8 @@ const UploadData = () => {
                         >
                             <button
                                 className="upload-icon-btn"
-                                onClick={() => fileInputRef.current?.click()}
+                                onClick={() => !uploading && fileInputRef.current?.click()}
+                                disabled={uploading}
                                 aria-label="Upload files"
                             >
                                 <UploadIcon />

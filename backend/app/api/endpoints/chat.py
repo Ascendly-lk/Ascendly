@@ -7,6 +7,7 @@ import os
 import re
 import uuid
 import json
+import asyncio
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -57,8 +58,8 @@ async def _quick_response(message: str, user_id: str, dataset_id: Optional[str] 
         if dataset_id:
             try:
                 client = get_supabase_client()
-                # Load file metadata
-                dataset = client.table("uploaded_files").select("filename, file_type, uploaded_at").eq("id", dataset_id).execute()
+                # Load file metadata (filter by user_id to prevent data leakage)
+                dataset = client.table("uploaded_files").select("filename, file_type, uploaded_at").eq("id", dataset_id).eq("user_id", user_id).execute()
                 if dataset.data:
                     d = dataset.data[0]
                     context = f"\n\nThe user has a dataset loaded: {d.get('filename', 'unknown')} ({d.get('file_type', '')})."
@@ -91,10 +92,11 @@ async def _quick_response(message: str, user_id: str, dataset_id: Optional[str] 
         return response.choices[0].message.content
 
     except Exception as e:
-        return f"I'm having trouble processing your request right now. Please try again. (Error: {str(e)})"
+        print(f"[chat] _quick_response error: {e}")
+        return "I'm having trouble processing your request right now. Please try again."
 
 
-async def _analysis_response(message: str, user_id: str, dataset_id: Optional[str]) -> str:
+def _analysis_response_sync(message: str, user_id: str, dataset_id: Optional[str]) -> str:
     """Run the full CrewAI pipeline for deep analysis requests."""
     try:
         from ai_engine.crew import run_dataset_analysis
@@ -149,7 +151,8 @@ async def _analysis_response(message: str, user_id: str, dataset_id: Optional[st
         return "\n".join(parts) if parts else "Analysis complete. No significant patterns found in the current dataset."
 
     except Exception as e:
-        return f"Analysis failed: {str(e)}. Please ensure your dataset is properly formatted and try again."
+        print(f"[chat] _analysis_response error: {e}")
+        return "Analysis failed. Please ensure your dataset is properly formatted and try again."
 
 
 @router.post("/chat")
@@ -168,12 +171,24 @@ async def chat(
     if not message:
         raise HTTPException(status_code=400, detail="Message cannot be empty.")
 
+    # Ownership check — ensure dataset belongs to this user
+    if request.dataset_id:
+        try:
+            client = get_supabase_client()
+            owned = client.table("uploaded_files").select("id").eq("id", request.dataset_id).eq("user_id", user_id).execute()
+            if not owned.data:
+                raise HTTPException(status_code=403, detail="Access to this dataset is not allowed.")
+        except HTTPException:
+            raise
+        except Exception:
+            raise HTTPException(status_code=403, detail="Access to this dataset is not allowed.")
+
     # Auto-detect mode
     is_analysis = _is_analysis_request(message, request.dataset_id)
 
     if is_analysis:
         mode = "analysis"
-        text = await _analysis_response(message, user_id, request.dataset_id)
+        text = await asyncio.to_thread(_analysis_response_sync, message, user_id, request.dataset_id)
     else:
         mode = "quick"
         text = await _quick_response(message, user_id, request.dataset_id)

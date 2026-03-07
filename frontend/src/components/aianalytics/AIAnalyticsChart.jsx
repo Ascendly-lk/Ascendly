@@ -20,12 +20,19 @@ const AIAnalyticsChart = () => {
     useEffect(() => {
         const p = period.toLowerCase();
         apiFetch(`/api/analytics/activity?period=${p}`)
-            .then((res) => res.json())
+            .then((res) => {
+                if (!res.ok) throw new Error('Failed to fetch');
+                return res.json();
+            })
             .then((data) => {
                 setChartData({ labels: data.labels, heights: data.data });
-                setTotalValue(`$${data.total_value.toLocaleString()}`);
+                const val = typeof data.total_value === 'number' ? data.total_value : 0;
+                setTotalValue(`$${val.toLocaleString()}`);
             })
-            .catch(() => setChartData(null));
+            .catch(() => {
+                setChartData(null);
+                setTotalValue('$0');
+            });
     }, [period]);
 
     const labels = chartData

@@ -108,7 +108,7 @@ async def upload_file(
 ):
     """
     Upload a dataset file (CSV, XLSX, XLS, JSON, PDF, TXT). Max 50MB.
-    Saves file to disk and metadata to datasets table.
+    Saves file to disk and metadata to uploaded_files table.
     """
     user_id = str(current_user.id)
 
