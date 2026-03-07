@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { setToken, setUser } from '../api';
 import './Login.css';
+import { login, getRoleDashboardRoute } from '../utils/auth';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
     const navigate = useNavigate();
+    const { setUser } = useAuth();
 
     // Form state
     const [formData, setFormData] = useState({
@@ -19,6 +21,10 @@ const Login = () => {
     // Error state
     const [errors, setErrors] = useState({});
 
+    // Loading & server error state
+    const [isLoading, setIsLoading] = useState(false);
+    const [serverError, setServerError] = useState('');
+
     // Handle input changes
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -26,13 +32,11 @@ const Login = () => {
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }));
-        // Clear error when user starts typing
+        // Clear errors when user types
         if (errors[name]) {
-            setErrors(prev => ({
-                ...prev,
-                [name]: ''
-            }));
+            setErrors(prev => ({ ...prev, [name]: '' }));
         }
+        if (serverError) setServerError('');
     };
 
     // Validate form
@@ -53,34 +57,28 @@ const Login = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const [isLoading, setIsLoading] = useState(false);
-
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!validateForm()) return;
 
         setIsLoading(true);
+        setServerError('');
+
         try {
-            const res = await fetch('http://localhost:8000/auth/signin', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: formData.email, password: formData.password }),
+            const result = await login({
+                email: formData.email,
+                password: formData.password,
             });
 
-            if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
-                setErrors({ email: err.detail || 'Invalid credentials' });
-                return;
-            }
+            // Update auth context with logged-in user
+            setUser(result.user);
 
-            const data = await res.json();
-            setToken(data.access_token);
-            setUser(data.user);
-            navigate('/dashboard/ai-analytics');
-        } catch {
-            setErrors({ email: 'Unable to connect to server' });
+            // Route to the correct dashboard based on role
+            const route = getRoleDashboardRoute(result.user?.role);
+            navigate(route, { replace: true });
+        } catch (err) {
+            setServerError(err.message || 'Login failed. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -137,6 +135,7 @@ const Login = () => {
                                 placeholder="Enter your email address"
                                 value={formData.email}
                                 onChange={handleChange}
+                                disabled={isLoading}
                             />
                             {errors.email && <span className="error-message">{errors.email}</span>}
                         </div>
@@ -153,6 +152,7 @@ const Login = () => {
                                     placeholder="Enter your password"
                                     value={formData.password}
                                     onChange={handleChange}
+                                    disabled={isLoading}
                                 />
                                 <button
                                     type="button"
@@ -180,9 +180,16 @@ const Login = () => {
                             <a href="#" className="forgot-password-link">Forgot Password?</a>
                         </div>
 
+                        {/* Server-side error message */}
+                        {serverError && (
+                            <span className="error-message" style={{ display: 'block', marginBottom: '8px' }}>
+                                {serverError}
+                            </span>
+                        )}
+
                         {/* Login Button */}
                         <button type="submit" className="login-button" disabled={isLoading}>
-                            {isLoading ? 'Signing in...' : 'Log In'}
+                            {isLoading ? 'Logging in…' : 'Log In'}
                         </button>
                     </form>
 

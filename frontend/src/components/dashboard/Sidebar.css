@@ -22,7 +22,7 @@
 .sidebar-logo {
     font-size: 28px;
     font-weight: 700;
-    color: #00E5FF;
+    color: #00FFEF;
     margin: 0 0 4px 0;
     letter-spacing: -0.5px;
 }
@@ -57,12 +57,12 @@
 
 .sidebar-nav-item:hover {
     background: rgba(255, 255, 255, 0.04);
-    color: #00E5FF;
+    color: #00FFEF;
 }
 
 .sidebar-nav-item.active {
-    background: rgba(0, 229, 255, 0.08);
-    color: #00E5FF;
+    background: rgba(0, 255, 239, 0.09);
+    color: #00FFEF;
 }
 
 .sidebar-nav-item.active::before {
@@ -72,8 +72,9 @@
     top: 0;
     bottom: 0;
     width: 3px;
-    background: #00E5FF;
+    background: #00FFEF;
     border-radius: 3px 0 0 3px;
+    box-shadow: 0 0 8px rgba(0, 255, 239, 0.6);
 }
 
 .sidebar-nav-item svg {
@@ -89,7 +90,7 @@
 }
 
 .sidebar-upgrade {
-    background: linear-gradient(135deg, #1A8B7E 0%, #00E5CC 100%);
+    background: linear-gradient(150deg, #00FFE5 0%, #23A7B4 45%, #0B1220 100%);
     border-radius: 16px;
     padding: 20px;
     margin-bottom: 16px;
@@ -119,7 +120,7 @@
 
 .sidebar-help:hover {
     background: rgba(255, 255, 255, 0.05);
-    color: #00E5FF;
+    color: #00FFEF;
 }
 
 .sidebar-help svg {

@@ -1,0 +1,145 @@
+.marketing-feedbacks-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--bg-primary, #0B0E14);
+    color: var(--text-primary, #FFFFFF);
+}
+
+.feedbacks-main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow-y: auto;
+}
+
+.projects-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.search-bar {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 300px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.search-bar svg {
+    width: 16px;
+    height: 16px;
+    color: var(--primary-color, #00FFEF);
+}
+
+.search-bar input {
+    background: transparent;
+    border: none;
+    color: #FFFFFF;
+    font-size: 14px;
+    outline: none;
+    width: 100%;
+}
+
+.search-bar input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.stats-row {
+    display: flex;
+    gap: 47px;
+}
+
+.stats-row>* {
+    flex: 1;
+    max-width: 200px;
+}
+
+.feedback-charts-row {
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+}
+
+.feedback-list-section {
+    background: rgba(15, 23, 32, 1);
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 8px;
+}
+
+.list-filters-bar {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.list-search {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.list-search svg {
+    width: 16px;
+    height: 16px;
+    color: var(--primary-color, #00FFEF);
+}
+
+.list-search input {
+    background: transparent;
+    border: none;
+    color: #FFFFFF;
+    font-size: 14px;
+    outline: none;
+    width: 100%;
+}
+
+.list-search input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.filter-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: none;
+    border-radius: 8px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color, #00FFEF);
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.filter-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.feedback-items-container {
+    display: flex;
+    flex-direction: column;
+}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Register.css';
+import { register } from '../utils/auth';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -22,6 +23,10 @@ const Register = () => {
   // Error state
   const [errors, setErrors] = useState({});
 
+  // Loading & server error state
+  const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState('');
+
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,11 +36,9 @@ const Register = () => {
     }));
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
+      setErrors(prev => ({ ...prev, [name]: '' }));
     }
+    if (serverError) setServerError('');
   };
 
   // Validate form
@@ -77,34 +80,28 @@ const Register = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
 
-    if (validateForm()) {
-      // Role-based navigation logic
-      // TODO: Replace with actual backend API call for registration
-      // This is a mock implementation for frontend-only demonstration
+    setIsLoading(true);
+    setServerError('');
 
-      const roleRoutes = {
-        'Startup Founder': '/dashboard/startup',
-        'Investor': '/dashboard/investor',
-        'Marketing Agency': '/dashboard/marketing',
-        'Business Advisor': '/dashboard/advisor',
-        'Admin': '/dashboard/admin'
-      };
+    try {
+      await register({
+        email: formData.email,
+        password: formData.password,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        role: formData.role,
+      });
 
-      const dashboardRoute = roleRoutes[formData.role];
-
-      if (dashboardRoute) {
-        // In production, this would:
-        // 1. Send registration data to backend API
-        // 2. Receive authentication token
-        // 3. Store token in localStorage/sessionStorage
-        // 4. Navigate to role-specific dashboard
-
-        console.log('Registration data:', formData);
-        navigate(dashboardRoute);
-      }
+      // On success — redirect to login with a success flag
+      navigate('/login?registered=1', { replace: true });
+    } catch (err) {
+      setServerError(err.message || 'Registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -160,6 +157,7 @@ const Register = () => {
                 className="form-select"
                 value={formData.role}
                 onChange={handleChange}
+                disabled={isLoading}
               >
                 <option value="">Select Role</option>
                 <option value="Startup Founder">Startup Founder</option>
@@ -183,6 +181,7 @@ const Register = () => {
                   placeholder="First Name"
                   value={formData.firstName}
                   onChange={handleChange}
+                  disabled={isLoading}
                 />
                 {errors.firstName && <span className="error-message">{errors.firstName}</span>}
               </div>
@@ -197,6 +196,7 @@ const Register = () => {
                   placeholder="Last Name"
                   value={formData.lastName}
                   onChange={handleChange}
+                  disabled={isLoading}
                 />
                 {errors.lastName && <span className="error-message">{errors.lastName}</span>}
               </div>
@@ -213,6 +213,7 @@ const Register = () => {
                 placeholder="Enter your email address"
                 value={formData.email}
                 onChange={handleChange}
+                disabled={isLoading}
               />
               {errors.email && <span className="error-message">{errors.email}</span>}
             </div>
@@ -229,6 +230,7 @@ const Register = () => {
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={handleChange}
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
@@ -254,6 +256,7 @@ const Register = () => {
                   placeholder="Enter your password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
@@ -267,9 +270,16 @@ const Register = () => {
               {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
             </div>
 
+            {/* Server-side error message */}
+            {serverError && (
+              <span className="error-message" style={{ display: 'block', marginBottom: '8px' }}>
+                {serverError}
+              </span>
+            )}
+
             {/* Register Button */}
-            <button type="submit" className="register-button">
-              Register
+            <button type="submit" className="register-button" disabled={isLoading}>
+              {isLoading ? 'Creating account…' : 'Register'}
             </button>
           </form>
 
