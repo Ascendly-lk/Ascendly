@@ -39,28 +39,13 @@ def _run_safe(crew: Crew, task: Task, label: str) -> str:
         return str(task.output) if task.output else ""
 
 
-def run_dataset_analysis(dataset_id: str) -> dict:
-    """
-    Run the full AI analysis pipeline on a dataset stored in Supabase.
-    Reads data via query_dataset tool, forecasts via SARIMAX, and
-    generates strategic advice with benchmark comparisons.
+# ── Individual step functions (used by streaming chat endpoint) ──────────────
 
-    Args:
-        dataset_id: UUID of the dataset in the `data_rows` table.
-
-    Returns:
-        Dict with status, metadata, and data (historical, forecast, strategic_advice).
-    """
+def run_analyst_step(dataset_id: str) -> str:
+    """Step 1: Load dataset from Supabase and compute growth metrics."""
     from ai_engine.tools.query_tool import query_dataset
     from ai_engine.tools.data_tools import growth_calculator
-    from ai_engine.tools.sarimax_tool import forecast_revenue
-    from ai_engine.tools.benchmark_tool import query_benchmarks
 
-    start_time = time.time()
-    request_id = str(uuid.uuid4())
-
-    # === Step 1: Data Analyst — load + compute metrics ===
-    print("[Ascendly] Step 1/3: Data Analyst (DB)...")
     analyst = Agent(
         role="Data Analyst",
         goal="Load the dataset and calculate performance metrics. Be concise.",
@@ -71,31 +56,32 @@ def run_dataset_analysis(dataset_id: str) -> dict:
         allow_delegation=False,
         max_iter=4,
     )
-    task_analyze = Task(
+    task = Task(
         description=(
             f"Use query_dataset to load dataset_id='{dataset_id}'. "
-            f"Then run growth_calculator on the result. Return cleaned data and metrics."
+            "Then run growth_calculator on the result. Return cleaned data and metrics."
         ),
         expected_output="JSON with 'cleaned_data' array and 'metrics' object.",
         agent=analyst,
     )
-    crew1 = Crew(agents=[analyst], tasks=[task_analyze], process=Process.sequential, verbose=True)
-    analyst_output = _run_safe(crew1, task_analyze, "Analyst")
+    crew = Crew(agents=[analyst], tasks=[task], process=Process.sequential, verbose=True)
+    output = _run_safe(crew, task, "Analyst")
 
-    # Fallback: run tools directly if agent failed
-    if not analyst_output:
-        print("[Ascendly] Analyst failed — running tools directly...")
+    if not output:
         try:
             raw = query_dataset.run(dataset_id)
-            analyst_output = growth_calculator.run(raw)
+            output = growth_calculator.run(raw)
         except Exception as e:
-            print(f"[Ascendly] Direct fallback failed: {e}")
-            analyst_output = ""
+            print(f"[Ascendly] Analyst direct fallback failed: {e}")
+            output = ""
 
-    print("[Ascendly] Step 1 complete.")
+    return output
 
-    # === Step 2: Forecaster — predict next 3 months ===
-    print("[Ascendly] Step 2/3: Forecaster...")
+
+def run_forecaster_step(analyst_output: str) -> str:
+    """Step 2: Predict next 3 months of revenue using SARIMAX/SES."""
+    from ai_engine.tools.sarimax_tool import forecast_revenue
+
     forecaster = Agent(
         role="Lead Forecaster",
         goal="Predict next 3 months of revenue. Be concise.",
@@ -106,25 +92,28 @@ def run_dataset_analysis(dataset_id: str) -> dict:
         allow_delegation=False,
         max_iter=5,
     )
-    task_forecast = Task(
+    task = Task(
         description=f"Run forecast_revenue on this data: {analyst_output[:2000]}",
         expected_output="JSON with model_used, data_points, and forecast array.",
         agent=forecaster,
     )
-    crew2 = Crew(agents=[forecaster], tasks=[task_forecast], process=Process.sequential, verbose=True)
-    forecast_output = _run_safe(crew2, task_forecast, "Forecaster")
+    crew = Crew(agents=[forecaster], tasks=[task], process=Process.sequential, verbose=True)
+    output = _run_safe(crew, task, "Forecaster")
 
-    if not forecast_output:
+    if not output:
         try:
-            forecast_output = forecast_revenue.run(analyst_output[:2000])
+            output = forecast_revenue.run(analyst_output[:2000])
         except Exception as e:
-            print(f"[Ascendly] Forecast fallback failed: {e}")
-            forecast_output = ""
+            print(f"[Ascendly] Forecaster direct fallback failed: {e}")
+            output = ""
 
-    print("[Ascendly] Step 2 complete.")
+    return output
 
-    # === Step 3: Strategist — advice with benchmark context ===
-    print("[Ascendly] Step 3/3: Strategist (with benchmarks)...")
+
+def run_strategist_step(analyst_output: str, forecast_output: str) -> str:
+    """Step 3: Generate 3 strategic recommendations with benchmark context."""
+    from ai_engine.tools.benchmark_tool import query_benchmarks
+
     strategist = Agent(
         role="Startup Consultant",
         goal="Give 3 short, actionable recommendations based on the data and benchmarks.",
@@ -140,18 +129,40 @@ def run_dataset_analysis(dataset_id: str) -> dict:
         max_iter=4,
     )
     context_summary = f"User metrics: {analyst_output[:800]}\nForecast: {forecast_output[:600]}"
-    task_advise = Task(
+    task = Task(
         description=(
-            f"First call query_benchmarks('industry_growth') to get sector averages. "
-            f"Then call query_benchmarks('competitor') for competitor data. "
-            f"Based on this user data AND the benchmarks, give exactly 3 recommendations as a JSON array. "
+            "First call query_benchmarks('industry_growth') to get sector averages. "
+            "Then call query_benchmarks('competitor') for competitor data. "
+            "Based on this user data AND the benchmarks, give exactly 3 recommendations as a JSON array. "
             f"Each with 'title' and 'body'. Reference specific benchmark comparisons.\n\n{context_summary}"
         ),
         expected_output='JSON array: [{"title": "...", "body": "..."}]',
         agent=strategist,
     )
-    crew3 = Crew(agents=[strategist], tasks=[task_advise], process=Process.sequential, verbose=True)
-    strategist_output = _run_safe(crew3, task_advise, "Strategist")
+    crew = Crew(agents=[strategist], tasks=[task], process=Process.sequential, verbose=True)
+    return _run_safe(crew, task, "Strategist")
+
+
+# ── Full pipeline (used by POST /api/analyze) ─────────────────────────────────
+
+def run_dataset_analysis(dataset_id: str) -> dict:
+    """
+    Run the full AI analysis pipeline on a dataset stored in Supabase.
+    Calls each step function in sequence and returns structured results.
+    """
+    start_time = time.time()
+    request_id = str(uuid.uuid4())
+
+    print("[Ascendly] Step 1/3: Data Analyst (DB)...")
+    analyst_output = run_analyst_step(dataset_id)
+    print("[Ascendly] Step 1 complete.")
+
+    print("[Ascendly] Step 2/3: Forecaster...")
+    forecast_output = run_forecaster_step(analyst_output)
+    print("[Ascendly] Step 2 complete.")
+
+    print("[Ascendly] Step 3/3: Strategist (with benchmarks)...")
+    strategist_output = run_strategist_step(analyst_output, forecast_output)
 
     processing_time = int((time.time() - start_time) * 1000)
     response = _parse_outputs(analyst_output, forecast_output, strategist_output, processing_time)
