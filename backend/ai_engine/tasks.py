@@ -1,6 +1,6 @@
 """
 CrewAI Task & Crew Definitions
-Runs agents one at a time with delays to respect free-tier rate limits.
+Runs 3 agents sequentially: Data Analyst → Forecaster → Strategist.
 """
 import json
 import time

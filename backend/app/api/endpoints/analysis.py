@@ -138,7 +138,10 @@ async def upload_file(
     except Exception:
         raise HTTPException(status_code=500, detail="Failed to save uploaded file.")
 
-    # 4. Save metadata to uploaded_files table (admin client bypasses RLS)
+    # 4. Save metadata to uploaded_files table.
+    # Uses admin client (service role key) to bypass RLS.
+    # Requires SUPABASE_SERVICE_KEY to be set — falls back to anon key if missing,
+    # which will be blocked by RLS policies.
     now = datetime.now(timezone.utc).isoformat()
     file_status = "uploaded"
     try:
@@ -153,7 +156,8 @@ async def upload_file(
         }).execute()
     except Exception as e:
         os.remove(file_path)
-        raise HTTPException(status_code=500, detail=f"Failed to save file metadata: {str(e)}")
+        print(f"[upload] Failed to save file metadata: {e}")
+        raise HTTPException(status_code=500, detail="Failed to save file metadata. Please try again.")
 
     # 5. Parse tabular files and store rows in data_rows for agent pipeline
     if ext.lower() in PARSEABLE_EXTENSIONS:
