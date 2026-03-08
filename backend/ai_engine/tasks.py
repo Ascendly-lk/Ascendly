@@ -3,25 +3,10 @@ CrewAI Task & Crew Definitions
 Runs agents one at a time with delays to respect free-tier rate limits.
 """
 import json
-import sys
 import time
 import uuid
 from crewai import Task, Crew, Process
 from ai_engine.agents import create_data_analyst, create_forecaster, create_strategist
-
-# Delay between agent runs (seconds) to avoid rate limits
-AGENT_DELAY = 75
-
-
-def _countdown(seconds: int, label: str):
-    """Display a countdown timer in the terminal."""
-    for remaining in range(seconds, 0, -1):
-        mins, secs = divmod(remaining, 60)
-        sys.stdout.write(f"\r[Ascendly] {label} — resuming in {mins:02d}:{secs:02d} ")
-        sys.stdout.flush()
-        time.sleep(1)
-    sys.stdout.write(f"\r[Ascendly] {label} — done! Continuing...           \n")
-    sys.stdout.flush()
 
 
 def _run_crew_safe(crew, task, label: str) -> str:
@@ -65,7 +50,6 @@ def run_analysis(file_path: str) -> dict:
         tasks=[task_analyze],
         process=Process.sequential,
         verbose=True,
-        max_rpm=2,
     )
     analyst_output = _run_crew_safe(crew1, task_analyze, "Analyst")
 
@@ -84,8 +68,7 @@ def run_analysis(file_path: str) -> dict:
             analyst_output = csv_result if csv_result else ""
 
     # Wait for rate limit to reset
-    print(f"[Ascendly] Step 1 complete.")
-    _countdown(AGENT_DELAY, "Rate limit cooldown (1/2)")
+    print("[Ascendly] Step 1 complete.")
 
     # === Step 2: Forecaster ===
     print("[Ascendly] Starting Step 2/3: Forecaster...")
@@ -103,7 +86,6 @@ def run_analysis(file_path: str) -> dict:
         tasks=[task_forecast],
         process=Process.sequential,
         verbose=True,
-        max_rpm=2,
     )
     forecast_output = _run_crew_safe(crew2, task_forecast, "Forecaster")
 
@@ -127,8 +109,7 @@ def run_analysis(file_path: str) -> dict:
             print(f"[Ascendly] Direct SARIMAX fallback also failed: {fallback_err}")
 
     # Wait for rate limit to reset
-    print(f"[Ascendly] Step 2 complete.")
-    _countdown(AGENT_DELAY, "Rate limit cooldown (2/2)")
+    print("[Ascendly] Step 2 complete.")
 
     # === Step 3: Strategist ===
     print("[Ascendly] Starting Step 3/3: Strategist...")
@@ -151,7 +132,6 @@ def run_analysis(file_path: str) -> dict:
         tasks=[task_advise],
         process=Process.sequential,
         verbose=True,
-        max_rpm=2,
     )
     strategist_output = _run_crew_safe(crew3, task_advise, "Strategist")
 

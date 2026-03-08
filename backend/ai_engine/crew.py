@@ -11,22 +11,18 @@ import sys
 import time
 import uuid
 
-from crewai import Agent, Task, Crew, Process
+from crewai import Agent, Task, Crew, Process, LLM
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-LLM_MODEL = os.getenv("CREWAI_LLM_MODEL", "groq/llama-3.1-8b-instant")
-AGENT_DELAY = 75  # seconds between agents to respect free-tier rate limits
 
-
-def _countdown(seconds: int, label: str):
-    for remaining in range(seconds, 0, -1):
-        mins, secs = divmod(remaining, 60)
-        sys.stdout.write(f"\r[Ascendly] {label} — resuming in {mins:02d}:{secs:02d} ")
-        sys.stdout.flush()
-        time.sleep(1)
-    sys.stdout.write(f"\r[Ascendly] {label} — done!                              \n")
-    sys.stdout.flush()
+def _make_llm() -> LLM:
+    return LLM(
+        model=os.getenv("CREWAI_LLM_MODEL", "azure/gpt-4o"),
+        api_key=os.getenv("AZURE_API_KEY"),
+        endpoint=os.getenv("AZURE_ENDPOINT"),
+        api_version=os.getenv("AZURE_API_VERSION"),
+    )
 
 
 def _run_safe(crew: Crew, task: Task, label: str) -> str:
@@ -65,7 +61,7 @@ def run_dataset_analysis(dataset_id: str) -> dict:
         goal="Load the dataset and calculate performance metrics. Be concise.",
         backstory="You load financial data from a database using query_dataset, then run growth_calculator. Output only facts.",
         tools=[query_dataset, growth_calculator],
-        llm=LLM_MODEL,
+        llm=_make_llm(),
         verbose=False,
         allow_delegation=False,
         max_iter=4,
@@ -78,7 +74,7 @@ def run_dataset_analysis(dataset_id: str) -> dict:
         expected_output="JSON with 'cleaned_data' array and 'metrics' object.",
         agent=analyst,
     )
-    crew1 = Crew(agents=[analyst], tasks=[task_analyze], process=Process.sequential, verbose=True, max_rpm=2)
+    crew1 = Crew(agents=[analyst], tasks=[task_analyze], process=Process.sequential, verbose=True)
     analyst_output = _run_safe(crew1, task_analyze, "Analyst")
 
     # Fallback: run tools directly if agent failed
@@ -92,7 +88,6 @@ def run_dataset_analysis(dataset_id: str) -> dict:
             analyst_output = ""
 
     print("[Ascendly] Step 1 complete.")
-    _countdown(AGENT_DELAY, "Rate limit cooldown (1/2)")
 
     # === Step 2: Forecaster — predict next 3 months ===
     print("[Ascendly] Step 2/3: Forecaster...")
@@ -101,7 +96,7 @@ def run_dataset_analysis(dataset_id: str) -> dict:
         goal="Predict next 3 months of revenue. Be concise.",
         backstory="You run SARIMAX forecasts. Only output numbers and confidence intervals.",
         tools=[forecast_revenue],
-        llm=LLM_MODEL,
+        llm=_make_llm(),
         verbose=False,
         allow_delegation=False,
         max_iter=5,
@@ -111,7 +106,7 @@ def run_dataset_analysis(dataset_id: str) -> dict:
         expected_output="JSON with model_used, data_points, and forecast array.",
         agent=forecaster,
     )
-    crew2 = Crew(agents=[forecaster], tasks=[task_forecast], process=Process.sequential, verbose=True, max_rpm=2)
+    crew2 = Crew(agents=[forecaster], tasks=[task_forecast], process=Process.sequential, verbose=True)
     forecast_output = _run_safe(crew2, task_forecast, "Forecaster")
 
     if not forecast_output:
@@ -122,7 +117,6 @@ def run_dataset_analysis(dataset_id: str) -> dict:
             forecast_output = ""
 
     print("[Ascendly] Step 2 complete.")
-    _countdown(AGENT_DELAY, "Rate limit cooldown (2/2)")
 
     # === Step 3: Strategist — advice with benchmark context ===
     print("[Ascendly] Step 3/3: Strategist (with benchmarks)...")
@@ -135,7 +129,7 @@ def run_dataset_analysis(dataset_id: str) -> dict:
             "Then give direct, data-backed advice. No fluff."
         ),
         tools=[query_benchmarks],
-        llm=LLM_MODEL,
+        llm=_make_llm(),
         verbose=False,
         allow_delegation=False,
         max_iter=4,
@@ -151,7 +145,7 @@ def run_dataset_analysis(dataset_id: str) -> dict:
         expected_output='JSON array: [{"title": "...", "body": "..."}]',
         agent=strategist,
     )
-    crew3 = Crew(agents=[strategist], tasks=[task_advise], process=Process.sequential, verbose=True, max_rpm=2)
+    crew3 = Crew(agents=[strategist], tasks=[task_advise], process=Process.sequential, verbose=True)
     strategist_output = _run_safe(crew3, task_advise, "Strategist")
 
     processing_time = int((time.time() - start_time) * 1000)

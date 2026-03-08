@@ -25,17 +25,23 @@ const RecentUploads = () => {
     const [files, setFiles] = useState(FALLBACK_FILES);
 
     useEffect(() => {
-        apiFetch('/api/files/recent?limit=5')
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.files && data.files.length > 0) {
-                    setFiles(data.files.map((f) => ({
-                        name: f.name,
-                        meta: `${timeAgo(f.uploaded_at)} • ${formatBytes(f.size_bytes)}`,
-                    })));
-                }
-            })
-            .catch(() => {});
+        const fetchFiles = () => {
+            apiFetch('/api/files/recent?limit=5')
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.files && data.files.length > 0) {
+                        setFiles(data.files.map((f) => ({
+                            name: f.name,
+                            meta: `${timeAgo(f.uploaded_at)} • ${formatBytes(f.size_bytes)}`,
+                        })));
+                    }
+                })
+                .catch(() => {});
+        };
+        fetchFiles();
+        const onVisible = () => { if (document.visibilityState === 'visible') fetchFiles(); };
+        document.addEventListener('visibilitychange', onVisible);
+        return () => document.removeEventListener('visibilitychange', onVisible);
     }, []);
 
     return (

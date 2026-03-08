@@ -10,7 +10,7 @@ import tempfile
 from datetime import datetime, timezone
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends, Query
 import pandas as pd
-from database.supabase_client import insert_record, get_records, require_auth, get_supabase_client
+from database.supabase_client import insert_record, get_records, require_auth, get_supabase_client, get_supabase_admin
 from ai_engine.tasks import run_analysis
 
 # File types that can be parsed into tabular data
@@ -138,11 +138,11 @@ async def upload_file(
     except Exception:
         raise HTTPException(status_code=500, detail="Failed to save uploaded file.")
 
-    # 4. Save metadata to uploaded_files table
+    # 4. Save metadata to uploaded_files table (admin client bypasses RLS)
     now = datetime.now(timezone.utc).isoformat()
     file_status = "uploaded"
     try:
-        insert_record("uploaded_files", {
+        get_supabase_admin().table("uploaded_files").insert({
             "id": file_id,
             "user_id": user_id,
             "filename": safe_filename,
@@ -150,17 +150,17 @@ async def upload_file(
             "file_type": ext.lower().lstrip("."),
             "status": file_status,
             "uploaded_at": now,
-        })
-    except Exception:
+        }).execute()
+    except Exception as e:
         os.remove(file_path)
-        raise HTTPException(status_code=500, detail="Failed to save file metadata.")
+        raise HTTPException(status_code=500, detail=f"Failed to save file metadata: {str(e)}")
 
     # 5. Parse tabular files and store rows in data_rows for agent pipeline
     if ext.lower() in PARSEABLE_EXTENSIONS:
         try:
             df = _parse_file_to_dataframe(contents, ext.lower())
             if df is not None and not df.empty:
-                client = get_supabase_client()
+                client = get_supabase_admin()
                 rows_to_insert = []
                 for idx, row in df.iterrows():
                     row_data = {}
@@ -185,7 +185,7 @@ async def upload_file(
                     client.table("data_rows").insert(batch).execute()
 
                 file_status = "processed"
-                client.table("uploaded_files").update({"status": "processed"}).eq("id", file_id).execute()
+                get_supabase_admin().table("uploaded_files").update({"status": "processed"}).eq("id", file_id).execute()
         except Exception:
             pass  # Don't fail upload if parsing fails — file is still saved
 
