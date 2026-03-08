@@ -27,6 +27,9 @@ import InvestorsPage from './pages/dashboard/InvestorsPage';
 import TiersPage from './pages/dashboard/TiersPage';
 import AdvisorsPage from './pages/dashboard/AdvisorsPage';
 
+// Patent Firm
+import PatentFirmDashboard from './pages/patent-firm/Dashboard';
+
 function App() {
   return (
     <AuthProvider>
@@ -66,6 +69,18 @@ function App() {
             <Route path="payments" element={<Payments />} />
             <Route path="profile" element={<DashboardPlaceholder />} />
             <Route path="help" element={<DashboardPlaceholder />} />
+
+            <Route path="marketing-agency/projects" element={<Projects />} />
+            <Route path="marketing-agency/feedbacks" element={<Feedbacks />} />
+
+            {/* Patent Firm Dashboard Routes */}
+            <Route path="patent-firm/dashboard" element={<PatentFirmDashboard />} />
+            <Route path="patent-firm/clients" element={<DashboardPlaceholder />} />
+            <Route path="patent-firm/applications" element={<DashboardPlaceholder />} />
+            <Route path="patent-firm/document-review" element={<DashboardPlaceholder />} />
+            <Route path="patent-firm/payments" element={<DashboardPlaceholder />} />
+
+            {/* Role placeholders */}
             <Route path="founder" element={<DashboardPlaceholder />} />
             <Route path="investor" element={<DashboardPlaceholder />} />
             <Route path="marketing" element={<DashboardPlaceholder />} />

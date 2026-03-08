@@ -184,6 +184,7 @@ export function getRoleDashboardRoute(role) {
         'Investor': '/dashboard/investor',
         'Marketing Agency': '/dashboard/marketing-agency/projects',
         'Business Advisor': '/dashboard/advisor',
+        'Patent Firm': '/dashboard/patent-firm/dashboard',
         'Admin': '/dashboard/admin',
     };
     return roleRoutes[role] || '/dashboard/startup';
