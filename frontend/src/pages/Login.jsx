@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import './Login.css';
-import { login, getRoleDashboardRoute, signInWithGoogle } from '../utils/auth';
+import { login, getRoleDashboardRoute, signInWithGoogle, completeProfile } from '../utils/auth';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { setUser } = useAuth();
+    const { user, setUser } = useAuth();
 
     // Check if user just registered
     const [successMessage, setSuccessMessage] = useState(
@@ -81,11 +81,7 @@ const Login = () => {
             });
 
             // Update auth context with logged-in user
-            setUser(result.user);
-
-            // Route to the correct dashboard based on role
-            const route = getRoleDashboardRoute(result.user?.role);
-            navigate(route, { replace: true });
+            setUser({ ...result.user, onboarding_completed: true });
         } catch (err) {
             setServerError(err.message || 'Login failed. Please try again.');
         } finally {
@@ -104,6 +100,39 @@ const Login = () => {
             setServerError(err.message || 'Google login failed. Please try again.');
         } finally {
             setIsGoogleLoading(false);
+        }
+    };
+
+    // Auto-redirect successfully registered or completely logged-in users
+    useEffect(() => {
+        if (user && user.onboarding_completed) {
+            const route = getRoleDashboardRoute(user.role);
+            navigate(route, { replace: true });
+        }
+    }, [user, navigate]);
+
+    // Complete Profile state & handler (For Google OAuth users missing roles)
+    const [profileData, setProfileData] = useState({ role: '' });
+
+    const handleCompleteProfileSubmit = async (e) => {
+        e.preventDefault();
+        if (!profileData.role) {
+            setServerError('Please select a role to continue.');
+            return;
+        }
+        setIsLoading(true);
+        setServerError('');
+        try {
+            const result = await completeProfile({
+                first_name: user?.first_name || '',
+                last_name: user?.last_name || '',
+                role: profileData.role
+            });
+            setUser(prev => ({ ...prev, role: result.role, onboarding_completed: true }));
+        } catch (err) {
+            setServerError(err.message || 'Failed to complete profile.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -133,6 +162,56 @@ const Login = () => {
         </svg>
     );
 
+    // If an authenticated user doesn't have a role yet, intercept them here
+    if (user && user.onboarding_completed === false) {
+        return (
+            <div className="login-container">
+                <div className="login-left">
+                    <div className="login-form-container">
+                        <div className="login-header">
+                            <h1>Ascendly</h1>
+                            <h2>Complete Profile</h2>
+                            <p>Almost there! Please select your role to continue.</p>
+                        </div>
+                        <form className="login-form" onSubmit={handleCompleteProfileSubmit}>
+                            <div className="form-group">
+                                <label htmlFor="role">I am a...</label>
+                                <select
+                                    id="role"
+                                    name="role"
+                                    className="form-input"
+                                    value={profileData.role}
+                                    onChange={(e) => setProfileData({ role: e.target.value })}
+                                    disabled={isLoading}
+                                    style={{ paddingRight: '40px', appearance: 'none', backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'12\' height=\'8\' viewBox=\'0 0 12 8\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M1 1.5L6 6.5L11 1.5\' stroke=\'%239CA3AF\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center' }}
+                                >
+                                    <option value="" disabled>Select your role</option>
+                                    <option value="Startup Founder">Startup Founder</option>
+                                    <option value="Investor">Investor</option>
+                                    <option value="Marketing Agency">Marketing Agency</option>
+                                    <option value="Business Advisor">Business Advisor</option>
+                                    <option value="Admin">Admin</option>
+                                </select>
+                            </div>
+
+                            {serverError && (
+                                <span className="error-message" style={{ display: 'block', marginBottom: '8px' }}>
+                                    {serverError}
+                                </span>
+                            )}
+
+                            <button type="submit" className="login-button" disabled={isLoading}>
+                                {isLoading ? 'Saving...' : 'Finish Setup'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div className="login-right"></div>
+            </div>
+        );
+    }
+
+    // Standard Login view
     return (
         <div className="login-container">
             {/* Left Side - Login Form */}
