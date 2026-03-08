@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { fetchMe, getCurrentUser, clearSession } from '../utils/auth';
+import { fetchMe, getCurrentUser, clearSession, supabase, getToken } from '../utils/auth';
 
 const AuthContext = createContext(null);
 
@@ -15,8 +15,29 @@ export function AuthProvider({ children }) {
         // Try to restore session on initial app load
         async function restoreSession() {
             try {
+                // 1. Check for Supabase OAuth redirect session first
+                if (supabase) {
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (session) {
+                        localStorage.setItem('ascendly_token', session.access_token);
+                    }
+
+                    // Listen to auth changes automatically (e.g. Google Popup / Redirect processing)
+                    supabase.auth.onAuthStateChange(async (event, session) => {
+                        if (event === 'SIGNED_IN' && session) {
+                            localStorage.setItem('ascendly_token', session.access_token);
+                            const updatedMe = await fetchMe();
+                            if (updatedMe) setUser(updatedMe);
+                        } else if (event === 'SIGNED_OUT') {
+                            clearSession();
+                            setUser(null);
+                        }
+                    });
+                }
+
+                // 2. Fetch the Ascendly profile from the backend
                 const me = await fetchMe();
-                setUser(me || getCurrentUser());
+                setUser(me);
             } catch {
                 setUser(null);
             } finally {
@@ -26,7 +47,10 @@ export function AuthProvider({ children }) {
         restoreSession();
     }, []);
 
-    function logoutUser() {
+    async function logoutUser() {
+        if (supabase) {
+            await supabase.auth.signOut();
+        }
         clearSession();
         setUser(null);
     }

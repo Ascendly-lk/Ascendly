@@ -3,7 +3,17 @@
  * Uses VITE_API_URL from .env (defaults to http://localhost:8000)
  */
 
+import { createClient } from '@supabase/supabase-js';
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// Initialize Supabase client only if env vars are present (prevents crash if missing)
+export const supabase = supabaseUrl && supabaseAnonKey
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
 
 const STORAGE_TOKEN_KEY = 'ascendly_token';
 const STORAGE_USER_KEY = 'ascendly_user';
@@ -50,8 +60,31 @@ export async function register(data) {
     const body = await response.json();
 
     if (!response.ok) {
-        // Forward the backend error message to the form
         throw new Error(body.detail || 'Registration failed. Please try again.');
+    }
+
+    return body;
+}
+
+/**
+ * Complete profile for new Google OAuth users (role assignment).
+ */
+export async function completeProfile(data) {
+    const token = getToken();
+    if (!token) throw new Error('No active session found.');
+
+    const response = await fetch(`${API_URL}/auth/profile/complete`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data),
+    });
+
+    const body = await response.json();
+    if (!response.ok) {
+        throw new Error(body.detail || 'Failed to complete profile. Please try again.');
     }
 
     return body;
@@ -81,22 +114,36 @@ export async function login(data) {
 }
 
 /**
- * Logout — clears localStorage session.
+ * Logout — clears localStorage session & Supabase.
  */
-export function logout() {
+export async function logout() {
     clearSession();
+    if (supabase) {
+        await supabase.auth.signOut();
+    }
 }
 
 /**
  * Initiate Google OAuth Sign In.
- * Currently a frontend stub until backend/Supabase is linked.
+ * Triggers standard Supabase Google Authentication flow.
  */
 export async function signInWithGoogle() {
-    // Simulate network delay for UI loading states
-    await new Promise(resolve => setTimeout(resolve, 800));
+    if (!supabase) {
+        throw new Error('Supabase configuration is missing. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file.');
+    }
 
-    // Throw controlled error until correctly wired to backend/Supabase
-    throw new Error('Google Authentication is not fully configured yet.');
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            redirectTo: window.location.origin + '/login' // Return to login to let AuthContext capture the session
+        }
+    });
+
+    if (error) {
+        throw new Error(error.message || 'Google Auth failed to start. Please try again.');
+    }
+
+    return data;
 }
 
 /**

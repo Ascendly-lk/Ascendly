@@ -54,6 +54,12 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class ProfileCompleteRequest(BaseModel):
+    first_name: str
+    last_name: str
+    role: str
+
+
 # ============ HEALTH CHECK ============
 
 @app.get("/")
@@ -168,6 +174,7 @@ async def login(payload: LoginRequest):
             "last_name": name_parts[1] if len(name_parts) > 1 else "",
             "role": profile.get("role") if profile else None,
             "is_active": profile.get("is_active") if profile else True,
+            "onboarding_completed": bool(profile and profile.get("role")),
         },
     }
 
@@ -186,16 +193,54 @@ async def logout():
 async def get_me(current_user=Depends(require_auth)):
     """
     Protected endpoint — returns current user's profile.
+    Automatically provisions/syncs the profile if it was created via Google OAuth.
     Requires: Authorization: Bearer <token>
     """
     auth_user_id = str(current_user.id)
     profile = get_profile_by_auth_id(auth_user_id)
+    is_newly_synced = False
+    
+    # If using Google Auth, a bare profile might have been created by the DB trigger
+    # but without a role or name. Let's pre-fill the name from Google Metadata if present.
+    if profile is None or (not profile.get("full_name") and current_user.user_metadata):
+        metadata = current_user.user_metadata or {}
+        # Pre-fill name and avatar if provided by Google
+        full_name = metadata.get("name") or metadata.get("full_name") or ""
+        avatar_url = metadata.get("avatar_url") or metadata.get("picture") or ""
+        
+        upsert_data = {
+            "id": auth_user_id,
+            "auth_user_id": auth_user_id,
+            "email": current_user.email,
+            "full_name": full_name,
+            "avatar_url": avatar_url,
+            "is_active": True
+        }
+        
+        # Merge existing profile keys so we don't accidentally erase roles
+        if profile:
+            upsert_data.update({
+                "role": profile.get("role"),
+            })
+        else:
+            upsert_data["created_at"] = datetime.now(timezone.utc).isoformat()
+            
+        try:
+            create_profile(upsert_data)
+        except Exception:
+            pass # Suppress issues if the trigger already handles portions of this seamlessly
+            
+        profile = get_profile_by_auth_id(auth_user_id)
+        is_newly_synced = True
 
     if not profile:
         raise HTTPException(status_code=404, detail="Profile not found.")
 
     full_name = profile.get("full_name", "")
     name_parts = full_name.split(" ", 1) if full_name else ["", ""]
+    
+    # Onboarding is done if the user has selected a valid role
+    onboarding_completed = bool(profile.get("role"))
 
     return {
         "id": auth_user_id,
@@ -204,8 +249,44 @@ async def get_me(current_user=Depends(require_auth)):
         "first_name": name_parts[0],
         "last_name": name_parts[1] if len(name_parts) > 1 else "",
         "role": profile.get("role"),
+        "avatar_url": profile.get("avatar_url"),
         "is_active": profile.get("is_active"),
         "created_at": profile.get("created_at"),
+        "onboarding_completed": onboarding_completed,
+        "provider": current_user.app_metadata.get("provider", "email") if hasattr(current_user, "app_metadata") else "email"
+    }
+
+
+@app.post("/auth/profile/complete")
+async def complete_profile(payload: ProfileCompleteRequest, current_user=Depends(require_auth)):
+    """
+    Called after Google Signup/Signin if the onboarding_completed flag is false.
+    Assigns the newly onboarded user their role.
+    """
+    valid_roles = {"Startup Founder", "Investor", "Marketing Agency", "Business Advisor", "Admin"}
+    if payload.role not in valid_roles:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid role. Choose from: {', '.join(valid_roles)}"
+        )
+        
+    auth_user_id = str(current_user.id)
+    full_name = f"{payload.first_name.strip()} {payload.last_name.strip()}".strip()
+    
+    from database.supabase_client import update_profile
+    try:
+        update_profile(auth_user_id, {
+            "full_name": full_name,
+            "role": payload.role,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        })
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to complete profile. Try again.")
+        
+    return {
+        "message": "Profile complete",
+        "onboarding_completed": True,
+        "role": payload.role
     }
 
 

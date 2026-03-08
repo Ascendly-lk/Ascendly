@@ -98,6 +98,11 @@ def get_profile_by_auth_id(auth_user_id: str):
     result = admin.table("profiles").select("*").eq("auth_user_id", auth_user_id).maybe_single().execute()
     return result.data if result else None
 
+def update_profile(auth_user_id: str, data: dict):
+    """Update a profile row using the service-role client"""
+    admin = get_supabase_admin()
+    return admin.table("profiles").update(data).eq("auth_user_id", auth_user_id).execute()
+
 
 # ============ FASTAPI AUTH DEPENDENCY ============
 
