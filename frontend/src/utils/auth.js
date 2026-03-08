@@ -88,6 +88,18 @@ export function logout() {
 }
 
 /**
+ * Initiate Google OAuth Sign In.
+ * Currently a frontend stub until backend/Supabase is linked.
+ */
+export async function signInWithGoogle() {
+    // Simulate network delay for UI loading states
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    // Throw controlled error until correctly wired to backend/Supabase
+    throw new Error('Google Authentication is not fully configured yet.');
+}
+
+/**
  * Fetch the current user's profile from the backend using the stored token.
  * Used to restore session on page refresh.
  * Returns null if token is missing or expired.
