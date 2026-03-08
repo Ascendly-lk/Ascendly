@@ -63,7 +63,7 @@ const AIAssistant = () => {
     const textareaRef = useRef(null);
 
     /* Fetch user's uploaded files */
-    useEffect(() => {
+    const fetchFiles = useCallback(() => {
         apiFetch('/api/files/recent?limit=20')
             .then((res) => res.json())
             .then((data) => {
@@ -75,6 +75,13 @@ const AIAssistant = () => {
             })
             .catch(() => {});
     }, []);
+
+    useEffect(() => {
+        fetchFiles();
+        const onVisible = () => { if (document.visibilityState === 'visible') fetchFiles(); };
+        document.addEventListener('visibilitychange', onVisible);
+        return () => document.removeEventListener('visibilitychange', onVisible);
+    }, [fetchFiles]);
 
     /* Auto-scroll to latest message */
     useEffect(() => {
@@ -127,8 +134,9 @@ const AIAssistant = () => {
             ]);
         } finally {
             setIsSending(false);
+            fetchFiles();
         }
-    }, [input, isSending, selectedFileId]);
+    }, [input, isSending, selectedFileId, fetchFiles]);
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {

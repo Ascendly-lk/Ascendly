@@ -160,8 +160,12 @@ async def login(payload: LoginRequest):
     auth_user_id = str(auth_response.user.id)
     access_token = auth_response.session.access_token
 
-    # Fetch profile to get full_name and role
-    profile = get_profile_by_auth_id(auth_user_id)
+    # Fetch profile to get full_name and role (non-fatal if missing)
+    try:
+        profile = get_profile_by_auth_id(auth_user_id)
+    except Exception as e:
+        print(f"[login] Profile fetch failed: {e}")
+        profile = None
 
     # Split full_name back into first/last for the frontend
     full_name = profile.get("full_name", "") if profile else ""

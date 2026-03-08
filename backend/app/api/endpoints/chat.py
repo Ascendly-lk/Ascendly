@@ -101,6 +101,9 @@ def _analysis_response_sync(message: str, user_id: str, dataset_id: Optional[str
     try:
         from ai_engine.crew import run_dataset_analysis
 
+        if not dataset_id:
+            return "No dataset found. Please upload a file first before requesting analysis."
+
         result = run_dataset_analysis(dataset_id)
 
         if result.get("status") != "success":
@@ -132,7 +135,7 @@ def _analysis_response_sync(message: str, user_id: str, dataset_id: Optional[str
             parts.append("**Forecast Summary:**")
             for f in forecast[:3]:
                 date = f.get("date", "N/A")
-                value = f.get("forecasted_value", 0)
+                value = f.get("revenue", f.get("forecasted_value", 0))
                 parts.append(f"- {date}: ${value:,.2f}")
 
         # Strategic advice
@@ -142,7 +145,7 @@ def _analysis_response_sync(message: str, user_id: str, dataset_id: Optional[str
             if isinstance(advice, list):
                 for a in advice[:3]:
                     if isinstance(a, dict):
-                        parts.append(f"- **{a.get('title', '')}**: {a.get('description', '')}")
+                        parts.append(f"- **{a.get('title', '')}**: {a.get('body', a.get('description', ''))}")
                     else:
                         parts.append(f"- {a}")
             elif isinstance(advice, str):
