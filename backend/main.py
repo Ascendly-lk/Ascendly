@@ -106,9 +106,10 @@ async def register(payload: RegisterRequest):
     # Combine first + last name into full_name to match existing 'full_name' column
     full_name = f"{payload.first_name.strip()} {payload.last_name.strip()}".strip()
 
-    # Step 2: Insert into existing profiles table
+    # Step 2: Upsert into existing profiles table
     try:
         create_profile({
+            "id": auth_user_id,               # Matches the PK created by the Supabase Auth trigger
             "auth_user_id": auth_user_id,     # new column (see ALTER TABLE SQL)
             "email": payload.email,
             "full_name": full_name,            # existing column
@@ -118,9 +119,15 @@ async def register(payload: RegisterRequest):
         })
     except Exception as e:
         print("PROFILE CREATION ERROR:", str(e))
+        err_str = str(e).lower()
+        if "duplicate key" in err_str or "already exists" in err_str:
+            raise HTTPException(
+                status_code=409,
+                detail="This email is already registered. Please log in."
+            )
         raise HTTPException(
             status_code=500,
-            detail="Account created but profile setup failed. Please contact support. Error: " + str(e)
+            detail="Something went wrong while setting up your profile. Please try again."
         )
 
     return {
