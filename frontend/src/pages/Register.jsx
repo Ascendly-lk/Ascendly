@@ -1,10 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import './Register.css';
-import { register, signInWithGoogle } from '../utils/auth';
+import './Register.css'; // Using the Register specific css
+import { register, signInWithGoogle, getRoleDashboardRoute } from '../utils/auth';
+import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Auto-redirect successfully registered or completely logged-in users
+  useEffect(() => {
+    if (user) {
+      if (user.onboarding_completed) {
+        const route = getRoleDashboardRoute(user.role);
+        navigate(route, { replace: true });
+      } else {
+        // If incomplete, send them to login to hit the Complete Profile form correctly
+        navigate('/login', { replace: true });
+      }
+    }
+  }, [user, navigate]);
 
   // Form state
   const [formData, setFormData] = useState({

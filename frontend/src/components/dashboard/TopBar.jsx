@@ -1,12 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './TopBar.css';
+import { useAuth } from '../../context/AuthContext';
 
 const TopBar = () => {
     const [profileOpen, setProfileOpen] = useState(false);
     const dropdownRef = useRef(null);
     const profileBtnRef = useRef(null);
     const navigate = useNavigate();
+    const { logoutUser } = useAuth();
 
     // Close on outside click
     useEffect(() => {
@@ -33,9 +35,10 @@ const TopBar = () => {
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-    const handleMenuItem = (action) => {
+    const handleMenuItem = async (action) => {
         setProfileOpen(false);
         if (action === 'logout') {
+            await logoutUser();
             navigate('/login');
         } else if (action === 'account') {
             navigate('/account');
