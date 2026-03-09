@@ -10,9 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
     "lucide-react": "^0.577.0",
+=======
+    "@supabase/supabase-js": "^2.98.0",
+>>>>>>> 7f8c4b245347b20810c0a506dd51c7bee84bd2d5
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.13.0"
   },
   "devDependencies": {

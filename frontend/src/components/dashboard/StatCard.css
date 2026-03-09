@@ -1,0 +1,127 @@
+.stat-card {
+    border-radius: 22px;
+    padding: 18px 20px;
+    transition: all 0.2s ease-out;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    height: 100px;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Dark Variant */
+.stat-card-dark {
+    background: #0d1628;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+}
+
+.stat-card-dark:hover {
+    /* border-color: rgba(0, 255, 239, 0.25); */
+    box-shadow: 0 8px 32px rgba(0, 229, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Gradient Variant */
+.stat-card-gradient {
+    background: linear-gradient(150deg, #00FFE5 0%, #23A7B4 45%, #0B1220 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 255, 239, 0.18);
+}
+
+.stat-card-gradient:hover {
+    box-shadow: 0 8px 16px rgb(0, 255, 229, 0.2);
+    filter: brightness(1.05);
+}
+
+.stat-card-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.stat-card-icon {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    /* prevent squeeze */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 229, 255, 0.12);
+    border-radius: 50%;
+    color: #00FFE5;
+    flex-shrink: 0;
+}
+
+.stat-card-gradient .stat-card-icon {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.stat-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    overflow: hidden;
+    align-self: center;
+    /* vertically centres within row */
+    justify-content: center;
+    /* align items along column axis */
+}
+
+.stat-card-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: #FFFFFF;
+    opacity: 0.85;
+    letter-spacing: 0.6px;
+    line-height: 1.3;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+.stat-card-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #FFFFFF;
+    line-height: 1;
+}
+
+.stat-card-decoration {
+    position: relative;
+    opacity: 0.6;
+    flex-shrink: 0;
+    align-self: center;
+    /* keep decoration vertically centred */
+    margin-left: 8px;
+    /* consistent gap from text column */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stat-card {
+        padding: 14px 16px;
+        height: 90px;
+    }
+
+    .stat-card-value {
+        font-size: 22px;
+    }
+}

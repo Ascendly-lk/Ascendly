@@ -1,0 +1,585 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   InvestorsPage.css  –  scoped with "ip-" prefix, no effect on other pages
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.ip-shell *,
+.ip-shell *::before,
+.ip-shell *::after {
+    box-sizing: border-box;
+}
+
+/* ── App Shell ───────────────────────────────────────────────────────────── */
+.ip-shell {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background: linear-gradient(135deg, #050B14 0%, #0B1220 100%);
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    color: #E2E8F0;
+    overflow-x: hidden;
+}
+
+/* ══ SIDEBAR ════════════════════════════════════════════════════════════════ */
+.ip-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 280px;
+    height: 100vh;
+    background: #080e1a;
+    border-right: 1px solid rgba(148, 163, 184, 0.1);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.ip-sidebar-header {
+    padding: 32px 24px 24px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    flex-shrink: 0;
+}
+
+.ip-sidebar-logo {
+    font-size: 28px;
+    font-weight: 700;
+    color: #00FFEF;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.5px;
+}
+
+.ip-sidebar-subtitle {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94A3B8;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.ip-sidebar-nav {
+    flex: 1;
+    padding: 20px 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.ip-sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    color: #94A3B8;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.ip-sidebar-nav-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: #00FFEF;
+}
+
+.ip-sidebar-nav-item.active {
+    background: rgba(0, 255, 239, 0.09);
+    color: #00FFEF;
+}
+
+.ip-sidebar-nav-item.active::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: #00FFEF;
+    border-radius: 3px 0 0 3px;
+    box-shadow: 0 0 8px rgba(0, 255, 239, 0.6);
+}
+
+.ip-sidebar-nav-item svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.ip-sidebar-footer {
+    padding: 20px 24px;
+    border-top: 1px solid rgba(148, 163, 184, 0.1);
+    flex-shrink: 0;
+}
+
+.ip-sidebar-upgrade {
+    background: linear-gradient(135deg, #0D7A6E 0%, #00FFEF 100%);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.ip-sidebar-upgrade p {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.ip-sidebar-help {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    color: #94A3B8;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+}
+
+.ip-sidebar-help:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #00FFEF;
+}
+
+/* ══ MAIN PANEL ═════════════════════════════════════════════════════════════ */
+.ip-main {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* ── Top Bar ─────────────────────────────────────────────────────────────── */
+.ip-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 28px;
+    background: #080e1a;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    flex-shrink: 0;
+    gap: 16px;
+}
+
+.ip-topbar-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #00FFEF;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.ip-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+}
+
+.ip-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 999px;
+    padding: 8px 18px;
+    min-width: 200px;
+}
+
+.ip-search svg {
+    color: #94A3B8;
+    flex-shrink: 0;
+}
+
+.ip-search input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #E2E8F0;
+    font-size: 14px;
+    width: 100%;
+}
+
+.ip-search input::placeholder {
+    color: #94A3B8;
+}
+
+.ip-topbar-icons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ip-icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    color: #94A3B8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ip-icon-btn:hover {
+    background: rgba(0, 255, 239, 0.1);
+    border-color: rgba(0, 255, 239, 0.3);
+    color: #00FFEF;
+}
+
+/* ── Content ─────────────────────────────────────────────────────────────── */
+.ip-content {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    flex: 1;
+}
+
+/* ══ STAT CARDS ═════════════════════════════════════════════════════════════ */
+.ip-stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    align-items: stretch;
+}
+
+.ip-stat-card {
+    border-radius: 22px;
+    padding: 22px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 130px;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease, filter 0.2s ease;
+    cursor: pointer;
+}
+
+.ip-stat-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Dark variant — matches Dashboard .stat-card-dark */
+.ip-stat-card--dark {
+    background: #0d1628;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+}
+
+.ip-stat-card--dark:hover {
+    box-shadow: 0 8px 32px rgba(0, 229, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Gradient variant — matches Dashboard .stat-card-gradient (Funding Probability only) */
+.ip-stat-card--glow {
+    background: linear-gradient(150deg, #00FFE5 0%, #23A7B4 45%, #0B1220 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 255, 239, 0.18);
+}
+
+.ip-stat-card--glow:hover {
+    box-shadow: 0 8px 16px rgba(0, 255, 229, 0.28);
+    filter: brightness(1.05);
+}
+
+.ip-stat-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+/* Icon container — matches Dashboard .stat-card-icon */
+.ip-stat-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 229, 255, 0.12);
+    border-radius: 50%;
+    color: #00FFE5;
+    filter: drop-shadow(0 0 4px rgba(0, 255, 239, 0.35));
+    flex-shrink: 0;
+}
+
+/* Icon on glow card */
+.ip-stat-card--glow .ip-stat-icon {
+    background: rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+    filter: none;
+}
+
+.ip-stat-value {
+    font-size: 42px;
+    font-weight: 700;
+    color: #FFFFFF;
+    line-height: 1;
+    margin-top: 4px;
+}
+
+.ip-stat-card--glow .ip-stat-value {
+    color: #ffffff;
+}
+
+.ip-stat-denom {
+    font-size: 22px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.ip-stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94A3B8;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.ip-stat-card--glow .ip-stat-label {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* ══ MAIN GRID ══════════════════════════════════════════════════════════════ */
+.ip-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: 20px;
+    align-items: start;
+}
+
+/* ── Generic card ────────────────────────────────────────────────────────── */
+/* Generic card — matches Dashboard AIForecastCard */
+.ip-card {
+    background: linear-gradient(160deg, #0f172a 0%, #0c1527 100%);
+    border: 1px solid rgba(148, 163, 184, 0.08);
+    border-radius: 22px;
+    padding: 24px;
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.3),
+        0 20px 60px rgba(0, 0, 0, 0.55);
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.ip-card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.3),
+        0 20px 60px rgba(0, 0, 0, 0.7),
+        0 8px 32px rgba(0, 255, 239, 0.12);
+}
+
+.ip-card-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #E2E8F0;
+    margin: 0 0 4px 0;
+}
+
+.ip-card-subtitle {
+    font-size: 13px;
+    color: #64748B;
+    margin: 0 0 18px 0;
+}
+
+/* ── Investors table ─────────────────────────────────────────────────────── */
+.ip-table-header {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr 1fr 0.8fr 1fr;
+    gap: 8px;
+    padding: 8px 0 10px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748B;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 8px;
+}
+
+.ip-table-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.ip-table-row {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr 1fr 0.8fr 1fr;
+    gap: 8px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.06);
+}
+
+.ip-table-row:last-child {
+    border-bottom: none;
+}
+
+.ip-inv-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #E2E8F0;
+    margin-bottom: 3px;
+}
+
+.ip-inv-meta {
+    font-size: 11px;
+    color: #64748B;
+}
+
+.ip-inv-focus,
+.ip-inv-stage {
+    font-size: 13px;
+    color: #CBD5E1;
+}
+
+.ip-match-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.ip-match-badge--high {
+    background: rgba(0, 255, 239, 0.15);
+    color: #00FFEF;
+    border: 1px solid rgba(0, 255, 239, 0.3);
+}
+
+.ip-match-badge--mid {
+    background: rgba(0, 255, 239, 0.08);
+    color: #00FFEF;
+    border: 1px solid rgba(0, 255, 239, 0.2);
+}
+
+.ip-request-btn {
+    padding: 7px 18px;
+    background: rgba(0, 255, 239, 0.1);
+    border: 1px solid rgba(0, 255, 239, 0.4);
+    border-radius: 8px;
+    color: #00FFEF;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-out;
+    white-space: nowrap;
+}
+
+.ip-request-btn:hover {
+    background: rgba(0, 255, 239, 0.18);
+    box-shadow: 0 0 12px rgba(0, 255, 239, 0.22);
+    transform: translateY(-1px);
+}
+
+/* ── Right column ────────────────────────────────────────────────────────── */
+.ip-right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ── Bullet list ─────────────────────────────────────────────────────────── */
+.ip-bullet-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ip-bullet-list li {
+    font-size: 13px;
+    color: #CBD5E1;
+    padding-left: 14px;
+    position: relative;
+}
+
+.ip-bullet-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #00FFEF;
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+/* ── Export button ───────────────────────────────────────────────────────── */
+.ip-export-btn {
+    width: 100%;
+    margin-top: 18px;
+    padding: 11px;
+    background: transparent;
+    border: 1px solid #00FFEF;
+    border-radius: 10px;
+    color: #00FFEF;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-out;
+    text-align: center;
+}
+
+.ip-export-btn:hover {
+    background: rgba(0, 255, 239, 0.1);
+    box-shadow: 0 0 14px rgba(0, 255, 239, 0.25);
+    transform: translateY(-1px);
+}
+
+/* ══ RESPONSIVE ═════════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+    /* sidebar responsive handled by DashboardLayout / Sidebar.css */
+
+    .ip-stats-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .ip-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .ip-content {
+        padding: 16px;
+        gap: 16px;
+    }
+
+    .ip-stats-row {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .ip-topbar {
+        padding: 14px 16px;
+        flex-wrap: wrap;
+    }
+
+    .ip-topbar-title {
+        font-size: 20px;
+    }
+
+    .ip-table-header,
+    .ip-table-row {
+        grid-template-columns: 2fr 1fr 1fr;
+    }
+
+    .ip-table-header span:nth-child(2),
+    .ip-table-row .ip-inv-focus {
+        display: none;
+    }
+}
