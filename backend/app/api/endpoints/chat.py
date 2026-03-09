@@ -41,7 +41,7 @@ class HistoryItem(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     dataset_id: Optional[str] = None
-    history: Optional[list[HistoryItem]] = []
+    history: Optional[list[HistoryItem]] = Field(default_factory=list, max_length=50)
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -136,8 +136,8 @@ async def _stream_quick_response(
 
         model = os.getenv("CREWAI_LLM_MODEL", "azure/gpt-4o")
         if model.startswith("azure/"):
-            if not os.getenv("AZURE_API_KEY") or not os.getenv("AZURE_API_BASE"):
-                raise EnvironmentError("AZURE_API_KEY and AZURE_API_BASE must be set for Azure models.")
+            if not os.getenv("AZURE_API_KEY") or not os.getenv("AZURE_ENDPOINT"):
+                raise EnvironmentError("AZURE_API_KEY and AZURE_ENDPOINT must be set for Azure models.")
 
         system_prompt = (
             "You are Ascendly AI, a helpful financial analytics assistant for startups. "
@@ -169,7 +169,7 @@ async def _stream_quick_response(
             max_tokens=512,
             stream=True,
             api_key=os.getenv("AZURE_API_KEY"),
-            api_base=os.getenv("AZURE_API_BASE"),
+            api_base=os.getenv("AZURE_ENDPOINT"),
             api_version=os.getenv("AZURE_API_VERSION"),
         )
 
@@ -200,7 +200,7 @@ async def _stream_quick_response(
         yield _sse({"type": "error", "content": "I'm having trouble processing your request right now. Please try again."})
 
 
-async def _stream_analysis_response(message: str, user_id: str, dataset_id: str, history: list[dict] = None):
+async def _stream_analysis_response(message: str, user_id: str, dataset_id: str):
     """Stream analysis progress steps then final result."""
     try:
         from ai_engine.crew import run_analyst_step, run_forecaster_step, run_strategist_step, parse_outputs
@@ -292,7 +292,7 @@ async def chat(
     is_analysis = _is_analysis_request(message, request.dataset_id)
 
     generator = (
-        _stream_analysis_response(message, user_id, request.dataset_id, history)
+        _stream_analysis_response(message, user_id, request.dataset_id)
         if is_analysis
         else _stream_quick_response(message, user_id, request.dataset_id, history)
     )
