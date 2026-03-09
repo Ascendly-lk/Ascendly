@@ -1,0 +1,114 @@
+.recent-uploads-card {
+    background: #0d1628;
+    /* border: 1px solid rgba(0, 229, 255, 0.12); */
+    border-radius: 20px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+    min-height: 0;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+}
+
+.recent-uploads-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: #ffffff;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+/* Scrollable list — custom scrollbar inside the card only */
+.recent-uploads-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    min-height: 0;
+
+    /* Custom scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: #00C8A0 #0a1020;
+}
+
+.recent-uploads-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.recent-uploads-list::-webkit-scrollbar-track {
+    background: #0a1020;
+    border-radius: 4px;
+}
+
+.recent-uploads-list::-webkit-scrollbar-thumb {
+    background: #00C8A0;
+    border-radius: 4px;
+}
+
+.recent-uploads-list::-webkit-scrollbar-thumb:hover {
+    background: #00E5CC;
+}
+
+/* List items */
+.recent-uploads-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s ease;
+    flex-shrink: 0;
+}
+
+.recent-uploads-item:hover {
+    background: rgba(0, 229, 255, 0.05);
+    border-color: rgba(0, 229, 255, 0.12);
+}
+
+.recent-uploads-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(0, 200, 160, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00FFE5;
+    flex-shrink: 0;
+}
+
+.recent-uploads-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.recent-uploads-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.recent-uploads-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #CBD5E1;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.recent-uploads-meta {
+    font-size: 11px;
+    color: #64748B;
+    margin: 0;
+}

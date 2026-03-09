@@ -1,0 +1,82 @@
+/* Full-screen layout: sidebar + main side-by-side */
+.ai-dashboard {
+    display: flex;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #050B14 0%, #0B1220 100%);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Main area pushed right of the sidebar (220px wide) */
+.ai-dashboard-main {
+    margin-left: 220px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-width: 0;
+}
+
+/* Scrollable content area */
+.ai-dashboard-content {
+    flex: 1;
+    padding: 24px 28px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+}
+
+/* ── Row 1: Stats ── */
+.ai-stats-row {
+    display: flex;
+    gap: 16px;
+}
+
+/* ── Row 3: Bottom two cards ── */
+.ai-bottom-row {
+    display: flex;
+    gap: 16px;
+    flex: 1;
+    min-height: 260px;
+}
+
+.ai-bottom-row>* {
+    flex: 1;
+    min-width: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+    .ai-dashboard-main {
+        margin-left: 68px;
+    }
+}
+
+@media (max-width: 900px) {
+    .ai-stats-row {
+        flex-wrap: wrap;
+    }
+
+    .ai-stats-row>* {
+        flex: 1 1 calc(50% - 8px);
+        min-width: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .ai-dashboard-main {
+        margin-left: 0;
+    }
+
+    .ai-stats-row>* {
+        flex: 1 1 100%;
+    }
+
+    .ai-bottom-row {
+        flex-direction: column;
+    }
+
+    .ai-dashboard-content {
+        padding: 16px;
+    }
+}

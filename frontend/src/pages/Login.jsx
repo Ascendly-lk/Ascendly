@@ -1,9 +1,20 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import './Login.css';
+import { login, getRoleDashboardRoute, signInWithGoogle, completeProfile } from '../utils/auth';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const { user, setUser } = useAuth();
+
+    // Check if user just registered
+    const [successMessage, setSuccessMessage] = useState(
+        new URLSearchParams(location.search).get('registered')
+            ? 'Your account was created successfully.'
+            : ''
+    );
 
     // Form state
     const [formData, setFormData] = useState({
@@ -18,6 +29,11 @@ const Login = () => {
     // Error state
     const [errors, setErrors] = useState({});
 
+    // Loading & server error state
+    const [isLoading, setIsLoading] = useState(false);
+    const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+    const [serverError, setServerError] = useState('');
+
     // Handle input changes
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -25,13 +41,11 @@ const Login = () => {
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }));
-        // Clear error when user starts typing
+        // Clear errors when user types
         if (errors[name]) {
-            setErrors(prev => ({
-                ...prev,
-                [name]: ''
-            }));
+            setErrors(prev => ({ ...prev, [name]: '' }));
         }
+        if (serverError) setServerError('');
     };
 
     // Validate form
@@ -53,24 +67,72 @@ const Login = () => {
     };
 
     // Handle form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!validateForm()) return;
 
-        if (validateForm()) {
-            // TODO: Replace with actual backend API call for authentication
-            // This is a placeholder for frontend-only demonstration
+        setIsLoading(true);
+        setServerError('');
 
-            // In production, this would:
-            // 1. Send login credentials to backend API
-            // 2. Receive authentication token and user role
-            // 3. Store token in localStorage/sessionStorage
-            // 4. Navigate to role-specific dashboard based on user's role
+        try {
+            const result = await login({
+                email: formData.email,
+                password: formData.password,
+            });
 
-            console.log('Login data:', formData);
+            // Update auth context with logged-in user
+            setUser({ ...result.user, onboarding_completed: true });
+        } catch (err) {
+            setServerError(err.message || 'Login failed. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-            // Placeholder: navigate to a default dashboard
-            // In real implementation, this would be based on the user's role from backend
-            navigate('/dashboard/founder');
+    // Handle Google Login
+    const handleGoogleLogin = async () => {
+        setIsGoogleLoading(true);
+        setServerError('');
+
+        try {
+            await signInWithGoogle();
+        } catch (err) {
+            setServerError(err.message || 'Google login failed. Please try again.');
+        } finally {
+            setIsGoogleLoading(false);
+        }
+    };
+
+    // Auto-redirect successfully registered or completely logged-in users
+    useEffect(() => {
+        if (user && user.onboarding_completed) {
+            const route = getRoleDashboardRoute(user.role);
+            navigate(route, { replace: true });
+        }
+    }, [user, navigate]);
+
+    // Complete Profile state & handler (For Google OAuth users missing roles)
+    const [profileData, setProfileData] = useState({ role: '' });
+
+    const handleCompleteProfileSubmit = async (e) => {
+        e.preventDefault();
+        if (!profileData.role) {
+            setServerError('Please select a role to continue.');
+            return;
+        }
+        setIsLoading(true);
+        setServerError('');
+        try {
+            const result = await completeProfile({
+                first_name: user?.first_name || '',
+                last_name: user?.last_name || '',
+                role: profileData.role
+            });
+            setUser(prev => ({ ...prev, role: result.role, onboarding_completed: true }));
+        } catch (err) {
+            setServerError(err.message || 'Failed to complete profile.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -100,6 +162,56 @@ const Login = () => {
         </svg>
     );
 
+    // If an authenticated user doesn't have a role yet, intercept them here
+    if (user && user.onboarding_completed === false) {
+        return (
+            <div className="login-container">
+                <div className="login-left">
+                    <div className="login-form-container">
+                        <div className="login-header">
+                            <h1>Ascendly</h1>
+                            <h2>Complete Profile</h2>
+                            <p>Almost there! Please select your role to continue.</p>
+                        </div>
+                        <form className="login-form" onSubmit={handleCompleteProfileSubmit}>
+                            <div className="form-group">
+                                <label htmlFor="role">I am a...</label>
+                                <select
+                                    id="role"
+                                    name="role"
+                                    className="form-input"
+                                    value={profileData.role}
+                                    onChange={(e) => setProfileData({ role: e.target.value })}
+                                    disabled={isLoading}
+                                    style={{ paddingRight: '40px', appearance: 'none', backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'12\' height=\'8\' viewBox=\'0 0 12 8\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M1 1.5L6 6.5L11 1.5\' stroke=\'%239CA3AF\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center' }}
+                                >
+                                    <option value="" disabled>Select your role</option>
+                                    <option value="Startup Founder">Startup Founder</option>
+                                    <option value="Investor">Investor</option>
+                                    <option value="Marketing Agency">Marketing Agency</option>
+                                    <option value="Business Advisor">Business Advisor</option>
+                                    <option value="Admin">Admin</option>
+                                </select>
+                            </div>
+
+                            {serverError && (
+                                <span className="error-message" style={{ display: 'block', marginBottom: '8px' }}>
+                                    {serverError}
+                                </span>
+                            )}
+
+                            <button type="submit" className="login-button" disabled={isLoading}>
+                                {isLoading ? 'Saving...' : 'Finish Setup'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div className="login-right"></div>
+            </div>
+        );
+    }
+
+    // Standard Login view
     return (
         <div className="login-container">
             {/* Left Side - Login Form */}
@@ -125,6 +237,7 @@ const Login = () => {
                                 placeholder="Enter your email address"
                                 value={formData.email}
                                 onChange={handleChange}
+                                disabled={isLoading}
                             />
                             {errors.email && <span className="error-message">{errors.email}</span>}
                         </div>
@@ -141,6 +254,7 @@ const Login = () => {
                                     placeholder="Enter your password"
                                     value={formData.password}
                                     onChange={handleChange}
+                                    disabled={isLoading}
                                 />
                                 <button
                                     type="button"
@@ -168,9 +282,50 @@ const Login = () => {
                             <a href="#" className="forgot-password-link">Forgot Password?</a>
                         </div>
 
+                        {/* Server-side error message */}
+                        {serverError && (
+                            <span className="error-message" style={{ display: 'block', marginBottom: '8px' }}>
+                                {serverError}
+                            </span>
+                        )}
+
+                        {/* Success message */}
+                        {successMessage && (
+                            <span className="success-message" style={{ color: '#00FFEF', display: 'block', marginBottom: '8px', fontSize: '14px' }}>
+                                {successMessage}
+                            </span>
+                        )}
+
                         {/* Login Button */}
-                        <button type="submit" className="login-button">
-                            Log In
+                        <button type="submit" className="login-button" disabled={isLoading || isGoogleLoading}>
+                            {isLoading ? 'Logging in…' : 'Log In'}
+                        </button>
+
+                        {/* Divider */}
+                        <div className="auth-divider">
+                            <span>or continue with</span>
+                        </div>
+
+                        {/* Google Auth Button */}
+                        <button
+                            type="button"
+                            className="google-auth-button"
+                            onClick={handleGoogleLogin}
+                            disabled={isLoading || isGoogleLoading}
+                        >
+                            {isGoogleLoading ? (
+                                'Connecting...'
+                            ) : (
+                                <>
+                                    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                                    </svg>
+                                    Google
+                                </>
+                            )}
                         </button>
                     </form>
 

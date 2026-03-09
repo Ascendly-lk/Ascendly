@@ -218,6 +218,62 @@
     display: block;
 }
 
+/* Authentication Divider */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    color: #64748B;
+    font-size: 14px;
+    margin: 12px 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.auth-divider span {
+    padding: 0 16px;
+    font-weight: 500;
+}
+
+/* Google Auth Button */
+.google-auth-button {
+    width: 100%;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 8px;
+}
+
+.google-auth-button svg {
+    width: 20px;
+    height: 20px;
+}
+
+.google-auth-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.google-auth-button:active {
+    transform: translateY(0);
+}
+
 /* Right Side - Diagonal Wedge */
 .login-right {
     position: absolute;
@@ -225,7 +281,7 @@
     right: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #1A8B7E 0%, #00E5CC 100%);
+    background: linear-gradient(150deg, #00FFE5 0%, #23A7B4 45%, #0B1220 100%);
     /* Diagonal wedge: starts at ~35% from left at top, ~55% at bottom */
     clip-path: polygon(40% 0, 100% 0, 100% 100%, 60% 100%);
     z-index: 1;

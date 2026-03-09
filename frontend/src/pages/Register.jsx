@@ -1,9 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import './Register.css';
+import './Register.css'; // Using the Register specific css
+import { register, signInWithGoogle, getRoleDashboardRoute } from '../utils/auth';
+import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Auto-redirect successfully registered or completely logged-in users
+  useEffect(() => {
+    if (user) {
+      if (user.onboarding_completed) {
+        const route = getRoleDashboardRoute(user.role);
+        navigate(route, { replace: true });
+      } else {
+        // If incomplete, send them to login to hit the Complete Profile form correctly
+        navigate('/login', { replace: true });
+      }
+    }
+  }, [user, navigate]);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -22,6 +38,11 @@ const Register = () => {
   // Error state
   const [errors, setErrors] = useState({});
 
+  // Loading & server error state
+  const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [serverError, setServerError] = useState('');
+
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,11 +52,9 @@ const Register = () => {
     }));
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
+      setErrors(prev => ({ ...prev, [name]: '' }));
     }
+    if (serverError) setServerError('');
   };
 
   // Validate form
@@ -77,34 +96,42 @@ const Register = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
 
-    if (validateForm()) {
-      // Role-based navigation logic
-      // TODO: Replace with actual backend API call for registration
-      // This is a mock implementation for frontend-only demonstration
+    setIsLoading(true);
+    setServerError('');
 
-      const roleRoutes = {
-        'Startup Founder': '/dashboard/founder',
-        'Investor': '/dashboard/investor',
-        'Marketing Partner': '/dashboard/marketing',
-        'Business Advisor': '/dashboard/advisor',
-        'Admin': '/dashboard/admin'
-      };
+    try {
+      await register({
+        email: formData.email,
+        password: formData.password,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        role: formData.role,
+      });
 
-      const dashboardRoute = roleRoutes[formData.role];
+      // On success — redirect to login with a success flag
+      navigate('/login?registered=1', { replace: true });
+    } catch (err) {
+      setServerError(err.message || 'Registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-      if (dashboardRoute) {
-        // In production, this would:
-        // 1. Send registration data to backend API
-        // 2. Receive authentication token
-        // 3. Store token in localStorage/sessionStorage
-        // 4. Navigate to role-specific dashboard
+  // Handle Google Login / Registration
+  const handleGoogleLogin = async () => {
+    setIsGoogleLoading(true);
+    setServerError('');
 
-        console.log('Registration data:', formData);
-        navigate(dashboardRoute);
-      }
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      setServerError(err.message || 'Google signup failed. Please try again.');
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
@@ -160,6 +187,7 @@ const Register = () => {
                 className="form-select"
                 value={formData.role}
                 onChange={handleChange}
+                disabled={isLoading}
               >
                 <option value="">Select Role</option>
                 <option value="Startup Founder">Startup Founder</option>
@@ -183,6 +211,7 @@ const Register = () => {
                   placeholder="First Name"
                   value={formData.firstName}
                   onChange={handleChange}
+                  disabled={isLoading}
                 />
                 {errors.firstName && <span className="error-message">{errors.firstName}</span>}
               </div>
@@ -197,6 +226,7 @@ const Register = () => {
                   placeholder="Last Name"
                   value={formData.lastName}
                   onChange={handleChange}
+                  disabled={isLoading}
                 />
                 {errors.lastName && <span className="error-message">{errors.lastName}</span>}
               </div>
@@ -213,6 +243,7 @@ const Register = () => {
                 placeholder="Enter your email address"
                 value={formData.email}
                 onChange={handleChange}
+                disabled={isLoading}
               />
               {errors.email && <span className="error-message">{errors.email}</span>}
             </div>
@@ -229,6 +260,7 @@ const Register = () => {
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={handleChange}
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
@@ -254,6 +286,7 @@ const Register = () => {
                   placeholder="Enter your password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
@@ -267,9 +300,43 @@ const Register = () => {
               {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
             </div>
 
+            {/* Server-side error message */}
+            {serverError && (
+              <span className="error-message" style={{ display: 'block', marginBottom: '8px' }}>
+                {serverError}
+              </span>
+            )}
+
             {/* Register Button */}
-            <button type="submit" className="register-button">
-              Register
+            <button type="submit" className="register-button" disabled={isLoading || isGoogleLoading}>
+              {isLoading ? 'Creating account…' : 'Register'}
+            </button>
+
+            {/* Divider */}
+            <div className="auth-divider">
+              <span>or continue with</span>
+            </div>
+
+            {/* Google Auth Button */}
+            <button
+              type="button"
+              className="google-auth-button"
+              onClick={handleGoogleLogin}
+              disabled={isLoading || isGoogleLoading}
+            >
+              {isGoogleLoading ? (
+                'Connecting...'
+              ) : (
+                <>
+                  <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                  </svg>
+                  Google
+                </>
+              )}
             </button>
           </form>
 
