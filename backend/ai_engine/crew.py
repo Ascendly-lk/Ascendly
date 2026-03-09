@@ -165,7 +165,7 @@ def run_dataset_analysis(dataset_id: str) -> dict:
     strategist_output = run_strategist_step(analyst_output, forecast_output)
 
     processing_time = int((time.time() - start_time) * 1000)
-    response = _parse_outputs(analyst_output, forecast_output, strategist_output, processing_time)
+    response = parse_outputs(analyst_output, forecast_output, strategist_output, processing_time)
     response["request_id"] = request_id
     response["agent_logs"] = [
         {"agent_name": "Analyst", "output": analyst_output},
@@ -175,7 +175,7 @@ def run_dataset_analysis(dataset_id: str) -> dict:
     return response
 
 
-def _parse_outputs(analyst_output: str, forecast_output: str, advice_output: str, processing_time: int) -> dict:
+def parse_outputs(analyst_output: str, forecast_output: str, advice_output: str, processing_time: int) -> dict:
     import re
 
     def extract_json(text):

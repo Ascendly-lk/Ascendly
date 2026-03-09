@@ -117,8 +117,8 @@ const AIAssistant = () => {
             content: m.text,
         }));
 
-        const userMsg = { id: Date.now(), role: 'user', text: trimmed, time: now() };
-        const assistantMsgId = Date.now() + 1;
+        const userMsg = { id: crypto.randomUUID(), role: 'user', text: trimmed, time: now() };
+        const assistantMsgId = crypto.randomUUID();
 
         setMessages((prev) => [
             ...prev,
@@ -286,8 +286,10 @@ const AIAssistant = () => {
                                                     <div className="ai-chat-typing">
                                                         <span /><span /><span />
                                                     </div>
-                                                ) : (
+                                                ) : msg.role === 'assistant' ? (
                                                     <ReactMarkdown>{msg.text}</ReactMarkdown>
+                                                ) : (
+                                                    msg.text
                                                 )}
                                             </div>
                                         )}

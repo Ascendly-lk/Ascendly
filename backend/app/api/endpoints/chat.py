@@ -12,11 +12,12 @@ import re
 import uuid
 import json
 import asyncio
+import traceback
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
-from typing import Optional
+from pydantic import BaseModel, Field
+from typing import Literal, Optional
 from database.supabase_client import require_auth, get_supabase_client, insert_record
 from dotenv import load_dotenv
 
@@ -33,8 +34,8 @@ ANALYSIS_KEYWORDS = re.compile(
 
 
 class HistoryItem(BaseModel):
-    role: str      # "user" or "assistant"
-    content: str
+    role: Literal["user", "assistant"]
+    content: str = Field(..., max_length=8000)
 
 
 class ChatRequest(BaseModel):
@@ -63,11 +64,11 @@ def _format_analysis_text(data: dict) -> str:
         parts.append("**Forecast Summary:**")
         for f in forecast[:3]:
             date = f.get("date", "N/A")
-            value = f.get("revenue", f.get("forecasted_value", 0))
+            value = float(f.get("revenue", f.get("forecasted_value", 0)) or 0)
             lower = f.get("conf_lower")
             upper = f.get("conf_upper")
             if lower is not None and upper is not None:
-                parts.append(f"- {date}: **${value:,.2f}** *(range: ${lower:,.2f} – ${upper:,.2f})*")
+                parts.append(f"- {date}: **${value:,.2f}** *(range: ${float(lower):,.2f} – ${float(upper):,.2f})*")
             else:
                 parts.append(f"- {date}: **${value:,.2f}**")
 
@@ -134,6 +135,9 @@ async def _stream_quick_response(
         import litellm
 
         model = os.getenv("CREWAI_LLM_MODEL", "azure/gpt-4o")
+        if model.startswith("azure/"):
+            if not os.getenv("AZURE_API_KEY") or not os.getenv("AZURE_API_BASE"):
+                raise EnvironmentError("AZURE_API_KEY and AZURE_API_BASE must be set for Azure models.")
 
         system_prompt = (
             "You are Ascendly AI, a helpful financial analytics assistant for startups. "
@@ -196,10 +200,10 @@ async def _stream_quick_response(
         yield _sse({"type": "error", "content": "I'm having trouble processing your request right now. Please try again."})
 
 
-async def _stream_analysis_response(message: str, user_id: str, dataset_id: str):
+async def _stream_analysis_response(message: str, user_id: str, dataset_id: str, history: list[dict] = None):
     """Stream analysis progress steps then final result."""
     try:
-        from ai_engine.crew import run_analyst_step, run_forecaster_step, run_strategist_step, _parse_outputs
+        from ai_engine.crew import run_analyst_step, run_forecaster_step, run_strategist_step, parse_outputs
 
         yield _sse({"type": "progress", "step": 1, "total": 3, "label": "Analyzing your data..."})
         analyst_output = await asyncio.to_thread(run_analyst_step, dataset_id)
@@ -210,7 +214,7 @@ async def _stream_analysis_response(message: str, user_id: str, dataset_id: str)
         yield _sse({"type": "progress", "step": 3, "total": 3, "label": "Generating recommendations..."})
         strategist_output = await asyncio.to_thread(run_strategist_step, analyst_output, forecast_output)
 
-        result = _parse_outputs(analyst_output, forecast_output, strategist_output, 0)
+        result = parse_outputs(analyst_output, forecast_output, strategist_output, 0)
         data = result.get("data", {})
         text = _format_analysis_text(data)
         message_id = str(uuid.uuid4())
@@ -245,7 +249,7 @@ async def _stream_analysis_response(message: str, user_id: str, dataset_id: str)
         yield _sse({"type": "done", "message_id": message_id})
 
     except Exception as e:
-        print(f"[chat] _stream_analysis_response error: {e}")
+        print(f"[chat] _stream_analysis_response error: {e}\n{traceback.format_exc()}")
         yield _sse({"type": "error", "content": "Analysis failed. Please ensure your dataset is properly formatted and try again."})
 
 
@@ -288,7 +292,7 @@ async def chat(
     is_analysis = _is_analysis_request(message, request.dataset_id)
 
     generator = (
-        _stream_analysis_response(message, user_id, request.dataset_id)
+        _stream_analysis_response(message, user_id, request.dataset_id, history)
         if is_analysis
         else _stream_quick_response(message, user_id, request.dataset_id, history)
     )
