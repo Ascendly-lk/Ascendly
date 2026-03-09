@@ -1,106 +1,138 @@
-# Ascendly
+# Ascendly MVP
 
-AI-powered financial analytics platform for startups — upload your data, get revenue forecasts, strategic recommendations, and chat with an AI assistant about your business metrics.
+AI-powered financial analysis platform that helps startups understand their revenue data through automated insights, forecasting, and strategic recommendations.
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
 | **Backend** | Python 3.12, FastAPI, CrewAI, Statsmodels (SARIMAX), Pandas |
-| **Database** | Supabase (PostgreSQL + Auth + Storage) |
-| **LLM** | Azure OpenAI GPT-4o via LiteLLM + CrewAI |
-| **Frontend** | React 19, Vite, React Router |
+| **Database** | Supabase (PostgreSQL + Auth) |
+| **LLM** | Groq (`llama-3.1-8b-instant`) via LiteLLM |
+| **Frontend** | Next.js (placeholder — not yet built) |
 
 ## Project Structure
 
 ```
-ascendly/
-├── backend/
-│   ├── main.py                        # FastAPI app entry point, auth endpoints
-│   ├── requirements.txt
-│   ├── .env.example
-│   ├── app/api/endpoints/
-│   │   ├── analysis.py                # File upload, analysis, file listing
-│   │   └── chat.py                    # SSE streaming AI chat endpoint
-│   ├── database/
-│   │   └── supabase_client.py         # Supabase auth & CRUD helpers
-│   └── ai_engine/
-│       ├── agents.py                  # CrewAI agent definitions
-│       ├── tasks.py                   # CSV-based analysis pipeline
-│       ├── crew.py                    # DB-based analysis pipeline (step functions)
-│       └── tools/
-│           ├── data_tools.py          # growth_calculator tool
-│           ├── query_tool.py          # query_dataset tool (loads from Supabase)
-│           ├── sarimax_tool.py        # forecast_revenue tool
-│           └── benchmark_tool.py     # query_benchmarks tool
-└── frontend/
-    ├── src/
-    │   ├── pages/
-    │   │   ├── Login.jsx / Register.jsx
-    │   │   └── aianalytics/
-    │   │       ├── AIAssistant.jsx    # SSE streaming chat UI
-    │   │       ├── UploadData.jsx     # File upload page
-    │   │       └── Dashboard.jsx      # Analytics dashboard
-    │   ├── components/
-    │   │   └── aianalytics/           # Sidebar, TopBar, charts, stat cards
-    │   ├── context/AuthContext.jsx    # Auth state (email + Google OAuth)
-    │   └── api.js                     # apiFetch, token helpers
-    └── package.json
+backend/
+├── main.py                        # FastAPI app entry point
+├── requirements.txt               # Python dependencies
+├── .env.example                   # Environment variable template
+├── sample_data.csv                # Sample financial CSV
+├── app/
+│   └── api/
+│       └── endpoints/
+│           └── analysis.py        # POST /api/analyze endpoint
+├── database/
+│   ├── supabase_client.py         # Supabase auth & CRUD helpers
+│   └── sqlalchemy_client.py       # PostgreSQL/SQLAlchemy setup
+├── models/
+│   └── user.py                    # User model (profiles table)
+└── ai_engine/
+    ├── agents.py                  # 3 CrewAI agents
+    ├── tasks.py                   # Task definitions & orchestration
+    └── tools/
+        ├── data_tools.py          # csv_reader & growth_calculator
+        └── sarimax_tool.py        # forecast_revenue tool
 ```
 
 ## Features
 
-- **File upload** — CSV, XLSX, XLS, JSON up to 50MB; rows stored in Supabase for agent pipeline
-- **3-agent AI pipeline** — Data Analyst → Forecaster → Strategist powered by CrewAI + Azure GPT-4o
-- **SARIMAX revenue forecasting** — 3-month forecast with confidence intervals; SES fallback for small datasets
-- **SSE streaming chat** — Token-by-token streaming response with step-by-step progress for analysis mode
-- **Conversation memory** — Last 10 messages sent as history context to the LLM
-- **Industry benchmarks** — Strategic recommendations with competitor and sector comparisons
-- **User authentication** — Email/password + Google OAuth via Supabase Auth
+- **CSV upload & analysis** — Upload financial CSV files for automated processing
+- **3-agent AI pipeline** — Data Analyst, Forecaster, and Strategist agents powered by CrewAI
+- **SARIMAX revenue forecasting** — Time-series forecasting with SES fallback for small datasets
+- **MoM growth metrics & trend detection** — Average, median, min/max revenue and growth volatility
+- **User authentication** — Signup, signin, and signout via Supabase Auth
+- **Rate limit handling** — Countdown timer and fallback logic for Groq API limits
 
 ## API Endpoints
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| `GET` | `/` | No | Health check |
-| `GET` | `/health/db` | Yes | Database connection check |
-| `POST` | `/auth/signup` | No | Register with email & password |
-| `POST` | `/auth/signin` | No | Login, returns JWT |
-| `POST` | `/auth/signout` | Yes | Logout |
-| `GET` | `/auth/me` | Yes | Current user profile |
-| `POST` | `/auth/profile/complete` | Yes | Complete onboarding (Google OAuth users) |
-| `POST` | `/api/upload` | Yes | Upload dataset file |
-| `POST` | `/api/analyze` | Yes | Upload CSV and run full analysis pipeline |
-| `GET` | `/api/files/recent` | Yes | List user's uploaded files |
-| `POST` | `/api/chat` | Yes | SSE streaming AI chat |
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/` | Health check |
+| `GET` | `/health/db` | Database connection check |
+| `POST` | `/auth/signup` | Register a new user |
+| `POST` | `/auth/signin` | Login with email & password |
+| `POST` | `/auth/signout` | Logout current user |
+| `POST` | `/api/analyze` | Upload CSV and run AI analysis pipeline |
 
 ## Getting Started
 
 ### Prerequisites
 
 - Python 3.12+
-- Node.js 18+
-- [Supabase](https://supabase.com) project
-- Azure OpenAI deployment (GPT-4o)
+- [Supabase](https://supabase.com) account
+- [Groq](https://groq.com/developers/) API key
 
-### Backend Setup
+### Setup
 
 ```bash
-cd backend
+# Clone the repo
+git clone <repo-url>
+cd ascendly-mvp/backend
+
+# Create and activate virtual environment
 python -m venv venv
 source venv/bin/activate   # Windows: venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
-cp .env.example .env       # Fill in your credentials
-uvicorn main:app --reload  # Runs on http://localhost:8000
 ```
 
-### Frontend Setup
+### Configure environment
+
+Copy `.env.example` to `.env` and fill in your credentials:
 
 ```bash
-cd frontend
-npm install
-npm run dev                # Runs on http://localhost:5173
+cp .env.example .env
 ```
+
+### Create Supabase tables
+
+Run the following SQL in the Supabase SQL Editor:
+
+```sql
+-- Profiles table (linked to Supabase Auth)
+CREATE TABLE public.profiles (
+    id UUID REFERENCES auth.users(id) PRIMARY KEY,
+    email TEXT,
+    full_name TEXT,
+    avatar_url TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own profile" ON public.profiles
+    FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users can update own profile" ON public.profiles
+    FOR UPDATE USING (auth.uid() = id);
+
+-- Financial records table
+CREATE TABLE public.financial_records (
+    id BIGSERIAL PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id),
+    data JSONB,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- AI logs table
+CREATE TABLE public.ai_logs (
+    id BIGSERIAL PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id),
+    result JSONB,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+### Run the server
+
+```bash
+uvicorn main:app --reload
+```
+
+The API will be available at `http://localhost:8000`. Interactive docs at `http://localhost:8000/docs`.
 
 ## Environment Variables
 
@@ -108,38 +140,33 @@ npm run dev                # Runs on http://localhost:5173
 |----------|-------------|
 | `SUPABASE_URL` | Supabase project URL |
 | `SUPABASE_KEY` | Supabase anon/public key |
-| `SUPABASE_SERVICE_KEY` | Supabase service role key (bypasses RLS for uploads) |
-| `AZURE_API_KEY` | Azure OpenAI API key |
-| `AZURE_ENDPOINT` | Full deployment URL e.g. `https://<resource>.cognitiveservices.azure.com/openai/deployments/gpt-4o` |
-| `AZURE_API_VERSION` | Azure API version e.g. `2024-02-01` |
-| `CREWAI_LLM_MODEL` | LLM model identifier (default: `azure/gpt-4o`) |
+| `DATABASE_URL` | PostgreSQL connection string |
+| `GROQ_API_KEY` | Groq API key |
+| `CREWAI_LLM_MODEL` | LLM model identifier (default: `groq/llama-3.1-8b-instant`) |
 
 ## How the AI Pipeline Works
 
 ```
-Dataset (uploaded to Supabase)
-        │
-        ▼
-┌──────────────┐   Loads rows via query_dataset,
-│ Data Analyst │── calculates MoM growth & metrics
+CSV Upload
+    │
+    ▼
+┌──────────────┐   Cleans data, fuzzy-matches columns,
+│  Data Analyst │──  calculates MoM growth & statistics
 └──────┬───────┘
        │
        ▼
-┌──────────────┐   SARIMAX (≥12 data points) or SES fallback,
-│  Forecaster  │── 3-month forecast with confidence intervals
+┌──────────────┐   SARIMAX (≥12 points) or SES (<12 points),
+│  Forecaster  │──  3-month revenue forecast with confidence intervals
 └──────┬───────┘
        │
        ▼
-┌──────────────┐   Compares against industry benchmarks,
-│  Strategist  │── generates 3 actionable recommendations
+┌──────────────┐   Synthesizes insights into 3 actionable
+│  Strategist  │──  recommendations for the startup
 └──────┬───────┘
        │
        ▼
-  SSE Stream → Frontend
-  (progress events → result event → done event)
+  JSON Response
+  (historical data + forecast + strategy)
 ```
 
-### Chat Modes
-
-- **Quick mode** — Conversational questions answered token-by-token via LiteLLM streaming
-- **Analysis mode** — Triggered by keywords (`analyze`, `forecast`, `trend`, etc.) with a dataset selected; runs the full 3-agent pipeline with step progress updates
+Each agent runs sequentially with a 75-second cooldown between calls to respect Groq rate limits. Results are persisted to Supabase (`financial_records` and `ai_logs` tables).
