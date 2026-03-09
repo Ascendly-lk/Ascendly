@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import ReactMarkdown from 'react-markdown';
 import AIAnalyticsSidebar from '../../components/aianalytics/AIAnalyticsSidebar';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
 import { apiFetch } from '../../api';
@@ -51,6 +52,21 @@ const SUGGESTIONS_NO_FILE = [
     "How does the analysis work?",
 ];
 
+/* ── Progress Bar ── */
+const ProgressStep = ({ step, total, label }) => (
+    <div className="ai-chat-progress">
+        <div className="ai-chat-progress-bar">
+            <div
+                className="ai-chat-progress-fill"
+                style={{ width: `${(step / total) * 100}%` }}
+            />
+        </div>
+        <span className="ai-chat-progress-label">
+            Step {step}/{total} — {label}
+        </span>
+    </div>
+);
+
 /* ── Page Component ── */
 const AIAssistant = () => {
     const [messages, setMessages] = useState(INITIAL_MESSAGES);
@@ -61,6 +77,9 @@ const AIAssistant = () => {
     const [showSuggestions, setShowSuggestions] = useState(true);
     const messagesEndRef = useRef(null);
     const textareaRef = useRef(null);
+    // Keep a ref to messages for history building without adding to sendMessage deps
+    const messagesRef = useRef(messages);
+    useEffect(() => { messagesRef.current = messages; }, [messages]);
 
     /* Fetch user's uploaded files */
     const fetchFiles = useCallback(() => {
@@ -92,46 +111,99 @@ const AIAssistant = () => {
         const trimmed = (overrideText || input).trim();
         if (!trimmed || isSending) return;
 
-        const userMsg = { id: Date.now(), role: 'user', text: trimmed, time: now() };
-        setMessages((prev) => [...prev, userMsg]);
+        // Build history from all messages except the initial greeting
+        const history = messagesRef.current.slice(1).map((m) => ({
+            role: m.role,
+            content: m.text,
+        }));
+
+        const userMsg = { id: crypto.randomUUID(), role: 'user', text: trimmed, time: now() };
+        const assistantMsgId = crypto.randomUUID();
+
+        setMessages((prev) => [
+            ...prev,
+            userMsg,
+            { id: assistantMsgId, role: 'assistant', text: '', time: now(), streaming: true },
+        ]);
         setInput('');
         setIsSending(true);
         setShowSuggestions(false);
 
-        // Reset textarea height
         if (textareaRef.current) textareaRef.current.style.height = 'auto';
 
         try {
-            const body = { message: trimmed };
+            const body = { message: trimmed, history };
             if (selectedFileId) body.dataset_id = selectedFileId;
 
             const res = await apiFetch('/api/chat', {
                 method: 'POST',
                 body: JSON.stringify(body),
             });
-            const data = await res.json().catch(() => ({}));
+
             if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
                 throw new Error(data.detail || 'Request failed');
             }
-            setMessages((prev) => [
-                ...prev,
-                {
-                    id: data.message_id || Date.now() + 1,
-                    role: 'assistant',
-                    text: data.text || 'Sorry, I could not process that.',
-                    time: now(),
-                },
-            ]);
+
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop() ?? '';
+
+                for (const line of lines) {
+                    if (!line.startsWith('data: ')) continue;
+                    try {
+                        const event = JSON.parse(line.slice(6));
+
+                        if (event.type === 'token') {
+                            setMessages((prev) => prev.map((m) =>
+                                m.id === assistantMsgId
+                                    ? { ...m, text: m.text + event.content }
+                                    : m
+                            ));
+                        } else if (event.type === 'progress') {
+                            setMessages((prev) => prev.map((m) =>
+                                m.id === assistantMsgId
+                                    ? { ...m, progress: { step: event.step, total: event.total, label: event.label } }
+                                    : m
+                            ));
+                        } else if (event.type === 'result') {
+                            setMessages((prev) => prev.map((m) =>
+                                m.id === assistantMsgId
+                                    ? { ...m, text: event.text, progress: null }
+                                    : m
+                            ));
+                        } else if (event.type === 'done') {
+                            setMessages((prev) => prev.map((m) =>
+                                m.id === assistantMsgId
+                                    ? { ...m, streaming: false, progress: null }
+                                    : m
+                            ));
+                        } else if (event.type === 'error') {
+                            setMessages((prev) => prev.map((m) =>
+                                m.id === assistantMsgId
+                                    ? { ...m, text: event.content, streaming: false, progress: null }
+                                    : m
+                            ));
+                        }
+                    } catch {
+                        // Skip malformed SSE lines
+                    }
+                }
+            }
         } catch {
-            setMessages((prev) => [
-                ...prev,
-                {
-                    id: Date.now() + 1,
-                    role: 'assistant',
-                    text: 'Sorry, something went wrong. Please try again.',
-                    time: now(),
-                },
-            ]);
+            setMessages((prev) => prev.map((m) =>
+                m.id === assistantMsgId
+                    ? { ...m, text: 'Sorry, something went wrong. Please try again.', streaming: false, progress: null }
+                    : m
+            ));
         } finally {
             setIsSending(false);
             fetchFiles();
@@ -204,25 +276,27 @@ const AIAssistant = () => {
                                         </div>
                                     )}
                                     <div className="ai-chat-bubble-wrap">
-                                        <div className="ai-chat-bubble">{msg.text}</div>
+                                        {msg.progress ? (
+                                            <div className="ai-chat-bubble">
+                                                <ProgressStep {...msg.progress} />
+                                            </div>
+                                        ) : (
+                                            <div className="ai-chat-bubble">
+                                                {msg.streaming && !msg.text ? (
+                                                    <div className="ai-chat-typing">
+                                                        <span /><span /><span />
+                                                    </div>
+                                                ) : msg.role === 'assistant' ? (
+                                                    <ReactMarkdown>{msg.text}</ReactMarkdown>
+                                                ) : (
+                                                    msg.text
+                                                )}
+                                            </div>
+                                        )}
                                         <span className="ai-chat-time">{msg.time}</span>
                                     </div>
                                 </div>
                             ))}
-
-                            {/* Typing indicator */}
-                            {isSending && (
-                                <div className="ai-chat-message assistant">
-                                    <div className="ai-chat-msg-avatar">
-                                        <BotIcon />
-                                    </div>
-                                    <div className="ai-chat-bubble-wrap">
-                                        <div className="ai-chat-bubble ai-chat-typing">
-                                            <span /><span /><span />
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
 
                             <div ref={messagesEndRef} />
                         </div>
