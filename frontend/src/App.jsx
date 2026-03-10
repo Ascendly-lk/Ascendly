@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import {
   BrowserRouter as Router,
   Routes,
@@ -17,12 +18,13 @@ import EditProfile from "./pages/editProfile";
 import Settings from "./pages/Settings";
 import NotificationsPage from "./pages/Notifications";
 =======
+=======
+>>>>>>> bc9022c1e5c38d06b901fcd8a1a537992d7b5bf1
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardPlaceholder from './pages/DashboardPlaceholder';
+<<<<<<< HEAD
 import AccountPage from './pages/AccountPage';
 import DashboardLayout from './pages/DashboardLayout';
 import StartupDashboard from './pages/dashboard/StartupDashboard';
@@ -37,6 +39,8 @@ import InvestorsPage from './pages/dashboard/InvestorsPage';
 import TiersPage from './pages/dashboard/TiersPage';
 import AdvisorsPage from './pages/dashboard/AdvisorsPage';
 >>>>>>> 7f8c4b245347b20810c0a506dd51c7bee84bd2d5
+=======
+>>>>>>> bc9022c1e5c38d06b901fcd8a1a537992d7b5bf1
 
 function App() {
   return (
@@ -50,6 +54,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
+<<<<<<< HEAD
           {/* Account page — protected */}
           <Route path="/account" element={
             <ProtectedRoute><AccountPage /></ProtectedRoute>
@@ -114,6 +119,14 @@ function App() {
           <Route path="/dashboard/ai-analytics/assistant" element={
             <ProtectedRoute><AIAssistant /></ProtectedRoute>
           } />
+=======
+        {/* Role-based dashboard routes (placeholders) */}
+        <Route path="/dashboard/founder" element={<DashboardPlaceholder />} />
+        <Route path="/dashboard/investor" element={<DashboardPlaceholder />} />
+        <Route path="/dashboard/marketing" element={<DashboardPlaceholder />} />
+        <Route path="/dashboard/advisor" element={<DashboardPlaceholder />} />
+        <Route path="/dashboard/admin" element={<DashboardPlaceholder />} />
+>>>>>>> bc9022c1e5c38d06b901fcd8a1a537992d7b5bf1
 
           {/* Marketing Agency standalone routes — protected */}
           <Route path="/marketing-agency/projects" element={
