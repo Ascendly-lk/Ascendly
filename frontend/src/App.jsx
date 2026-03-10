@@ -30,6 +30,8 @@ import AdvisorsPage from './pages/dashboard/AdvisorsPage';
 // Patent Firm
 import PatentFirmDashboard from './pages/patent-firm/Dashboard';
 import Clients from './pages/patent-firm/Clients';
+import Applications from './pages/patent-firm/Applications';
+import ApplicationDetail from './pages/patent-firm/ApplicationDetail';
 
 function App() {
   return (
@@ -77,7 +79,8 @@ function App() {
             {/* Patent Firm Dashboard Routes */}
             <Route path="patent-firm/dashboard" element={<PatentFirmDashboard />} />
             <Route path="patent-firm/clients" element={<Clients />} />
-            <Route path="patent-firm/applications" element={<DashboardPlaceholder />} />
+            <Route path="patent-firm/applications" element={<Applications />} />
+            <Route path="patent-firm/applications/:id" element={<ApplicationDetail />} />
             <Route path="patent-firm/document-review" element={<DashboardPlaceholder />} />
             <Route path="patent-firm/payments" element={<DashboardPlaceholder />} />
 
