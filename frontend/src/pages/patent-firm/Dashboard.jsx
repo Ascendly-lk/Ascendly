@@ -151,7 +151,7 @@ const PatentFirmDashboard = () => {
                 </div>
 
                 {/* Grid Layouts */}
-                <div className="dashboard-row pf-row-2">
+                <div className="dashboard-row pf-row-2" style={{ gap: '2rem' }}>
                     {/* Column 1: Pipeline */}
                     <div className="pf-card pf-pipeline-card">
                         <div className="pf-card-header">
