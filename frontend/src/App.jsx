@@ -1,9 +1,30 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import DashboardPlaceholder from "./pages/DashboardPlaceholder";
+import Dashboard from "./pages/Dashboard";
+import Clients from "./pages/Clients";
+import Projects from "./pages/Projects";
+import CalendarPage from "./pages/Calendar";
+import Payments from "./pages/Payments";
+import EditProfile from "./pages/editProfile";
+import Settings from "./pages/Settings";
+import NotificationsPage from "./pages/Notifications";
+=======
+=======
+>>>>>>> bc9022c1e5c38d06b901fcd8a1a537992d7b5bf1
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardPlaceholder from './pages/DashboardPlaceholder';
+<<<<<<< HEAD
 import AccountPage from './pages/AccountPage';
 import DashboardLayout from './pages/DashboardLayout';
 import StartupDashboard from './pages/dashboard/StartupDashboard';
@@ -17,6 +38,9 @@ import PatentPage from './pages/dashboard/PatentPage';
 import InvestorsPage from './pages/dashboard/InvestorsPage';
 import TiersPage from './pages/dashboard/TiersPage';
 import AdvisorsPage from './pages/dashboard/AdvisorsPage';
+>>>>>>> 7f8c4b245347b20810c0a506dd51c7bee84bd2d5
+=======
+>>>>>>> bc9022c1e5c38d06b901fcd8a1a537992d7b5bf1
 
 function App() {
   return (
@@ -30,11 +54,39 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
+<<<<<<< HEAD
           {/* Account page — protected */}
           <Route path="/account" element={
             <ProtectedRoute><AccountPage /></ProtectedRoute>
           } />
 
+<<<<<<< HEAD
+        {/* Dashboard */}
+        <Route path="/dashboard" element={<Dashboard />} />
+
+        {/* Role-based dashboard routes */}
+        <Route path="/dashboard/founder" element={<Dashboard />} />
+        <Route path="/dashboard/investor" element={<Dashboard />} />
+        <Route path="/dashboard/marketing" element={<Dashboard />} />
+        <Route path="/dashboard/advisor" element={<Dashboard />} />
+        <Route path="/dashboard/admin" element={<Dashboard />} />
+        <Route path="/dashboard/ai-analytics" element={<Dashboard />} />
+        <Route path="/dashboard/clients" element={<Clients />} />
+        <Route path="/dashboard/projects" element={<Projects />} />
+        <Route path="/dashboard/calendar" element={<CalendarPage />} />
+        <Route path="/dashboard/payments" element={<Payments />} />
+        <Route path="/dashboard/profile" element={<Dashboard />} />
+        <Route path="/dashboard/help" element={<Dashboard />} />
+
+        {/* Edit Profile page */}
+        <Route path="/edit-profile" element={<EditProfile />} />
+
+        {/* Settings page */}
+        <Route path="/settings" element={<Settings />} />
+
+        {/* Notifications page */}
+        <Route path="/notifications" element={<NotificationsPage />} />
+=======
           {/* ── Shared Dashboard Layout — protected ──────────────────────── */}
           <Route path="/dashboard" element={
             <ProtectedRoute><DashboardLayout /></ProtectedRoute>
@@ -55,6 +107,7 @@ function App() {
             <Route path="advisor" element={<DashboardPlaceholder />} />
             <Route path="admin" element={<DashboardPlaceholder />} />
           </Route>
+>>>>>>> 7f8c4b245347b20810c0a506dd51c7bee84bd2d5
 
           {/* ── AI Analytics — protected, standalone layout ─────────────── */}
           <Route path="/dashboard/ai-analytics" element={
@@ -66,6 +119,14 @@ function App() {
           <Route path="/dashboard/ai-analytics/assistant" element={
             <ProtectedRoute><AIAssistant /></ProtectedRoute>
           } />
+=======
+        {/* Role-based dashboard routes (placeholders) */}
+        <Route path="/dashboard/founder" element={<DashboardPlaceholder />} />
+        <Route path="/dashboard/investor" element={<DashboardPlaceholder />} />
+        <Route path="/dashboard/marketing" element={<DashboardPlaceholder />} />
+        <Route path="/dashboard/advisor" element={<DashboardPlaceholder />} />
+        <Route path="/dashboard/admin" element={<DashboardPlaceholder />} />
+>>>>>>> bc9022c1e5c38d06b901fcd8a1a537992d7b5bf1
 
           {/* Marketing Agency standalone routes — protected */}
           <Route path="/marketing-agency/projects" element={

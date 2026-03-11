@@ -10,7 +10,16 @@
 /* Left Side - Gradient Background with Diagonal Slant */
 .register-left {
     flex: 1;
+<<<<<<< HEAD
+<<<<<<< HEAD
+    background: linear-gradient(135deg,  #00FFEF 3%, #0E817A 37%, #1A1A1A 94%);
+    background: linear-gradient(135deg, #1A8B7E 0%, #00E5CC 100%);
+=======
     background: linear-gradient(200deg, #00FFE5 0%, #23A7B4 45%, #0B1220 100%);
+>>>>>>> 7f8c4b245347b20810c0a506dd51c7bee84bd2d5
+=======
+    background: linear-gradient(135deg, #1A8B7E 0%, #00E5CC 100%);
+>>>>>>> bc9022c1e5c38d06b901fcd8a1a537992d7b5bf1
     position: relative;
     overflow: hidden;
     /* More aggressive diagonal slant for stronger visual identity */
