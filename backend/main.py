@@ -139,6 +139,29 @@ async def register(payload: RegisterRequest):
     }
 
 
+def safe_update_activity(auth_user_id: str, profile_data: dict):
+    from database.supabase_client import update_profile
+    try:
+        update_data = {"updated_at": datetime.now(timezone.utc).isoformat()}
+        if profile_data:
+            if "login_count" in profile_data:
+                current_count = profile_data.get("login_count")
+                update_data["login_count"] = (current_count if isinstance(current_count, int) else 0) + 1
+            else:
+                print("[METRICS DEBUG] 'login_count' field missing in profile data.")
+            
+            # Using 'last_login_at' as expected by metrics if present
+            if "last_login_at" in profile_data:
+                update_data["last_login_at"] = datetime.now(timezone.utc).isoformat()
+            else:
+                print("[METRICS DEBUG] 'last_login_at' field missing in profile data.")
+                
+        print(f"[METRICS DEBUG] Updating profile {auth_user_id} with: {update_data}")
+        update_profile(auth_user_id, update_data)
+    except Exception as e:
+        print(f"[METRICS DEBUG] Failed to update activity for {auth_user_id}: {str(e)}")
+
+
 @app.post("/auth/signin")
 async def login(payload: LoginRequest):
     """
@@ -158,6 +181,9 @@ async def login(payload: LoginRequest):
 
     # Fetch profile to get full_name and role
     profile = get_profile_by_auth_id(auth_user_id)
+
+    # Safe activity update (fire and forget)
+    safe_update_activity(auth_user_id, profile)
 
     # Split full_name back into first/last for the frontend
     full_name = profile.get("full_name", "") if profile else ""
@@ -287,6 +313,84 @@ async def complete_profile(payload: ProfileCompleteRequest, current_user=Depends
         "message": "Profile complete",
         "onboarding_completed": True,
         "role": payload.role
+    }
+
+
+@app.get("/dashboard/user-count")
+async def get_user_count(current_user=Depends(require_auth)):
+    """Fetch the total count of registered users from the profiles table."""
+    from database.supabase_client import get_supabase_admin
+    admin = get_supabase_admin()
+    try:
+        # Fetch the count efficiently using count='exact' and head=True to avoid returning data
+        res = admin.table("profiles").select("id", count="exact", head=True).execute()
+        user_count = res.count if res.count is not None else 0
+        print(f"[DEBUG] User count fetched: {user_count}")
+        return {"user_count": user_count}
+    except Exception as e:
+        print(f"[ERROR] Failed to fetch user count: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error while fetching user count.")
+
+
+@app.get("/dashboard/metrics")
+async def get_dashboard_metrics(current_user=Depends(require_auth)):
+    from database.supabase_client import get_supabase_admin
+    admin = get_supabase_admin()
+    
+    # 1. Active Users (Showing total user count as requested for dashboard)
+    active_users = 0
+    total_users = 0
+    try:
+        # Fetch the total count efficiently for "Active users" card
+        res_total = admin.table("profiles").select("id", count="exact", head=True).execute()
+        total_users = res_total.count if res_total.count is not None else 0
+        active_users = total_users  # Show total count as active users in dashboard
+        
+        print(f"[METRICS DEBUG] Queried 'profiles'. total_count={total_users}")
+    except Exception as e:
+        print(f"[METRICS DEBUG] Error fetching users from 'profiles': {e}")
+        pass
+
+    # 2. Monthly Revenue (Defaulting to 0 since no payments table exists yet)
+    monthly_revenue = 0
+
+    # 3. Engagement Score
+    engagement_score = 0
+    if total_users > 0:
+        engagement_score = min(int((active_users / total_users) * 100), 100)
+    
+    # 4. Growth (Defaulting to simple logic to prevent crashing)
+    # Ideally compare this month's registrants with last month
+    growth = 0
+    try:
+        now = datetime.now(timezone.utc)
+        current_month_start = datetime(now.year, now.month, 1, tzinfo=timezone.utc).isoformat()
+        
+        last_month = now.month - 1 if now.month > 1 else 12
+        last_year = now.year if now.month > 1 else now.year - 1
+        last_month_start = datetime(last_year, last_month, 1, tzinfo=timezone.utc).isoformat()
+        
+        current_month_res = admin.table("profiles").select("id", count="exact").gte("created_at", current_month_start).execute()
+        current_month_signups = current_month_res.count if current_month_res.count is not None else len(current_month_res.data)
+
+        last_month_res = admin.table("profiles").select("id", count="exact").gte("created_at", last_month_start).lt("created_at", current_month_start).execute()
+        last_month_signups = last_month_res.count if last_month_res.count is not None else len(last_month_res.data)
+        
+        if last_month_signups > 0:
+            growth = round(((current_month_signups - last_month_signups) / last_month_signups) * 100, 1)
+        elif current_month_signups > 0:
+            growth = 100.0  # arbitrary representation for first month growth
+            
+        print(f"[METRICS DEBUG] Growth calculated: current_month={current_month_signups}, last_month={last_month_signups}, growth={growth}%")
+    except Exception as e:
+        print(f"[METRICS DEBUG] Error calculating growth from 'profiles': {e}")
+        pass
+
+    return {
+        "active_users": active_users,
+        "monthly_revenue": monthly_revenue,
+        "engagement_score": engagement_score,
+        "growth": growth
     }
 
 
