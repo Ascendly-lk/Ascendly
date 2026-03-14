@@ -132,9 +132,11 @@ const Sidebar = () => {
             </nav>
 
             <div className="sidebar-footer">
-                <div className="sidebar-upgrade">
-                    <p>Upgrade to PRO to get access to all features!</p>
-                </div>
+                {!isPatentFirm && (
+                    <div className="sidebar-upgrade">
+                        <p>Upgrade to PRO to get access to all features!</p>
+                    </div>
+                )}
                 <a href="#" className="sidebar-help">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="12" cy="12" r="10" />

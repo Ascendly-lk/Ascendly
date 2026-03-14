@@ -1,8 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import StatCard from "../../components/dashboard/StatCard";
 import TopBar from "../../components/dashboard/TopBar";
 import "./Dashboard.css";
 
 const PatentFirmDashboard = () => {
+    const navigate = useNavigate();
     // Icons
     const fileIcon = (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" strokeWidth="2">
@@ -124,7 +126,7 @@ const PatentFirmDashboard = () => {
                     <p className="pf-urgent-desc">These applications have approaching deadlines</p>
 
                     <div className="pf-urgent-list">
-                        <div className="pf-urgent-item">
+                        <button type="button" className="pf-urgent-item pf-urgent-link" onClick={() => { window.location.href = '/dashboard/patent-firm/applications'; }}>
                             <div className="pf-urgent-info">
                                 <h3>AI-Powered Task Automation</h3>
                                 <p>TechCo AI • PAT-2026-018</p>
@@ -132,11 +134,11 @@ const PatentFirmDashboard = () => {
                             </div>
                             <div className="pf-urgent-actions">
                                 <span className="pf-badge pf-orange-badge">2 days left</span>
-                                <button className="pf-btn-outline">Review &rarr;</button>
+                                <span className="pf-btn-outline">Review →</span>
                             </div>
-                        </div>
+                        </button>
 
-                        <div className="pf-urgent-item">
+                        <button type="button" className="pf-urgent-item pf-urgent-link" onClick={() => { window.location.href = '/dashboard/patent-firm/applications'; }}>
                             <div className="pf-urgent-info">
                                 <h3>Smart IoT Sensor System</h3>
                                 <p>IoT Innovations • PAT-2026-015</p>
@@ -144,14 +146,14 @@ const PatentFirmDashboard = () => {
                             </div>
                             <div className="pf-urgent-actions">
                                 <span className="pf-badge pf-orange-badge">4 days left</span>
-                                <button className="pf-btn-outline">Review &rarr;</button>
+                                <span className="pf-btn-outline">Review →</span>
                             </div>
-                        </div>
+                        </button>
                     </div>
                 </div>
 
                 {/* Grid Layouts */}
-                <div className="dashboard-row pf-row-2" style={{ gap: '2rem' }}>
+                <div className="dashboard-row pf-row-2">
                     {/* Column 1: Pipeline */}
                     <div className="pf-card pf-pipeline-card">
                         <div className="pf-card-header">
@@ -183,7 +185,13 @@ const PatentFirmDashboard = () => {
                             </div>
                         </div>
 
-                        <button className="pf-btn-full">View All Applications &rarr;</button>
+                        <button
+                            className="pf-btn-full"
+                            type="button"
+                            onClick={() => navigate('/dashboard/patent-firm/applications')}
+                        >
+                            View All Applications →
+                        </button>
                     </div>
 
                     {/* Column 2: Quick Actions */}

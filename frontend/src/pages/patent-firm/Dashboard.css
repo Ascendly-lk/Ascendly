@@ -20,6 +20,14 @@
     padding-top: 16px;
 }
 
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+    width: 100%;
+    max-width: 100%;
+}
+
 /* ─── Stat Cards Flow ────────────────────────────────────────────────────── */
 
 .pf-stat-subtitle {
@@ -51,13 +59,16 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
 }
 
 .pf-urgent-header h2 {
     color: #F59E0B;
     font-size: 18px;
     font-weight: 600;
+    margin: 0;
+    line-height: 1.2;
+    white-space: nowrap;
 }
 
 .pf-urgent-desc {
@@ -80,6 +91,26 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.pf-urgent-link {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pf-urgent-link:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+.pf-urgent-link:focus-visible {
+    outline: 2px solid #60a5fa;
+    outline-offset: 2px;
 }
 
 .pf-urgent-info h3 {
@@ -136,7 +167,9 @@
 
 /* ─── Grid Configurations ───────────────────────────────────────────────── */
 .pf-row-2 {
+    display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 4fr);
+    gap: 24px;
     margin-bottom: 24px;
 }
 

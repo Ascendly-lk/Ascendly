@@ -26,12 +26,14 @@ import PatentPage from './pages/dashboard/PatentPage';
 import InvestorsPage from './pages/dashboard/InvestorsPage';
 import TiersPage from './pages/dashboard/TiersPage';
 import AdvisorsPage from './pages/dashboard/AdvisorsPage';
+import DocumentReview from './pages/patent-firm/DocumentReview';
 
 // Patent Firm
 import PatentFirmDashboard from './pages/patent-firm/Dashboard';
 import Clients from './pages/patent-firm/Clients';
 import Applications from './pages/patent-firm/Applications';
 import ApplicationDetail from './pages/patent-firm/ApplicationDetail';
+import PatentFirmPayments from './pages/patent-firm/Payments';
 
 function App() {
   return (
@@ -81,8 +83,8 @@ function App() {
             <Route path="patent-firm/clients" element={<Clients />} />
             <Route path="patent-firm/applications" element={<Applications />} />
             <Route path="patent-firm/applications/:id" element={<ApplicationDetail />} />
-            <Route path="patent-firm/document-review" element={<DashboardPlaceholder />} />
-            <Route path="patent-firm/payments" element={<DashboardPlaceholder />} />
+            <Route path="patent-firm/document-review" element={<DocumentReview />} />
+            <Route path="patent-firm/payments" element={<PatentFirmPayments />} />
 
             {/* Role placeholders */}
             <Route path="founder" element={<DashboardPlaceholder />} />
@@ -92,8 +94,6 @@ function App() {
             <Route path="admin" element={<DashboardPlaceholder />} />
             <Route path="marketing-agency/projects" element={<MarketingAgencyProjects />} />
             <Route path="marketing-agency/feedbacks" element={<Feedbacks />} />
-            <Route path="patent" element={<PatentPage />} />
-            <Route path="patent-firm/dashboard" element={<PatentPage />} />
           </Route>
 
           <Route
