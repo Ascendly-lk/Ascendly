@@ -181,9 +181,10 @@ export async function fetchMe() {
 export function getRoleDashboardRoute(role) {
     const roleRoutes = {
         'Startup Founder': '/dashboard/startup',
-        'Investor': '/dashboard/investor',
+        'Investor': '/dashboard/investors',
         'Marketing Agency': '/dashboard/marketing-agency/projects',
-        'Business Advisor': '/dashboard/advisor',
+        'Business Advisor': '/dashboard/advisors',
+        'Patent Firm': '/dashboard/patent-firm/dashboard',
         'Admin': '/dashboard/admin',
     };
     return roleRoutes[role] || '/dashboard/startup';
