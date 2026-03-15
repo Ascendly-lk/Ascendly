@@ -14,7 +14,14 @@ All tools return a dict (required by ADK). On failure they return {"error": "...
 so the agent can gracefully handle the fallback.
 """
 import os
+import re
 import requests
+
+# Prompt-injection guard for untrusted web content passed to LLM agents
+_INJECTION_PATTERNS = re.compile(
+    r"(ignore\s+(all\s+)?previous|disregard|forget|new\s+instructions?|system\s*:)",
+    re.IGNORECASE,
+)
 
 
 # ── World Bank ─────────────────────────────────────────────────────────────────
@@ -124,17 +131,21 @@ def fetch_serp_competitors(category: str) -> dict:
         resp.raise_for_status()
         data = resp.json()
 
+        # Sanitise untrusted web content before passing to the LLM agent.
+        def _safe_text(text: str, max_len: int = 150) -> str:
+            cleaned = _INJECTION_PATTERNS.sub("[removed]", text or "")
+            return cleaned[:max_len]
+
         records = []
         for result in data.get("organic_results", [])[:5]:
             records.append({
-                "name": result.get("title", "Unknown"),
+                "name": _safe_text(result.get("title", "Unknown"), 100),
                 "metric": "competitor_data",
                 "value": 0,
                 "unit": "reference",
                 "period": "2024",
                 "source": "SerpAPI",
-                "snippet": result.get("snippet", "")[:200],
-                "link": result.get("link", ""),
+                "snippet": _safe_text(result.get("snippet", "")),
             })
 
         return {"source": "serpapi", "records": records, "count": len(records)}

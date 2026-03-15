@@ -61,14 +61,17 @@ def _normalise_records(records: list, category: str) -> list:
     for r in records:
         if not isinstance(r, dict):
             continue
+        try:
+            value = float(r.get("value", 0) or 0)
+        except (ValueError, TypeError):
+            value = 0.0
         normalised.append({
             "name": str(r.get("name", "Unknown")),
             "metric": str(r.get("metric", "benchmark")),
-            "value": float(r.get("value", 0) or 0),
+            "value": value,
             "unit": str(r.get("unit", "")),
             "period": str(r.get("period", "")),
             "source": str(r.get("source", "ADK")),
-            "category": category,
         })
     return normalised
 
@@ -141,8 +144,10 @@ class BenchmarkOrchestrator:
 
     def run(self, category: str) -> list[dict]:
         """
-        Sync wrapper — safe to call from CrewAI tool (runs in asyncio.to_thread,
-        so no running event loop exists in this thread).
+        Sync wrapper around run_async().
+        Uses asyncio.run() directly (preferred path — creates a new event loop).
+        Falls back to a ThreadPoolExecutor if a loop is already running in the
+        calling thread (e.g. nested asyncio contexts).
         """
         try:
             return asyncio.run(self.run_async(category))

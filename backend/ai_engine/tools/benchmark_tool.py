@@ -56,36 +56,46 @@ def query_benchmarks(category: str) -> str:
     if category not in valid_categories:
         return json.dumps({"error": f"Invalid category '{category}'. Must be one of: {valid_categories}"})
 
-    # ── Layer 1: In-memory cache ──────────────────────────────────────────────
+    # Shared cache helpers — used by any layer that succeeds
     try:
         from cache.cache_manager import get_cached_benchmark, set_cached_benchmark
-        cached = get_cached_benchmark(category)
-        if cached is not None:
-            print(f"[Ascendly] Benchmark cache HIT for category='{category}'")
-            return cached
-    except Exception as e:
-        print(f"[Ascendly] Cache read failed: {e}")
+        _cache_available = True
+    except Exception:
+        _cache_available = False
+        get_cached_benchmark = set_cached_benchmark = None
+
+    def _cache_and_return(records: list) -> str:
+        """Serialise records, write to cache (from any layer), and return."""
+        result = json.dumps(records, indent=2)
+        if _cache_available:
+            try:
+                set_cached_benchmark(category, result)
+            except Exception:
+                pass
+        return result
+
+    # ── Layer 1: In-memory cache ──────────────────────────────────────────────
+    if _cache_available:
+        try:
+            cached = get_cached_benchmark(category)
+            if cached is not None:
+                print(f"[Ascendly] Benchmark cache HIT for category='{category}'")
+                return cached
+        except Exception as e:
+            print(f"[Ascendly] Cache read failed: {e}")
 
     # ── Layer 2: Google ADK live fetch ────────────────────────────────────────
-    adk_records = []
     try:
         from ai_engine.adk.orchestrator import BenchmarkOrchestrator
         print(f"[Ascendly] ADK benchmark fetch starting for category='{category}'...")
         orchestrator = BenchmarkOrchestrator()
         adk_records = orchestrator.run(category)
         print(f"[Ascendly] ADK returned {len(adk_records)} benchmark records.")
+        if adk_records:
+            # TODO: upsert to Supabase benchmarks table with fetched_at=NOW() once columns are added
+            return _cache_and_return(adk_records)
     except Exception as e:
         print(f"[Ascendly] ADK benchmark fetch failed: {e}")
-
-    if adk_records:
-        result = json.dumps(adk_records, indent=2)
-        try:
-            from cache.cache_manager import set_cached_benchmark
-            set_cached_benchmark(category, result)
-        except Exception:
-            pass
-        # TODO: upsert to Supabase benchmarks table with fetched_at=NOW() once columns are added
-        return result
 
     # ── Layer 3: Supabase fallback (last-known-good) ──────────────────────────
     try:
@@ -105,10 +115,10 @@ def query_benchmarks(category: str) -> str:
                 }
                 for r in rows
             ]
-            return json.dumps(benchmarks, indent=2)
+            return _cache_and_return(benchmarks)
     except Exception as e:
         print(f"[Ascendly] Supabase fallback failed: {e}")
 
     # ── Layer 4: Hardcoded defaults ───────────────────────────────────────────
     print(f"[Ascendly] All sources failed — using hardcoded defaults for '{category}'.")
-    return json.dumps(_DEFAULTS.get(category, []), indent=2)
+    return _cache_and_return(_DEFAULTS.get(category, []))
