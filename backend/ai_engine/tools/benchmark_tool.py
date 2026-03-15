@@ -28,6 +28,7 @@ def query_benchmarks(category: str) -> str:
       query_benchmarks("competitor")
     """
     try:
+        from cache.cache_manager import get_cached_benchmark, set_cached_benchmark
         from database.supabase_client import get_records
 
         valid_categories = ("industry_growth", "competitor")
@@ -35,6 +36,12 @@ def query_benchmarks(category: str) -> str:
             return json.dumps({
                 "error": f"Invalid category '{category}'. Must be one of: {valid_categories}"
             })
+
+        # Return from cache if available (TTL managed by cache_manager — 24h)
+        cached = get_cached_benchmark(category)
+        if cached:
+            print(f"[Ascendly] Benchmark cache HIT for category='{category}'")
+            return cached
 
         response = get_records("benchmarks", {"category": category})
         rows = response.data if response and response.data else []
@@ -45,7 +52,6 @@ def query_benchmarks(category: str) -> str:
                            "The benchmarks table may not be populated yet."
             })
 
-        # Return clean, agent-readable records
         benchmarks = [
             {
                 "name": r.get("name"),
@@ -58,7 +64,9 @@ def query_benchmarks(category: str) -> str:
             for r in rows
         ]
 
-        return json.dumps(benchmarks, indent=2)
+        result = json.dumps(benchmarks, indent=2)
+        set_cached_benchmark(category, result)
+        return result
 
     except Exception as e:
         return json.dumps({"error": f"Failed to query benchmarks: {str(e)}"})
