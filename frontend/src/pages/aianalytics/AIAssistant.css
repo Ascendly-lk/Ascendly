@@ -222,6 +222,38 @@ git
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
 }
 
+/* Analysis progress bar */
+.ai-chat-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 220px;
+}
+.ai-chat-progress-bar {
+    height: 4px;
+    background: rgba(0, 255, 229, 0.12);
+    border-radius: 2px;
+    overflow: hidden;
+}
+.ai-chat-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00FFE5, #00B4D8);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+}
+.ai-chat-progress-label {
+    font-size: 12px;
+    color: #94A3B8;
+}
+
+/* Markdown inside assistant bubbles */
+.ai-chat-bubble p { margin: 0 0 6px 0; }
+.ai-chat-bubble p:last-child { margin-bottom: 0; }
+.ai-chat-bubble strong { color: #00FFE5; font-weight: 600; }
+.ai-chat-bubble em { color: #94A3B8; font-style: italic; }
+.ai-chat-bubble ul, .ai-chat-bubble ol { margin: 4px 0 6px 0; padding-left: 18px; }
+.ai-chat-bubble li { margin-bottom: 4px; }
+
 .ai-chat-message.user .ai-chat-bubble {
     background: rgba(0, 200, 180, 0.12);
     border: 1px solid rgba(0, 255, 229, 0.2);
@@ -395,4 +427,61 @@ git
     .ai-chat-message {
         max-width: 90%;
     }
+}
+
+/* ── File selector dropdown ── */
+.ai-chat-file-selector {
+    margin-left: auto;
+}
+
+.ai-chat-file-dropdown {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #e2e8f0;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    outline: none;
+    max-width: 220px;
+    text-overflow: ellipsis;
+}
+
+.ai-chat-file-dropdown:focus {
+    border-color: #10b981;
+}
+
+.ai-chat-file-dropdown option {
+    background: #0f1a2e;
+    color: #e2e8f0;
+}
+
+/* ── Suggestion chips ── */
+.ai-chat-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 20px 12px;
+}
+
+.ai-chat-chip {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    color: #10b981;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.ai-chat-chip:hover:not(:disabled) {
+    background: rgba(16, 185, 129, 0.18);
+    border-color: #10b981;
+}
+
+.ai-chat-chip:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }

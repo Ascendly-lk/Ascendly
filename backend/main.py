@@ -15,8 +15,10 @@ from database.supabase_client import (
     sign_up, sign_in, sign_out, require_auth,
     create_profile, get_profile_by_auth_id
 )
-# from app.api.endpoints.analysis import router as analysis_router
-# from app.api.insights import router as insights_router
+from app.api.endpoints.analysis import router as analysis_router
+from app.api.endpoints.dashboard import router as dashboard_router
+from app.api.endpoints.chat import router as chat_router
+from app.api.insights import router as insights_router
 
 app = FastAPI(
     title="Ascendly API",
@@ -35,8 +37,10 @@ app.add_middleware(
 
 
 # ============ ROUTERS ============
-# app.include_router(analysis_router)
-# app.include_router(insights_router)
+app.include_router(analysis_router)
+app.include_router(dashboard_router)
+app.include_router(chat_router)
+app.include_router(insights_router)
 
 
 # ============ SCHEMAS ============
@@ -179,8 +183,12 @@ async def login(payload: LoginRequest):
     auth_user_id = str(auth_response.user.id)
     access_token = auth_response.session.access_token
 
-    # Fetch profile to get full_name and role
-    profile = get_profile_by_auth_id(auth_user_id)
+    # Fetch profile to get full_name and role (non-fatal if missing)
+    try:
+        profile = get_profile_by_auth_id(auth_user_id)
+    except Exception as e:
+        print(f"[login] Profile fetch failed: {e}")
+        profile = None
 
     # Safe activity update (fire and forget)
     safe_update_activity(auth_user_id, profile)

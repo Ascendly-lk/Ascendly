@@ -1,9 +1,11 @@
+import { useState, useEffect } from 'react';
 import AIAnalyticsSidebar from '../../components/aianalytics/AIAnalyticsSidebar';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
 import AIStatCard from '../../components/aianalytics/AIStatCard';
 import AIAnalyticsChart from '../../components/aianalytics/AIAnalyticsChart';
 import RecentUploads from '../../components/aianalytics/RecentUploads';
 import QuickActions from '../../components/aianalytics/QuickActions';
+import { apiFetch } from '../../api';
 import './AIAnalyticsDashboard.css';
 
 /* ── Stat card icons ── */
@@ -41,6 +43,27 @@ const ReportIcon = () => (
 );
 
 const AIAnalyticsDashboard = () => {
+    const [metrics, setMetrics] = useState(null);
+
+    useEffect(() => {
+        apiFetch('/api/dashboard/metrics')
+            .then((res) => {
+                if (!res.ok) throw new Error('Failed to fetch metrics');
+                return res.json();
+            })
+            .then(setMetrics)
+            .catch(() => {});
+    }, []);
+
+    const m = metrics || {
+        files_uploaded: { value: '--', change_percent: 0 },
+        ai_queries: { value: '--', change_percent: 0 },
+        data_processed: { value: '--', change_percent: 0 },
+        active_reports: { value: '--', change_percent: 0 },
+    };
+
+    const fmt = (v) => (v >= 0 ? `+${v}%` : `${v}%`);
+
     return (
         <div className="ai-dashboard">
             <AIAnalyticsSidebar />
@@ -54,29 +77,29 @@ const AIAnalyticsDashboard = () => {
                         <AIStatCard
                             icon={<UploadIcon />}
                             title="Files Uploaded"
-                            value="24"
-                            change="+12.5%"
+                            value={String(m.files_uploaded.value)}
+                            change={fmt(m.files_uploaded.change_percent)}
                             variant="dark"
                         />
                         <AIStatCard
                             icon={<QueryIcon />}
                             title="AI Queries"
-                            value="156"
-                            change="+8.3%"
+                            value={String(m.ai_queries.value)}
+                            change={fmt(m.ai_queries.change_percent)}
                             variant="dark"
                         />
                         <AIStatCard
                             icon={<DataIcon />}
                             title="Data Processed"
-                            value="2.4 GB"
-                            change="+15.7%"
+                            value={String(m.data_processed.value)}
+                            change={fmt(m.data_processed.change_percent)}
                             variant="dark"
                         />
                         <AIStatCard
                             icon={<ReportIcon />}
                             title="Active Reports"
-                            value="8"
-                            change="+5.2%"
+                            value={String(m.active_reports.value)}
+                            change={fmt(m.active_reports.change_percent)}
                             variant="highlight"
                         />
                     </div>

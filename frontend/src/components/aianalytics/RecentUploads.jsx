@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react';
+import { apiFetch } from '../../api';
+import { formatBytes, timeAgo } from '../../utils/format';
 import './RecentUploads.css';
 
-const FILES = [
+const FALLBACK_FILES = [
     { name: 'sales_data_2024.csv', meta: '2 hours ago • 2.4 MB' },
     { name: 'customer_analysis.xlsx', meta: '5 hours ago • 1.8 MB' },
     { name: 'quarterly_report.pdf', meta: '1 day ago • 890 KB' },
@@ -19,11 +22,33 @@ const FileIcon = () => (
 );
 
 const RecentUploads = () => {
+    const [files, setFiles] = useState(FALLBACK_FILES);
+
+    useEffect(() => {
+        const fetchFiles = () => {
+            apiFetch('/api/files/recent?limit=5')
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.files && data.files.length > 0) {
+                        setFiles(data.files.map((f) => ({
+                            name: f.name,
+                            meta: `${timeAgo(f.uploaded_at)} • ${formatBytes(f.size_bytes)}`,
+                        })));
+                    }
+                })
+                .catch(() => {});
+        };
+        fetchFiles();
+        const onVisible = () => { if (document.visibilityState === 'visible') fetchFiles(); };
+        document.addEventListener('visibilitychange', onVisible);
+        return () => document.removeEventListener('visibilitychange', onVisible);
+    }, []);
+
     return (
         <div className="recent-uploads-card">
             <h3 className="recent-uploads-title">Recent Uploads</h3>
             <ul className="recent-uploads-list">
-                {FILES.map((file, i) => (
+                {files.map((file, i) => (
                     <li key={i} className="recent-uploads-item">
                         <div className="recent-uploads-icon">
                             <FileIcon />
