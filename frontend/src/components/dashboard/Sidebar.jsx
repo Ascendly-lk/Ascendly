@@ -113,7 +113,13 @@ const Sidebar = () => {
     return (
         <div className="sidebar">
             <div className="sidebar-header">
-                <h1 className="sidebar-logo">Ascendly</h1>
+                <h1 
+                    className="sidebar-logo" 
+                    onClick={() => navigate('/dashboard/startup')}
+                    style={{ cursor: 'pointer' }}
+                >
+                    Ascendly
+                </h1>
                 <p className="sidebar-subtitle">{dashboardTitle}</p>
             </div>
 
