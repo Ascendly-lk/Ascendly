@@ -1,10 +1,33 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StatCard from "../../components/dashboard/StatCard";
 import TopBar from "../../components/dashboard/TopBar";
+import { fetchDashboardStats, fetchRecentActivity } from '../../utils/patent-api';
 import "./Dashboard.css";
 
 const PatentFirmDashboard = () => {
     const navigate = useNavigate();
+    const [stats, setStats] = useState(null);
+    const [activity, setActivity] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadDashboardData = async () => {
+            try {
+                const [statsData, activityData] = await Promise.all([
+                    fetchDashboardStats(),
+                    fetchRecentActivity()
+                ]);
+                setStats(statsData);
+                setActivity(activityData);
+            } catch (error) {
+                console.error("Failed to load dashboard data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadDashboardData();
+    }, []);
     // Icons
     const fileIcon = (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" strokeWidth="2">
@@ -86,7 +109,7 @@ const PatentFirmDashboard = () => {
                 <div className="dashboard-row dashboard-stats">
                     <StatCard
                         title="Active Applications"
-                        value="18"
+                        value={stats ? stats.active_applications : "..."}
                         icon={fileIcon}
                         variant="dark"
                         decoration={<div className="pf-stat-subtitle">+3 this week</div>}
@@ -94,7 +117,7 @@ const PatentFirmDashboard = () => {
 
                     <StatCard
                         title="Total Clients"
-                        value="42"
+                        value={stats ? stats.total_clients : "..."}
                         icon={usersIcon}
                         variant="dark"
                         decoration={<div className="pf-stat-subtitle">+2 new this month</div>}
@@ -102,7 +125,7 @@ const PatentFirmDashboard = () => {
 
                     <StatCard
                         title="Pending Reviews"
-                        value="7"
+                        value={stats ? stats.pending_reviews : "..."}
                         icon={clockIcon}
                         variant="dark"
                         decoration={<div className="pf-stat-subtitle text-orange">Needs attention</div>}
@@ -110,10 +133,10 @@ const PatentFirmDashboard = () => {
 
                     <StatCard
                         title="Revenue (MTD)"
-                        value="$85K"
+                        value={stats ? stats.revenue_mtd : "..."}
                         icon={dollarIcon}
                         variant="gradient"
-                        decoration={<div className="pf-stat-subtitle">+12% vs last month</div>}
+                        decoration={<div className="pf-stat-subtitle">{stats ? stats.revenue_growth : "+0%"} vs last month</div>}
                     />
                 </div>
 
@@ -226,27 +249,17 @@ const PatentFirmDashboard = () => {
                     <p className="pf-card-desc">Latest updates from your clients and team</p>
 
                     <div className="pf-activity-list">
-                        <div className="pf-activity-item">
-                            <div className="pf-icon-circle bg-blue-subtle">{fileIcon}</div>
-                            <div className="pf-activity-info">
-                                <h4>New application submitted by TechCo AI</h4>
-                                <p>TechCo AI • 2 hours ago</p>
+                        {activity.map((item, idx) => (
+                            <div className="pf-activity-item" key={idx}>
+                                <div className="pf-icon-circle bg-blue-subtle">
+                                    {item.type === 'submission' ? fileIcon : item.type === 'completion' ? checkIcon : calendarIcon}
+                                </div>
+                                <div className="pf-activity-info">
+                                    <h4>{item.title}</h4>
+                                    <p>{item.client_name} • {item.time_ago || 'Recent'}</p>
+                                </div>
                             </div>
-                        </div>
-                        <div className="pf-activity-item">
-                            <div className="pf-icon-circle bg-green-subtle">{checkIcon}</div>
-                            <div className="pf-activity-info">
-                                <h4>Completed novelty assessment for IoT Innovations</h4>
-                                <p>IoT Innovations • 5 hours ago</p>
-                            </div>
-                        </div>
-                        <div className="pf-activity-item">
-                            <div className="pf-icon-circle bg-purple-subtle">{calendarIcon}</div>
-                            <div className="pf-activity-info">
-                                <h4>Scheduled consultation with DataFlow Inc</h4>
-                                <p>DataFlow Inc • 1 day ago</p>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
 
