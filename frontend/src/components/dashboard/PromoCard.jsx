@@ -1,13 +1,21 @@
+import { useNavigate } from 'react-router-dom';
 import './PromoCard.css';
 
 const PromoCard = () => {
+    const navigate = useNavigate();
+
     return (
         <div className="promo-card">
             <div className="promo-content">
                 <h2>Try Ascendly for free now!</h2>
                 <p>"From Idea to Impact, We help you Ascend"</p>
                 <div className="promo-buttons">
-                    <button className="promo-button-primary">Try for free</button>
+                    <button 
+                        className="promo-button-primary" 
+                        onClick={() => navigate('/dashboard/ai-analytics/upload')}
+                    >
+                        Try for free
+                    </button>
                     <button className="promo-button-secondary">Skip</button>
                 </div>
             </div>
