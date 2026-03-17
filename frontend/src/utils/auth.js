@@ -97,11 +97,17 @@ export async function completeProfile(data) {
  * @returns {{ access_token, user }}
  */
 export async function login(data) {
-    const response = await fetch(`${API_URL}/auth/signin`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-    });
+    let response;
+    try {
+        response = await fetch(`${API_URL}/auth/signin`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+    } catch (networkError) {
+        console.error("Login fetch error:", networkError);
+        throw new Error('Unable to connect to the server. Please ensure the backend is running.');
+    }
 
     const body = await response.json();
 
@@ -179,12 +185,16 @@ export async function fetchMe() {
  * Map role string to the correct dashboard route.
  */
 export function getRoleDashboardRoute(role) {
-    const roleRoutes = {
-        'Startup Founder': '/dashboard/startup',
-        'Investor': '/dashboard/investor',
-        'Marketing Agency': '/dashboard/marketing-agency/projects',
-        'Business Advisor': '/dashboard/advisor',
-        'Admin': '/dashboard/admin',
-    };
-    return roleRoutes[role] || '/dashboard/startup';
+    if (!role) return '/dashboard/startup';
+    
+    const r = role.toLowerCase();
+    
+    if (r.includes('startup') || r.includes('founder')) return '/dashboard/startup';
+    if (r.includes('investor')) return '/dashboard/investor';
+    if (r.includes('marketing') || r.includes('agency')) return '/dashboard/marketing-agency/projects';
+    if (r.includes('business') || r.includes('advisor')) return '/dashboard/advisor';
+    if (r.includes('admin')) return '/dashboard/admin';
+    
+    // Default fallback
+    return '/dashboard/startup';
 }

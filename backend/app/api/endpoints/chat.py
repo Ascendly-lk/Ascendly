@@ -132,6 +132,17 @@ async def _stream_quick_response(
 ):
     """Stream quick conversational response token by token."""
     try:
+        from cache.cache_manager import get_cached_chat, set_cached_chat
+
+        # Only cache stateless requests — skip when history is present (context-dependent)
+        use_cache = not history
+        if use_cache:
+            cached = get_cached_chat(message, user_id, dataset_id)
+            if cached is not None:
+                yield _sse({"type": "token", "content": cached})
+                yield _sse({"type": "done", "message_id": str(uuid.uuid4()), "cached": True})
+                return
+
         import litellm
 
         model = os.getenv("CREWAI_LLM_MODEL", "azure/gpt-4o")
@@ -181,6 +192,8 @@ async def _stream_quick_response(
                 yield _sse({"type": "token", "content": token})
 
         message_id = str(uuid.uuid4())
+        if use_cache:
+            set_cached_chat(message, user_id, dataset_id, full_text)
         yield _sse({"type": "done", "message_id": message_id})
 
         # Log after stream completes

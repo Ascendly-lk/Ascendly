@@ -19,6 +19,7 @@ from app.api.endpoints.analysis import router as analysis_router
 from app.api.endpoints.dashboard import router as dashboard_router
 from app.api.endpoints.chat import router as chat_router
 from app.api.insights import router as insights_router
+from app.api.endpoints.patent_firm import router as patent_firm_router
 
 app = FastAPI(
     title="Ascendly API",
@@ -29,7 +30,7 @@ app = FastAPI(
 # CORS — allow Vite frontend dev server (port 5173)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -41,6 +42,7 @@ app.include_router(analysis_router)
 app.include_router(dashboard_router)
 app.include_router(chat_router)
 app.include_router(insights_router)
+app.include_router(patent_firm_router)
 
 
 # ============ SCHEMAS ============
@@ -143,6 +145,29 @@ async def register(payload: RegisterRequest):
     }
 
 
+def safe_update_activity(auth_user_id: str, profile_data: dict):
+    from database.supabase_client import update_profile
+    try:
+        update_data = {"updated_at": datetime.now(timezone.utc).isoformat()}
+        if profile_data:
+            if "login_count" in profile_data:
+                current_count = profile_data.get("login_count")
+                update_data["login_count"] = (current_count if isinstance(current_count, int) else 0) + 1
+            else:
+                print("[METRICS DEBUG] 'login_count' field missing in profile data.")
+            
+            # Using 'last_login_at' as expected by metrics if present
+            if "last_login_at" in profile_data:
+                update_data["last_login_at"] = datetime.now(timezone.utc).isoformat()
+            else:
+                print("[METRICS DEBUG] 'last_login_at' field missing in profile data.")
+                
+        print(f"[METRICS DEBUG] Updating profile {auth_user_id} with: {update_data}")
+        update_profile(auth_user_id, update_data)
+    except Exception as e:
+        print(f"[METRICS DEBUG] Failed to update activity for {auth_user_id}: {str(e)}")
+
+
 @app.post("/auth/signin")
 async def login(payload: LoginRequest):
     """
@@ -166,6 +191,9 @@ async def login(payload: LoginRequest):
     except Exception as e:
         print(f"[login] Profile fetch failed: {e}")
         profile = None
+
+    # Safe activity update (fire and forget)
+    safe_update_activity(auth_user_id, profile)
 
     # Split full_name back into first/last for the frontend
     full_name = profile.get("full_name", "") if profile else ""
@@ -295,6 +323,116 @@ async def complete_profile(payload: ProfileCompleteRequest, current_user=Depends
         "message": "Profile complete",
         "onboarding_completed": True,
         "role": payload.role
+    }
+
+
+@app.get("/dashboard/user-count")
+async def get_user_count(current_user=Depends(require_auth)):
+    """Fetch the total count of registered users from the profiles table."""
+    from database.supabase_client import get_supabase_admin
+    admin = get_supabase_admin()
+    try:
+        # Fetch the count efficiently using count='exact' and head=True to avoid returning data
+        res = admin.table("profiles").select("id", count="exact", head=True).execute()
+        user_count = res.count if res.count is not None else 0
+        print(f"[DEBUG] User count fetched: {user_count}")
+        return {"user_count": user_count}
+    except Exception as e:
+        print(f"[ERROR] Failed to fetch user count: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error while fetching user count.")
+
+
+@app.get("/dashboard/metrics")
+async def get_dashboard_metrics(current_user=Depends(require_auth)):
+    from database.supabase_client import get_supabase_admin
+    admin = get_supabase_admin()
+    
+    # 1. Active Users (Showing total user count as requested for dashboard)
+    active_users = 0
+    total_users = 0
+    try:
+        # Fetch the total count efficiently for "Active users" card
+        res_total = admin.table("profiles").select("id", count="exact", head=True).execute()
+        total_users = res_total.count if res_total.count is not None else 0
+        active_users = total_users  # Show total count as active users in dashboard
+        
+        print(f"[METRICS DEBUG] Queried 'profiles'. total_count={total_users}")
+    except Exception as e:
+        print(f"[METRICS DEBUG] Error fetching users from 'profiles': {e}")
+        pass
+
+    now = datetime.now(timezone.utc)
+
+    # 2. Monthly Revenue — sum `amount` from `monthly_revenue` for current month + year.
+    #    If no rows exist for the current month, fall back to the most recent month with data.
+    monthly_revenue = 0.0
+    try:
+        # We query the monthly_revenue table
+        res_rev = admin.table("monthly_revenue").select("amount,revenue_month,revenue_year").execute()
+        if res_rev.data:
+            # Check for current month first
+            current_month_data = [r for r in res_rev.data if r.get("revenue_month") == now.month and r.get("revenue_year") == now.year]
+            if current_month_data:
+                monthly_revenue = sum(float(r.get("amount", 0) or 0) for r in current_month_data)
+                print(f"[METRICS DEBUG] Monthly revenue (current month): {monthly_revenue}")
+            else:
+                # No data for current month, aggregate total as fallback / test
+                monthly_revenue = sum(float(r.get("amount", 0) or 0) for r in res_rev.data)
+                print(f"[METRICS DEBUG] Monthly revenue (fallback aggregate): {monthly_revenue}")
+        else:
+            print("[METRICS DEBUG] monthly_revenue table is empty.")
+    except Exception as e:
+        print(f"[METRICS DEBUG] Error fetching monthly_revenue: {e}")
+
+    # 3. Engagement Score — from `ai_logs` (last 30 days)
+    engagement_score = 0
+    try:
+        from datetime import timedelta
+        thirty_days_ago = (now - timedelta(days=30)).isoformat()
+        res_eng = admin.table("ai_logs").select("created_at") \
+            .gte("created_at", thirty_days_ago) \
+            .execute()
+        recent = len(res_eng.data) if res_eng.data else 0
+        if recent > 0:
+            engagement_score = min(recent * 10, 100)
+        else:
+            # fallback: use all-time count (5 pts each, max 100)
+            res_all = admin.table("ai_logs").select("id", count="exact", head=True).execute()
+            if res_all.count:
+                engagement_score = min(res_all.count * 5, 100)
+        print(f"[METRICS DEBUG] Engagement score: {engagement_score} (recent_activities={recent})")
+    except Exception as e:
+        print(f"[METRICS DEBUG] Error fetching ai_logs: {e}")
+
+    # 4. Growth — compare current-month vs previous-month signups in `profiles`.`created_at`
+    growth = 0
+    try:
+        current_month_start = datetime(now.year, now.month, 1, tzinfo=timezone.utc).isoformat()
+        last_month = now.month - 1 if now.month > 1 else 12
+        last_year = now.year if now.month > 1 else now.year - 1
+        last_month_start = datetime(last_year, last_month, 1, tzinfo=timezone.utc).isoformat()
+
+        cur_res = admin.table("profiles").select("id", count="exact", head=True) \
+            .gte("created_at", current_month_start).execute()
+        cur_signups = cur_res.count or 0
+
+        prev_res = admin.table("profiles").select("id", count="exact", head=True) \
+            .gte("created_at", last_month_start).lt("created_at", current_month_start).execute()
+        prev_signups = prev_res.count or 0
+
+        if prev_signups > 0:
+            growth = round(((cur_signups - prev_signups) / prev_signups) * 100, 1)
+        elif cur_signups > 0:
+            growth = 100.0  # first-month baseline: no prior data means 100% growth
+        print(f"[METRICS DEBUG] Growth: {growth}% (this_month={cur_signups}, last_month={prev_signups})")
+    except Exception as e:
+        print(f"[METRICS DEBUG] Error calculating growth from 'profiles': {e}")
+
+    return {
+        "active_users": active_users,
+        "monthly_revenue": monthly_revenue,
+        "engagement_score": engagement_score,
+        "growth": growth
     }
 
 

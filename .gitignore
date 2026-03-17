@@ -61,3 +61,8 @@ Thumbs.db
 # =====================
 backend/uploads
 uploads
+
+# =====================
+# Internal QA agent (local only — not for GitHub)
+# =====================
+.local-qa/

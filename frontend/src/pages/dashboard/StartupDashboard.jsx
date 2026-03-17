@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import StatCard from "../../components/dashboard/StatCard";
 import AIForecastCard from "../../components/dashboard/AIForecastCard";
 import AdvisorsCard from "../../components/dashboard/AdvisorsCard";
@@ -7,6 +8,44 @@ import TopBar from "../../components/dashboard/TopBar";
 import "./StartupDashboard.css";
 
 const StartupDashboard = () => {
+    const [metrics, setMetrics] = useState({
+        active_users: 0,
+        monthly_revenue: 0,
+        engagement_score: 0,
+        growth: 0
+    });
+    
+    useEffect(() => {
+        const fetchMetrics = async () => {
+            try {
+                const token = localStorage.getItem("ascendly_token") || localStorage.getItem("access_token");
+
+                // Only attach Authorization header if a real token exists
+                const headers = token ? { "Authorization": `Bearer ${token}` } : {};
+
+                const response = await fetch("http://localhost:8000/dashboard/metrics", { headers });
+                console.log("Metrics fetch status:", response.status);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // Sanitize all values to numbers to prevent formatting crashes
+                    setMetrics({
+                        active_users:     Number(data.active_users)     || 0,
+                        monthly_revenue:  Number(data.monthly_revenue)  || 0,
+                        engagement_score: Number(data.engagement_score) || 0,
+                        growth:           Number(data.growth)           || 0,
+                    });
+                } else {
+                    const errBody = await response.text();
+                    console.error("Metrics fetch failed:", response.status, errBody);
+                }
+            } catch (error) {
+                console.error("Error fetching metrics:", error);
+            }
+        };
+        fetchMetrics();
+    }, []);
+
     const userIcon = (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -39,19 +78,26 @@ const StartupDashboard = () => {
         </svg>
     );
 
+    // Safe derived display values - always strings, always valid
+    const activeUsersValue   = String(Number(metrics.active_users) || 0);
+    const monthlyRevenueValue = `$${Number(metrics.monthly_revenue || 0).toLocaleString()}`;
+    const engagementScoreValue = `${Number(metrics.engagement_score) || 0}/100`;
+    const growthNum = Number(metrics.growth) || 0;
+    const growthValue = `${growthNum > 0 ? '+' : ''}${growthNum}%`;
+
     return (
         <>
             <TopBar />
             <div className="dashboard-content">
                 {/* Row 1: Stat Cards */}
                 <div className="dashboard-row dashboard-stats">
-                    <StatCard title="Active users" value="1892" icon={userIcon} variant="dark" />
+                    <StatCard title="Active users" value={activeUsersValue} icon={userIcon} variant="dark" />
 
-                    <StatCard title="Monthly Revenue" value="$18,500" icon={null} variant="dark" decoration={miniBars} />
+                    <StatCard title="Monthly Revenue" value={monthlyRevenueValue} icon={null} variant="dark" decoration={miniBars} />
 
-                    <StatCard title="Engagement Score" value="81/100" icon={analyticsIcon} variant="dark" />
+                    <StatCard title="Engagement Score" value={engagementScoreValue} icon={analyticsIcon} variant="dark" />
 
-                    <StatCard title="Growth" value="+17.4%" icon={null} variant="gradient" decoration={growthCurve} />
+                    <StatCard title="Growth" value={growthValue} icon={null} variant="gradient" decoration={growthCurve} />
                 </div>
 
                 {/* Row 2: AI Forecast & Advisors */}

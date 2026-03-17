@@ -148,8 +148,22 @@ def run_strategist_step(analyst_output: str, forecast_output: str) -> str:
 def run_dataset_analysis(dataset_id: str) -> dict:
     """
     Run the full AI analysis pipeline on a dataset stored in Supabase.
-    Calls each step function in sequence and returns structured results.
+    Checks in-memory cache first — returns immediately on hit.
+    Calls each step function in sequence and caches the result on miss.
     """
+    from cache.cache_manager import get_cached_analysis, set_cached_analysis
+
+    cached = get_cached_analysis(dataset_id)
+    if cached is not None:
+        print(f"[Ascendly] Cache HIT for dataset {dataset_id} — skipping pipeline.")
+        return {
+            **cached,
+            "request_id": str(uuid.uuid4()),           # fresh per-request ID
+            "cached": True,
+            "metadata": {**cached.get("metadata", {}), "processing_time_ms": 0},
+            "agent_logs": [],                          # no logs on cache hit
+        }
+
     start_time = time.time()
     request_id = str(uuid.uuid4())
 
@@ -172,6 +186,10 @@ def run_dataset_analysis(dataset_id: str) -> dict:
         {"agent_name": "Forecaster", "output": forecast_output},
         {"agent_name": "Strategist", "output": strategist_output},
     ]
+
+    # Strip per-request volatile fields before caching — they are regenerated on cache hit
+    cacheable = {k: v for k, v in response.items() if k not in ("request_id", "agent_logs")}
+    set_cached_analysis(dataset_id, cacheable)
     return response
 
 
