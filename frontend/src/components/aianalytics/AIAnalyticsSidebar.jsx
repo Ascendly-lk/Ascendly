@@ -57,7 +57,13 @@ const AIAnalyticsSidebar = () => {
     return (
         <div className="ai-sidebar">
             <div className="ai-sidebar-header">
-                <h1 className="ai-sidebar-logo">Ascendly</h1>
+                <h1 
+                    className="ai-sidebar-logo" 
+                    onClick={() => navigate('/dashboard/startup')}
+                    style={{ cursor: 'pointer' }}
+                >
+                    Ascendly
+                </h1>
                 <p className="ai-sidebar-subtitle">AI ANALYTICS DASHBOARD</p>
             </div>
 
