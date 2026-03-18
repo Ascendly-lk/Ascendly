@@ -18,7 +18,7 @@ import Settings from "./pages/Settings";
 import Help from "./pages/Help";
 import "./App.css";
 
-// Dashboard Layout with Sidebar and Header
+// Layout of the dashboard sidebar and header 
 const DashboardLayout = () => {
   return (
     <div className="dashboard-layout">
