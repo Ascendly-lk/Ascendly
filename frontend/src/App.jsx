@@ -163,7 +163,7 @@ function App() {
             path="/business-advisory"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <Navigate to="/dashboard" replace />
               </ProtectedRoute>
             }
           />
