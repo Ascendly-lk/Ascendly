@@ -80,9 +80,6 @@ function App() {
             <Route path="profile" element={<DashboardPlaceholder />} />
             <Route path="help" element={<DashboardPlaceholder />} />
 
-            <Route path="marketing-agency/projects" element={<Projects />} />
-            <Route path="marketing-agency/feedbacks" element={<Feedbacks />} />
-
             {/* Patent Firm Dashboard Routes */}
             <Route
               path="patent-firm/dashboard"
