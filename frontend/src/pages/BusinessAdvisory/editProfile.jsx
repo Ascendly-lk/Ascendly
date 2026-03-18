@@ -1,6 +1,6 @@
 import React from "react";
 import Sidebar from "./Sidebar";
-import TopHeader from "../components/TopHeader";
+import TopHeader from "../../components/TopHeader";
 import "./editProfile.css";
 
 const EditProfile = () => {
