@@ -1,151 +1,137 @@
-:root {
-  --bg-dark: #050509;
-  --sidebar-bg: #0a0e14;
-  --card-bg: #0e121a;
-  --text-primary: #ffffff;
-  --text-secondary: #a1a1aa;
-  --accent-cyan: #00ffef;
-  --accent-cyan-hover: #00d9ff;
-  --border-color: #1f2937;
-  --input-bg: #050509;
-  --input-border: #1f2937;
-  --input-focus: #00ffef;
-  --divider-color: #1f2937;
-  /* Fallback */
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: "Inter", sans-serif;
-  background-color: var(--bg-dark);
-  color: var(--text-primary);
-  line-height: 1.5;
-}
+/* ═══════════════════════════════════════════════════════════════════════════
+   editProfile.css  –  Refined layout for Business Advisory Edit Profile
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 .app-container {
   display: flex;
   min-height: 100vh;
-  background: var(--bg-dark);
+  background: #050509;
 }
 
-/* Main Content */
+/* ── Main Content ────────────────────────────────────────────────────────── */
 .main-content {
   flex: 1;
   min-width: 0;
-  padding: 24px 28px;
+  padding: 24px 40px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Constrain content width and center */
+.content-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin: 16px 0 24px;
 }
 
 .page-title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: var(--accent-cyan);
-  margin-bottom: 5px;
-  letter-spacing: -1px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #00ffef;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
 }
 
 .page-subtitle {
-  color: var(--text-secondary);
-  margin-bottom: 30px;
-  font-size: 1rem;
+  color: #b0b8c8;
+  margin-bottom: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
-/* Card */
+/* ── Profile Card ────────────────────────────────────────────────────────── */
 .card {
-  background-color: var(--card-bg);
-  border-radius: 20px;
-  padding: 40px;
+  background-color: #0e121a;
+  border-radius: 16px;
+  padding: 32px;
   border: 1px solid #1c2230;
 }
 
-/* Section */
+/* ── Sections ────────────────────────────────────────────────────────────── */
 .section {
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
 .section-title {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  margin-bottom: 20px;
-  color: white;
+  margin-bottom: 18px;
+  color: #e2e8f0;
 }
 
-/* Photo Section */
+/* ── Photo Section ───────────────────────────────────────────────────────── */
 .photo-section {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 24px;
 }
 
 .photo-placeholder {
-  width: 120px;
-  height: 120px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
-  background-color: #e0e0e0;
+  background: linear-gradient(135deg, #1a2332 0%, #0e1620 100%);
+  border: 2px solid #1c2230;
+  flex-shrink: 0;
 }
 
 .photo-info h3 {
-  font-size: 1.2rem;
-  margin-bottom: 8px;
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #e2e8f0;
 }
 
 .photo-info p {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  margin-bottom: 15px;
-  max-width: 400px;
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin-bottom: 14px;
+  max-width: 360px;
+  line-height: 1.5;
 }
 
 .btn {
-  padding: 10px 24px;
+  padding: 8px 20px;
   border-radius: 8px;
   font-weight: 600;
+  font-size: 0.85rem;
   cursor: pointer;
   border: none;
   transition: all 0.2s;
 }
 
 .btn-primary {
-  background-color: var(--accent-cyan);
-  color: #000;
+  background-color: #00ffef;
+  color: #0a0e14;
 }
 
 .btn-primary:hover {
-  background-color: var(--accent-cyan-hover);
+  background-color: #00d9d0;
+  transform: translateY(-1px);
 }
 
-/* Divider */
+/* ── Divider ─────────────────────────────────────────────────────────────── */
 .divider {
   height: 1px;
-  background-image: linear-gradient(to right, transparent 50%, #00ffef 50%);
-  /* Dashed effect fallback construction */
-  background-image: repeating-linear-gradient(
-    90deg,
-    #00ffef 0,
-    #00ffef 6px,
-    transparent 6px,
-    transparent 12px
-  );
+  background: linear-gradient(90deg, rgba(0, 255, 239, 0.2) 0%, transparent 100%);
   border: none;
-  opacity: 0.3;
-  margin: 30px 0;
+  margin: 24px 0;
 }
 
-/* Forms */
+/* ── Form Grid — 2 columns for Personal Details ─────────────────────────── */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 25px;
+  gap: 18px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .form-group.full-width {
@@ -153,65 +139,59 @@ body {
 }
 
 .form-group label {
-  color: var(--accent-cyan);
-  font-size: 0.9rem;
+  color: #00ffef;
+  font-size: 0.85rem;
   font-weight: 600;
+  letter-spacing: 0.2px;
 }
 
 .form-group input,
 .form-group textarea {
-  background-color: var(--input-bg);
-  border: 1px solid var(--accent-cyan);
-  /* Using cyan border as per image style usually implies focus but image has them colored */
-  border-radius: 10px;
-  padding: 12px 16px;
-  color: var(--text-primary);
-  font-size: 1rem;
+  background-color: #0a0f18;
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #ffffff;
+  font-size: 0.95rem;
   font-family: inherit;
   outline: none;
-  border: 1px solid #2d3748;
-  /* Default border */
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* For the specific design in image, some inputs have cyan borders. Let's make focus state cyan. */
 .form-group input:focus,
 .form-group textarea:focus {
-  border-color: var(--accent-cyan);
-  box-shadow: 0 0 0 1px rgba(0, 240, 255, 0.1);
-}
-
-/* Specific styling to match the image 'active' or 'filled' look */
-.form-group input {
-  border-color: var(--accent-cyan);
-  /* As per the image where the borders look cyan/teal */
-  box-shadow: 0 0 5px rgba(0, 240, 255, 0.1);
+  border-color: #00ffef;
+  box-shadow: 0 0 0 2px rgba(0, 255, 239, 0.1);
 }
 
 .form-group textarea {
-  border-color: var(--accent-cyan);
-  box-shadow: 0 0 5px rgba(0, 240, 255, 0.1);
   resize: vertical;
+  min-height: 80px;
 }
 
-/* Input Prefix Group */
+/* ── Input Prefix Group ──────────────────────────────────────────────────── */
 .input-prefix-group {
   display: flex;
   align-items: center;
-  background-color: var(--input-bg);
-  border: 1px solid var(--accent-cyan);
-  border-radius: 10px;
+  background-color: #0a0f18;
+  border: 1px solid #2d3748;
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 0 5px rgba(0, 240, 255, 0.1);
+  transition: border-color 0.2s;
+}
+
+.input-prefix-group:focus-within {
+  border-color: #00ffef;
+  box-shadow: 0 0 0 2px rgba(0, 255, 239, 0.1);
 }
 
 .input-prefix-group .prefix {
-  background-color: #1a202c;
-  /* Slightly lighter than input */
-  color: var(--text-secondary);
-  padding: 12px 16px;
-  font-size: 0.9rem;
+  background-color: #111827;
+  color: #94a3b8;
+  padding: 10px 14px;
+  font-size: 0.85rem;
   border-right: 1px solid #2d3748;
+  white-space: nowrap;
 }
 
 .input-prefix-group input {
@@ -225,10 +205,10 @@ body {
   box-shadow: none;
 }
 
-/* Responsive */
+/* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .main-content {
-    padding: 20px 14px;
+    padding: 20px 16px;
   }
 }
 
@@ -237,8 +217,16 @@ body {
     grid-template-columns: 1fr;
   }
 
+  .form-group.full-width {
+    grid-column: span 1;
+  }
+
   .photo-section {
     flex-direction: column;
     text-align: center;
+  }
+
+  .card {
+    padding: 20px;
   }
 }
