@@ -1,7 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import AIAnalyticsSidebar from '../../components/aianalytics/AIAnalyticsSidebar';
-
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
 import { apiFetch } from '../../api';
 import { formatBytes, timeAgo } from '../../utils/format';
@@ -111,82 +109,77 @@ const UploadData = () => {
     }, [uploadFiles, uploading]);
 
     return (
-        <div className="upload-page">
-            <AIAnalyticsSidebar />
+        <div className="upload-main">
+            <AIAnalyticsTopBar />
 
-            <div className="upload-main">
-                <AIAnalyticsTopBar />
+            {/* ── Content ── */}
+            <div className="upload-content">
+                {/* ... rest of the content ... */}
+                <div className="upload-card">
+                    <p className="upload-card-title">Upload Files</p>
 
-                {/* ── Content ── */}
-                <div className="upload-content">
-
-                    {/* Big Upload Card */}
-                    <div className="upload-card">
-                        <p className="upload-card-title">Upload Files</p>
-
-                        {/* Inner dropzone */}
-                        <div
-                            className={`upload-dropzone ${isDragging ? 'dragging' : ''}`}
-                            onDragOver={handleDragOver}
-                            onDragLeave={handleDragLeave}
-                            onDrop={handleDrop}
+                    {/* Inner dropzone */}
+                    <div
+                        className={`upload-dropzone ${isDragging ? 'dragging' : ''}`}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                    >
+                        <button
+                            className="upload-icon-btn"
+                            onClick={() => !uploading && fileInputRef.current?.click()}
+                            disabled={uploading}
+                            aria-label="Upload files"
                         >
-                            <button
-                                className="upload-icon-btn"
-                                onClick={() => !uploading && fileInputRef.current?.click()}
-                                disabled={uploading}
-                                aria-label="Upload files"
-                            >
-                                <UploadIcon />
-                            </button>
+                            <UploadIcon />
+                        </button>
 
-                            <p className="upload-drop-text">
-                                {uploading ? 'Uploading...' : 'Drop your files here, or browse'}
-                            </p>
-                            <p className="upload-drop-sub">Supports: CSV, Excel, PDF, JSON, TXT (Max 50MB)</p>
-                            {uploadMsg && <p className="upload-drop-sub" style={{ color: uploadMsg.startsWith('Failed') ? '#ef4444' : '#10b981' }}>{uploadMsg}</p>}
+                        <p className="upload-drop-text">
+                            {uploading ? 'Uploading...' : 'Drop your files here, or browse'}
+                        </p>
+                        <p className="upload-drop-sub">Supports: CSV, Excel, PDF, JSON, TXT (Max 50MB)</p>
+                        {uploadMsg && <p className="upload-drop-sub" style={{ color: uploadMsg.startsWith('Failed') ? '#ef4444' : '#10b981' }}>{uploadMsg}</p>}
 
-                            <button
-                                className="upload-select-btn"
-                                onClick={() => fileInputRef.current?.click()}
-                                disabled={uploading}
-                            >
-                                {uploading ? 'Uploading...' : 'Select Files'}
-                            </button>
+                        <button
+                            className="upload-select-btn"
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={uploading}
+                        >
+                            {uploading ? 'Uploading...' : 'Select Files'}
+                        </button>
 
-                            {/* Hidden file input */}
-                            <input
-                                ref={fileInputRef}
-                                type="file"
-                                multiple
-                                accept=".csv,.xlsx,.xls,.pdf,.json,.txt"
-                                className="upload-file-input"
-                                onChange={(e) => { uploadFiles(e.target.files); e.target.value = ''; }}
-                            />
-                        </div>
+                        {/* Hidden file input */}
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            multiple
+                            accept=".csv,.xlsx,.xls,.pdf,.json,.txt"
+                            className="upload-file-input"
+                            onChange={(e) => { uploadFiles(e.target.files); e.target.value = ''; }}
+                        />
                     </div>
+                </div>
 
-                    {/* Bottom row */}
-                    <div className="upload-bottom-row">
-                        {/* Recent Uploads */}
-                        <div className="upload-recent-card">
-                            <h3 className="upload-recent-title">Recent Uploads</h3>
-                            <ul className="upload-recent-list">
-                                {recentFiles.map((file, i) => (
-                                    <li key={i} className="upload-recent-item">
-                                        <div className="upload-recent-icon">
-                                            <FileIcon />
-                                        </div>
-                                        <div className="upload-recent-info">
-                                            <p className="upload-recent-name">{file.name}</p>
-                                            <p className="upload-recent-meta">{file.meta}</p>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                        {/* Right side intentionally empty per Figma */}
+                {/* Bottom row */}
+                <div className="upload-bottom-row">
+                    {/* Recent Uploads */}
+                    <div className="upload-recent-card">
+                        <h3 className="upload-recent-title">Recent Uploads</h3>
+                        <ul className="upload-recent-list">
+                            {recentFiles.map((file, i) => (
+                                <li key={i} className="upload-recent-item">
+                                    <div className="upload-recent-icon">
+                                        <FileIcon />
+                                    </div>
+                                    <div className="upload-recent-info">
+                                        <p className="upload-recent-name">{file.name}</p>
+                                        <p className="upload-recent-meta">{file.meta}</p>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
+                    {/* Right side intentionally empty per Figma */}
                 </div>
             </div>
         </div>

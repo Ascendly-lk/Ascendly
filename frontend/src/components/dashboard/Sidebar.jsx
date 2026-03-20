@@ -21,6 +21,12 @@ const PATENT_FIRM_MENU_ITEMS = [
     { name: 'Payments', icon: 'dollarSign', route: '/dashboard/patent-firm/payments' },
 ];
 
+const AI_ANALYTICS_MENU_ITEMS = [
+    { name: 'Dashboard', icon: 'grid', route: '/dashboard/ai-analytics' },
+    { name: 'Upload Files', icon: 'upload', route: '/dashboard/ai-analytics/upload' },
+    { name: 'AI Assistant', icon: 'bot', route: '/dashboard/ai-analytics/assistant' },
+];
+
 /* ── SVG icons ───────────────────────────────────────────────────────────── */
 const ICONS = {
     grid: (
@@ -95,6 +101,22 @@ const ICONS = {
             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
         </svg>
     ),
+    upload: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
+    ),
+    bot: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="11" width="18" height="10" rx="2" />
+            <circle cx="12" cy="5" r="2" />
+            <line x1="12" y1="7" x2="12" y2="11" />
+            <line x1="8" y1="15" x2="8" y2="17" />
+            <line x1="16" y1="15" x2="16" y2="17" />
+        </svg>
+    ),
 };
 
 /* ── Component ───────────────────────────────────────────────────────────── */
@@ -107,8 +129,18 @@ const Sidebar = () => {
 
     // Determine which menu items to use based on path
     const isPatentFirm = pathname.startsWith('/dashboard/patent-firm');
-    const menuItems = isPatentFirm ? PATENT_FIRM_MENU_ITEMS : STARTUP_MENU_ITEMS;
-    const dashboardTitle = isPatentFirm ? "PATENT FIRM APP" : "STARTUPS DASHBOARD";
+    const isAIAnalytics = pathname.startsWith('/dashboard/ai-analytics');
+
+    let menuItems = STARTUP_MENU_ITEMS;
+    let dashboardTitle = "STARTUPS DASHBOARD";
+
+    if (isPatentFirm) {
+        menuItems = PATENT_FIRM_MENU_ITEMS;
+        dashboardTitle = "PATENT FIRM APP";
+    } else if (isAIAnalytics) {
+        menuItems = AI_ANALYTICS_MENU_ITEMS;
+        dashboardTitle = "AI ANALYTICS DASHBOARD";
+    }
 
     return (
         <div className="sidebar">

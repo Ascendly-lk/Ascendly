@@ -86,6 +86,11 @@ function App() {
             <Route path="patent-firm/document-review" element={<DocumentReview />} />
             <Route path="patent-firm/payments" element={<PatentFirmPayments />} />
 
+            {/* AI Analytics Routes */}
+            <Route path="ai-analytics" element={<AIAnalyticsDashboard />} />
+            <Route path="ai-analytics/upload" element={<UploadData />} />
+            <Route path="ai-analytics/assistant" element={<AIAssistant />} />
+
             {/* Role placeholders */}
             <Route path="founder" element={<DashboardPlaceholder />} />
             <Route path="investor" element={<DashboardPlaceholder />} />
@@ -95,31 +100,6 @@ function App() {
             <Route path="marketing-agency/projects" element={<MarketingAgencyProjects />} />
             <Route path="marketing-agency/feedbacks" element={<Feedbacks />} />
           </Route>
-
-          <Route
-            path="/dashboard/ai-analytics"
-            element={
-              <ProtectedRoute>
-                <AIAnalyticsDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/ai-analytics/upload"
-            element={
-              <ProtectedRoute>
-                <UploadData />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/ai-analytics/assistant"
-            element={
-              <ProtectedRoute>
-                <AIAssistant />
-              </ProtectedRoute>
-            }
-          />
 
           <Route
             path="/marketing-agency/projects"
