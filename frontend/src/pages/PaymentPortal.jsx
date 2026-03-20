@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { saveSubscriptionPlan } from '../utils/auth';
 import './PaymentPortal.css';
 
 const PaymentPortal = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const { user, setUser } = useAuth();
     const { plan = 'Pro', price = 25 } = location.state || {};
 
     const [formData, setFormData] = useState({
@@ -87,6 +90,12 @@ const PaymentPortal = () => {
             
             // Redirect after showing success for a bit
             setTimeout(() => {
+                // Persist the plan locally
+                saveSubscriptionPlan(plan);
+                // Update local context for immediate UI feedback
+                if (user && setUser) {
+                    setUser({ ...user, plan });
+                }
                 navigate('/dashboard/startup');
             }, 3000);
         }, 1500);
