@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
+
 import AIAnalyticsSidebar from '../../components/aianalytics/AIAnalyticsSidebar';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
 import { apiFetch } from '../../api';
@@ -75,8 +77,11 @@ const AIAssistant = () => {
     const [files, setFiles] = useState([]);
     const [selectedFileId, setSelectedFileId] = useState(null);
     const [showSuggestions, setShowSuggestions] = useState(true);
+    const location = useLocation();
+    const hasAutoPrompted = useRef(false);
     const messagesEndRef = useRef(null);
     const textareaRef = useRef(null);
+
     // Keep a ref to messages for history building without adding to sendMessage deps
     const messagesRef = useRef(messages);
     useEffect(() => { messagesRef.current = messages; }, [messages]);
@@ -101,6 +106,17 @@ const AIAssistant = () => {
         document.addEventListener('visibilitychange', onVisible);
         return () => document.removeEventListener('visibilitychange', onVisible);
     }, [fetchFiles]);
+
+    // Handle initial prompt from Quick Actions (e.g., Generate Report)
+    useEffect(() => {
+        if (location.state?.initialPrompt && !hasAutoPrompted.current) {
+            hasAutoPrompted.current = true;
+            sendMessage(location.state.initialPrompt);
+            // Clear state so it doesn't re-trigger
+            window.history.replaceState({}, document.title);
+        }
+    }, [location.state, sendMessage]);
+
 
     /* Auto-scroll to latest message */
     useEffect(() => {
