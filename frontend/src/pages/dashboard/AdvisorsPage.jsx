@@ -31,7 +31,7 @@ const BOOKING_POOL = [
 
 /* ── Tier helpers ─────────────────────────────────────────────────────────── */
 function resolveTier() {
-    const raw = (getSubscriptionPlan() || 'starter').toLowerCase();
+    const raw = (getSubscriptionPlan() || 'free').toLowerCase();
     if (raw.includes('enterprise') || raw.includes('premium')) return 'premium';
     if (raw.includes('standard') || raw.includes('pro'))       return 'pro';
     return 'free';               // 'basic', 'starter' or anything else → free
