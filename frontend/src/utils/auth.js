@@ -52,7 +52,7 @@ export function saveSubscriptionPlan(plan) {
 }
 
 export function getSubscriptionPlan() {
-    return localStorage.getItem(STORAGE_PLAN_KEY) || 'Starter';
+    return localStorage.getItem(STORAGE_PLAN_KEY) || 'Free';
 }
 
 // ─── API calls ────────────────────────────────────────────────────────────────
