@@ -10,6 +10,14 @@ import { useAuth } from '../context/AuthContext';
 export default function ProtectedRoute({ children }) {
     const { user, loading } = useAuth();
 
+    // Allow an explicit, dev-only auth bypass controlled via env var.
+    // In production builds, this will always be false.
+    const shouldBypassAuth =
+        typeof import.meta !== 'undefined' &&
+        import.meta.env &&
+        import.meta.env.DEV &&
+        import.meta.env.VITE_BYPASS_AUTH === 'true';
+
     if (loading) {
         return (
             <div style={{
@@ -27,7 +35,7 @@ export default function ProtectedRoute({ children }) {
         );
     }
 
-    if (!user) {
+    if (!user && !shouldBypassAuth) {
         return <Navigate to="/login" replace />;
     }
 

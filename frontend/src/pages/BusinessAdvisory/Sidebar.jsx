@@ -13,7 +13,7 @@ import "./Sidebar.css";
 const Sidebar = () => {
   const menuItems = [
     {
-      path: "/dashboard",
+      path: "/business-advisory",
       icon: <LayoutDashboard size={16} strokeWidth={2} />,
       label: "Dashboard",
       end: true,

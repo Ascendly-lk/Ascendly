@@ -1,6 +1,11 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -30,11 +35,11 @@ import DocumentReview from './pages/patent-firm/DocumentReview';
 import PaymentPortal from './pages/PaymentPortal';
 
 // Patent Firm
-import PatentFirmDashboard from './pages/patent-firm/Dashboard';
-import PatentFirmClients from './pages/patent-firm/Clients';
-import Applications from './pages/patent-firm/Applications';
-import ApplicationDetail from './pages/patent-firm/ApplicationDetail';
-import PatentFirmPayments from './pages/patent-firm/Payments';
+import PatentFirmDashboard from "./pages/patent-firm/Dashboard";
+import PatentFirmClients from "./pages/patent-firm/Clients";
+import Applications from "./pages/patent-firm/Applications";
+import ApplicationDetail from "./pages/patent-firm/ApplicationDetail";
+import PatentFirmPayments from "./pages/patent-firm/Payments";
 
 function App() {
   return (
@@ -77,16 +82,25 @@ function App() {
             <Route path="profile" element={<DashboardPlaceholder />} />
             <Route path="help" element={<DashboardPlaceholder />} />
 
-            <Route path="marketing-agency/projects" element={<Projects />} />
-            <Route path="marketing-agency/feedbacks" element={<Feedbacks />} />
-
             {/* Patent Firm Dashboard Routes */}
-            <Route path="patent-firm/dashboard" element={<PatentFirmDashboard />} />
+            <Route
+              path="patent-firm/dashboard"
+              element={<PatentFirmDashboard />}
+            />
             <Route path="patent-firm/clients" element={<PatentFirmClients />} />
             <Route path="patent-firm/applications" element={<Applications />} />
-            <Route path="patent-firm/applications/:id" element={<ApplicationDetail />} />
-            <Route path="patent-firm/document-review" element={<DocumentReview />} />
-            <Route path="patent-firm/payments" element={<PatentFirmPayments />} />
+            <Route
+              path="patent-firm/applications/:id"
+              element={<ApplicationDetail />}
+            />
+            <Route
+              path="patent-firm/document-review"
+              element={<DocumentReview />}
+            />
+            <Route
+              path="patent-firm/payments"
+              element={<PatentFirmPayments />}
+            />
 
             {/* AI Analytics Routes */}
             <Route path="ai-analytics" element={<AIAnalyticsDashboard />} />
@@ -99,7 +113,10 @@ function App() {
             <Route path="marketing" element={<DashboardPlaceholder />} />
             <Route path="advisor" element={<DashboardPlaceholder />} />
             <Route path="admin" element={<DashboardPlaceholder />} />
-            <Route path="marketing-agency/projects" element={<MarketingAgencyProjects />} />
+            <Route
+              path="marketing-agency/projects"
+              element={<MarketingAgencyProjects />}
+            />
             <Route path="marketing-agency/feedbacks" element={<Feedbacks />} />
           </Route>
 
@@ -124,6 +141,15 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/notifications" element={<NotificationsPage />} />
 
+          <Route
+            path="/business-advisory"
+            element={
+              <ProtectedRoute>
+                <Navigate to="/dashboard" replace />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
@@ -132,4 +158,3 @@ function App() {
 }
 
 export default App;
-

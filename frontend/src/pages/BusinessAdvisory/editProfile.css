@@ -1,0 +1,232 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   editProfile.css  –  Refined layout for Business Advisory Edit Profile
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  background: #050509;
+}
+
+/* ── Main Content ────────────────────────────────────────────────────────── */
+.main-content {
+  flex: 1;
+  min-width: 0;
+  padding: 24px 40px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Constrain content width and center */
+.content-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin: 16px 0 24px;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #00ffef;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+
+.page-subtitle {
+  color: #b0b8c8;
+  margin-bottom: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* ── Profile Card ────────────────────────────────────────────────────────── */
+.card {
+  background-color: #0e121a;
+  border-radius: 16px;
+  padding: 32px;
+  border: 1px solid #1c2230;
+}
+
+/* ── Sections ────────────────────────────────────────────────────────────── */
+.section {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 18px;
+  color: #e2e8f0;
+}
+
+/* ── Photo Section ───────────────────────────────────────────────────────── */
+.photo-section {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.photo-placeholder {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1a2332 0%, #0e1620 100%);
+  border: 2px solid #1c2230;
+  flex-shrink: 0;
+}
+
+.photo-info h3 {
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.photo-info p {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin-bottom: 14px;
+  max-width: 360px;
+  line-height: 1.5;
+}
+
+.btn {
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: #00ffef;
+  color: #0a0e14;
+}
+
+.btn-primary:hover {
+  background-color: #00d9d0;
+  transform: translateY(-1px);
+}
+
+/* ── Divider ─────────────────────────────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(0, 255, 239, 0.2) 0%, transparent 100%);
+  border: none;
+  margin: 24px 0;
+}
+
+/* ── Form Grid — 2 columns for Personal Details ─────────────────────────── */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group.full-width {
+  grid-column: span 2;
+}
+
+.form-group label {
+  color: #00ffef;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.form-group input,
+.form-group textarea {
+  background-color: #0a0f18;
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #00ffef;
+  box-shadow: 0 0 0 2px rgba(0, 255, 239, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ── Input Prefix Group ──────────────────────────────────────────────────── */
+.input-prefix-group {
+  display: flex;
+  align-items: center;
+  background-color: #0a0f18;
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.input-prefix-group:focus-within {
+  border-color: #00ffef;
+  box-shadow: 0 0 0 2px rgba(0, 255, 239, 0.1);
+}
+
+.input-prefix-group .prefix {
+  background-color: #111827;
+  color: #94a3b8;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  border-right: 1px solid #2d3748;
+  white-space: nowrap;
+}
+
+.input-prefix-group input {
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  flex: 1;
+}
+
+.input-prefix-group input:focus {
+  box-shadow: none;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .main-content {
+    padding: 20px 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group.full-width {
+    grid-column: span 1;
+  }
+
+  .photo-section {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .card {
+    padding: 20px;
+  }
+}
