@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-
-import AIAnalyticsSidebar from '../../components/aianalytics/AIAnalyticsSidebar';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
 import { apiFetch } from '../../api';
 import './AIAssistant.css';
@@ -241,121 +239,117 @@ const AIAssistant = () => {
     };
 
     return (
-        <div className="ai-assistant-page">
-            <AIAnalyticsSidebar />
+        <div className="ai-assistant-main">
+            <AIAnalyticsTopBar />
 
-            <div className="ai-assistant-main">
-                <AIAnalyticsTopBar />
-
-                <div className="ai-assistant-content">
-                    {/* Chat Card */}
-                    <div className="ai-chat-card">
-                        {/* Card Header */}
-                        <div className="ai-chat-card-header">
-                            <div className="ai-chat-avatar">
-                                <BotIcon />
-                            </div>
-                            <div className="ai-chat-header-info">
-                                <span className="ai-chat-header-name">AI Assistant</span>
-                                <span className="ai-chat-status">
-                                    <span className="ai-chat-status-dot" />
-                                    Online
-                                </span>
-                            </div>
-                            {/* File selector */}
-                            <div className="ai-chat-file-selector">
-                                <select
-                                    value={selectedFileId || ''}
-                                    onChange={(e) => setSelectedFileId(e.target.value || null)}
-                                    className="ai-chat-file-dropdown"
-                                >
-                                    <option value="">No dataset selected</option>
-                                    {files.map((f) => (
-                                        <option key={f.file_id} value={f.file_id}>
-                                            {f.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+            <div className="ai-assistant-content">
+                {/* Chat Card */}
+                <div className="ai-chat-card">
+                    {/* Card Header */}
+                    <div className="ai-chat-card-header">
+                        <div className="ai-chat-avatar">
+                            <BotIcon />
                         </div>
+                        <div className="ai-chat-header-info">
+                            <span className="ai-chat-header-name">AI Assistant</span>
+                            <span className="ai-chat-status">
+                                <span className="ai-chat-status-dot" />
+                                Online
+                            </span>
+                        </div>
+                        {/* File selector */}
+                        <div className="ai-chat-file-selector">
+                            <select
+                                value={selectedFileId || ''}
+                                onChange={(e) => setSelectedFileId(e.target.value || null)}
+                                className="ai-chat-file-dropdown"
+                            >
+                                <option value="">No dataset selected</option>
+                                {files.map((f) => (
+                                    <option key={f.file_id} value={f.file_id}>
+                                        {f.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
 
-                        {/* Messages area */}
-                        <div className="ai-chat-messages">
-                            {messages.map((msg) => (
-                                <div
-                                    key={msg.id}
-                                    className={`ai-chat-message ${msg.role === 'user' ? 'user' : 'assistant'}`}
-                                >
-                                    {msg.role === 'assistant' && (
-                                        <div className="ai-chat-msg-avatar">
-                                            <BotIcon />
+                    {/* Messages area */}
+                    <div className="ai-chat-messages">
+                        {messages.map((msg) => (
+                            <div
+                                key={msg.id}
+                                className={`ai-chat-message ${msg.role === 'user' ? 'user' : 'assistant'}`}
+                            >
+                                {msg.role === 'assistant' && (
+                                    <div className="ai-chat-msg-avatar">
+                                        <BotIcon />
+                                    </div>
+                                )}
+                                <div className="ai-chat-bubble-wrap">
+                                    {msg.progress ? (
+                                        <div className="ai-chat-bubble">
+                                            <ProgressStep {...msg.progress} />
+                                        </div>
+                                    ) : (
+                                        <div className="ai-chat-bubble">
+                                            {msg.streaming && !msg.text ? (
+                                                <div className="ai-chat-typing">
+                                                    <span /><span /><span />
+                                                </div>
+                                            ) : msg.role === 'assistant' ? (
+                                                <ReactMarkdown>{msg.text}</ReactMarkdown>
+                                            ) : (
+                                                msg.text
+                                            )}
                                         </div>
                                     )}
-                                    <div className="ai-chat-bubble-wrap">
-                                        {msg.progress ? (
-                                            <div className="ai-chat-bubble">
-                                                <ProgressStep {...msg.progress} />
-                                            </div>
-                                        ) : (
-                                            <div className="ai-chat-bubble">
-                                                {msg.streaming && !msg.text ? (
-                                                    <div className="ai-chat-typing">
-                                                        <span /><span /><span />
-                                                    </div>
-                                                ) : msg.role === 'assistant' ? (
-                                                    <ReactMarkdown>{msg.text}</ReactMarkdown>
-                                                ) : (
-                                                    msg.text
-                                                )}
-                                            </div>
-                                        )}
-                                        <span className="ai-chat-time">{msg.time}</span>
-                                    </div>
+                                    <span className="ai-chat-time">{msg.time}</span>
                                 </div>
-                            ))}
-
-                            <div ref={messagesEndRef} />
-                        </div>
-
-                        {/* Suggestion chips */}
-                        {showSuggestions && (
-                            <div className="ai-chat-suggestions">
-                                {(selectedFileId ? SUGGESTIONS_WITH_FILE : SUGGESTIONS_NO_FILE).map((s) => (
-                                    <button
-                                        key={s}
-                                        className="ai-chat-chip"
-                                        onClick={() => sendMessage(s)}
-                                        disabled={isSending}
-                                    >
-                                        {s}
-                                    </button>
-                                ))}
                             </div>
-                        )}
+                        ))}
 
-                        {/* Composer */}
-                        <div className="ai-chat-composer">
-                            <div className="ai-chat-input-wrap">
-                                <textarea
-                                    ref={textareaRef}
-                                    className="ai-chat-input"
-                                    placeholder="Ask me anything about your data..."
-                                    value={input}
-                                    onChange={handleInput}
-                                    onKeyDown={handleKeyDown}
-                                    rows={1}
-                                />
+                        <div ref={messagesEndRef} />
+                    </div>
+
+                    {/* Suggestion chips */}
+                    {showSuggestions && (
+                        <div className="ai-chat-suggestions">
+                            {(selectedFileId ? SUGGESTIONS_WITH_FILE : SUGGESTIONS_NO_FILE).map((s) => (
                                 <button
-                                    className="ai-chat-send-btn"
-                                    onClick={sendMessage}
-                                    disabled={!input.trim() || isSending}
-                                    aria-label="Send message"
+                                    key={s}
+                                    className="ai-chat-chip"
+                                    onClick={() => sendMessage(s)}
+                                    disabled={isSending}
                                 >
-                                    <SendIcon />
+                                    {s}
                                 </button>
-                            </div>
-                            <p className="ai-chat-hint">Press Enter to send, Shift + Enter for new line</p>
+                            ))}
                         </div>
+                    )}
+
+                    {/* Composer */}
+                    <div className="ai-chat-composer">
+                        <div className="ai-chat-input-wrap">
+                            <textarea
+                                ref={textareaRef}
+                                className="ai-chat-input"
+                                placeholder="Ask me anything about your data..."
+                                value={input}
+                                onChange={handleInput}
+                                onKeyDown={handleKeyDown}
+                                rows={1}
+                            />
+                            <button
+                                className="ai-chat-send-btn"
+                                onClick={sendMessage}
+                                disabled={!input.trim() || isSending}
+                                aria-label="Send message"
+                            >
+                                <SendIcon />
+                            </button>
+                        </div>
+                        <p className="ai-chat-hint">Press Enter to send, Shift + Enter for new line</p>
                     </div>
                 </div>
             </div>
