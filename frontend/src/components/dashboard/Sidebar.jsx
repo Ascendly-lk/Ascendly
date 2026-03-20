@@ -178,7 +178,7 @@ const Sidebar = () => {
             </nav>
 
             <div className="sidebar-footer">
-                {!isPatentFirm && !(user?.plan === 'Pro' || user?.plan === 'Premium') && (
+                {!isPatentFirm && !(user?.plan === 'Standard' || user?.plan === 'Enterprise' || user?.plan === 'Pro' || user?.plan === 'Premium') && (
                     <button 
                         className="sidebar-upgrade" 
                         onClick={() => navigate('/dashboard/tiers')}
