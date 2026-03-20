@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './Sidebar.css';
 
 /* ── Route map ───────────────────────────────────────────────────────────── */
@@ -123,9 +124,16 @@ const ICONS = {
 const Sidebar = () => {
     const navigate = useNavigate();
     const { pathname } = useLocation();
+    const { user } = useAuth();
 
     // Derive active item: match exact route or prefix (for sub-routes like /ai-analytics/upload)
-    const isActive = (route) => pathname === route || pathname.startsWith(route + '/');
+    const isActive = (route) => {
+        // Use exact match for index-like routes to avoid parent highlighting when on a sub-route
+        if (route === '/dashboard/ai-analytics' || route === '/dashboard/startup' || route === '/dashboard/patent-firm/dashboard') {
+            return pathname === route;
+        }
+        return pathname === route || pathname.startsWith(route + '/');
+    };
 
     // Determine which menu items to use based on path
     const isPatentFirm = pathname.startsWith('/dashboard/patent-firm');
@@ -170,10 +178,13 @@ const Sidebar = () => {
             </nav>
 
             <div className="sidebar-footer">
-                {!isPatentFirm && (
-                    <div className="sidebar-upgrade">
+                {!isPatentFirm && !(user?.plan === 'Pro' || user?.plan === 'Premium') && (
+                    <button 
+                        className="sidebar-upgrade" 
+                        onClick={() => navigate('/dashboard/tiers')}
+                    >
                         <p>Upgrade to PRO to get access to all features!</p>
-                    </div>
+                    </button>
                 )}
                 <a href="#" className="sidebar-help">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

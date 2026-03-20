@@ -10,17 +10,17 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardPlaceholder from './pages/DashboardPlaceholder';
-import Dashboard from './pages/Dashboard';
-import Clients from './pages/Clients';
-import Projects from './pages/Projects';
+import Dashboard from './pages/BusinessAdvisory/Dashboard';
+import Clients from './pages/BusinessAdvisory/Clients';
+import Projects from './pages/BusinessAdvisory/Projects';
 import MarketingAgencyProjects from './pages/marketing-agency/Projects';
-import CalendarPage from './pages/Calendar';
-import Payments from './pages/Payments';
-import EditProfile from './pages/editProfile';
-import Settings from './pages/Settings';
-import NotificationsPage from './pages/Notifications';
+import CalendarPage from './pages/BusinessAdvisory/Calendar';
+import Payments from './pages/BusinessAdvisory/Payments';
+import EditProfile from './pages/BusinessAdvisory/editProfile';
+import Settings from './pages/BusinessAdvisory/Settings';
+import NotificationsPage from './pages/BusinessAdvisory/Notifications';
 import AccountPage from './pages/AccountPage';
-import DashboardLayout from './pages/DashboardLayout';
+import DashboardLayout from './pages/BusinessAdvisory/DashboardLayout';
 import StartupDashboard from './pages/dashboard/StartupDashboard';
 import AIAnalyticsDashboard from './pages/aianalytics/AIAnalyticsDashboard';
 import UploadData from './pages/aianalytics/UploadData';
@@ -141,14 +141,14 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/notifications" element={<NotificationsPage />} />
 
-          <Route
-            path="/business-advisory"
-            element={
-              <ProtectedRoute>
-                <Navigate to="/dashboard" replace />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/business-advisory" element={<Dashboard />} />
+          <Route path="/business-advisory/clients" element={<Clients />} />
+          <Route path="/business-advisory/projects" element={<Projects />} />
+          <Route path="/business-advisory/calendar" element={<CalendarPage />} />
+          <Route path="/business-advisory/payments" element={<Payments />} />
+          <Route path="/business-advisory/settings" element={<Settings />} />
+          <Route path="/business-advisory/notifications" element={<NotificationsPage />} />
+          <Route path="/business-advisory/edit-profile" element={<EditProfile />} />
 
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
