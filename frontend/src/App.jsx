@@ -7,31 +7,32 @@ import {
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import DashboardPlaceholder from "./pages/DashboardPlaceholder";
-import Dashboard from "./pages/BusinessAdvisory/Dashboard";
-import Clients from "./pages/BusinessAdvisory/Clients";
-import Projects from "./pages/BusinessAdvisory/Projects";
-import MarketingAgencyProjects from "./pages/marketing-agency/Projects";
-import CalendarPage from "./pages/BusinessAdvisory/Calendar";
-import Payments from "./pages/BusinessAdvisory/Payments";
-import EditProfile from "./pages/BusinessAdvisory/editProfile";
-import Settings from "./pages/BusinessAdvisory/Settings";
-import NotificationsPage from "./pages/BusinessAdvisory/Notifications";
-import AccountPage from "./pages/AccountPage";
-import DashboardLayout from "./pages/BusinessAdvisory/DashboardLayout";
-import StartupDashboard from "./pages/dashboard/StartupDashboard";
-import AIAnalyticsDashboard from "./pages/aianalytics/AIAnalyticsDashboard";
-import UploadData from "./pages/aianalytics/UploadData";
-import AIAssistant from "./pages/aianalytics/AIAssistant";
-import Feedbacks from "./pages/marketing-agency/Feedbacks";
-import LogisticsPage from "./pages/dashboard/LogisticsPage";
-import PatentPage from "./pages/dashboard/PatentPage";
-import InvestorsPage from "./pages/dashboard/InvestorsPage";
-import TiersPage from "./pages/dashboard/TiersPage";
-import AdvisorsPage from "./pages/dashboard/AdvisorsPage";
-import DocumentReview from "./pages/patent-firm/DocumentReview";
+import Login from './pages/Login';
+import Register from './pages/Register';
+import DashboardPlaceholder from './pages/DashboardPlaceholder';
+import Dashboard from './pages/Dashboard';
+import Clients from './pages/Clients';
+import Projects from './pages/Projects';
+import MarketingAgencyProjects from './pages/marketing-agency/Projects';
+import CalendarPage from './pages/Calendar';
+import Payments from './pages/Payments';
+import EditProfile from './pages/editProfile';
+import Settings from './pages/Settings';
+import NotificationsPage from './pages/Notifications';
+import AccountPage from './pages/AccountPage';
+import DashboardLayout from './pages/DashboardLayout';
+import StartupDashboard from './pages/dashboard/StartupDashboard';
+import AIAnalyticsDashboard from './pages/aianalytics/AIAnalyticsDashboard';
+import UploadData from './pages/aianalytics/UploadData';
+import AIAssistant from './pages/aianalytics/AIAssistant';
+import Feedbacks from './pages/marketing-agency/Feedbacks';
+import LogisticsPage from './pages/dashboard/LogisticsPage';
+import PatentPage from './pages/dashboard/PatentPage';
+import InvestorsPage from './pages/dashboard/InvestorsPage';
+import TiersPage from './pages/dashboard/TiersPage';
+import AdvisorsPage from './pages/dashboard/AdvisorsPage';
+import DocumentReview from './pages/patent-firm/DocumentReview';
+import PaymentPortal from './pages/PaymentPortal';
 
 // Patent Firm
 import PatentFirmDashboard from "./pages/patent-firm/Dashboard";
@@ -48,6 +49,7 @@ function App() {
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/payment" element={<PaymentPortal />} />
 
           <Route
             path="/account"
