@@ -24,10 +24,16 @@ export function AuthProvider({ children }) {
 
                     // Listen to auth changes automatically (e.g. Google Popup / Redirect processing)
                     supabase.auth.onAuthStateChange(async (event, session) => {
-                        if (event === 'SIGNED_IN' && session) {
+                        console.log(`[AuthContext] Auth event: ${event}`);
+                        if (session) {
                             localStorage.setItem('ascendly_token', session.access_token);
                             const updatedMe = await fetchMe();
-                            if (updatedMe) setUser(updatedMe);
+                            if (updatedMe) {
+                                console.log("[AuthContext] User profile fetched successfully after event.");
+                                setUser(updatedMe);
+                            } else {
+                                console.warn("[AuthContext] Failed to fetch user profile after SIGNED_IN.");
+                            }
                         } else if (event === 'SIGNED_OUT') {
                             clearSession();
                             setUser(null);

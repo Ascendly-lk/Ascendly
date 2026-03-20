@@ -98,29 +98,6 @@ const AIAssistant = () => {
             .catch(() => {});
     }, []);
 
-    useEffect(() => {
-        fetchFiles();
-        const onVisible = () => { if (document.visibilityState === 'visible') fetchFiles(); };
-        document.addEventListener('visibilitychange', onVisible);
-        return () => document.removeEventListener('visibilitychange', onVisible);
-    }, [fetchFiles]);
-
-    // Handle initial prompt from Quick Actions (e.g., Generate Report)
-    useEffect(() => {
-        if (location.state?.initialPrompt && !hasAutoPrompted.current) {
-            hasAutoPrompted.current = true;
-            sendMessage(location.state.initialPrompt);
-            // Clear state so it doesn't re-trigger
-            window.history.replaceState({}, document.title);
-        }
-    }, [location.state, sendMessage]);
-
-
-    /* Auto-scroll to latest message */
-    useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
-
     const sendMessage = useCallback(async (overrideText) => {
         const trimmed = (overrideText || input).trim();
         if (!trimmed || isSending) return;
@@ -223,6 +200,28 @@ const AIAssistant = () => {
             fetchFiles();
         }
     }, [input, isSending, selectedFileId, fetchFiles]);
+
+    useEffect(() => {
+        fetchFiles();
+        const onVisible = () => { if (document.visibilityState === 'visible') fetchFiles(); };
+        document.addEventListener('visibilitychange', onVisible);
+        return () => document.removeEventListener('visibilitychange', onVisible);
+    }, [fetchFiles]);
+
+    // Handle initial prompt from Quick Actions (e.g., Generate Report)
+    useEffect(() => {
+        if (location.state?.initialPrompt && !hasAutoPrompted.current) {
+            hasAutoPrompted.current = true;
+            sendMessage(location.state.initialPrompt);
+            // Clear state so it doesn't re-trigger
+            window.history.replaceState({}, document.title);
+        }
+    }, [location.state, sendMessage]);
+
+    /* Auto-scroll to latest message */
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
