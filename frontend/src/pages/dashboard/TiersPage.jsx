@@ -5,27 +5,30 @@ import './TiersPage.css';
 /* ── Plans data ──────────────────────────────────────────────────────────── */
 const plans = [
     {
-        name: 'Starter',
-        tagline: 'Perfect for individuals and small teams getting started',
-        monthlyPrice: 0,
-        yearlyPrice: 0,
-        features: ['Core Platform Access', 'Basic Ai Analytics', 'Stranded Support'],
+        name: 'Basic',
+        tagline: 'The cheapest way to get started.',
+        monthlyPrice: 29,
+        yearlyPrice: 29,
+        features: ['Core Analytics', 'Limited Use User tracking', 'Simple Dashboard'],
+        disabledFeatures: ['Email Support', 'AI Reports'],
         popular: false,
     },
     {
-        name: 'Pro',
-        tagline: 'Perfect for Small businesses who want to expand their repertoire',
-        monthlyPrice: 25,
-        yearlyPrice: 25,
-        features: ['Core Platform Access', 'Pro Ai Analytics', 'Extended Support'],
+        name: 'Standard',
+        tagline: 'The most popular plan.',
+        monthlyPrice: 49,
+        yearlyPrice: 49,
+        features: ['Everything in starter', 'Funnel & drop-off analysis', 'Custom dashboards', 'Team collaboration'],
+        disabledFeatures: ['Advanced integrations'],
         popular: true,
     },
     {
-        name: 'Premium',
-        tagline: 'Perfect for established businesses who want to expand their customer base',
-        monthlyPrice: 50,
-        yearlyPrice: 50,
-        features: ['Core Platform Access', 'Complete Ai Analytics', 'Dedicated Support'],
+        name: 'Enterprise',
+        tagline: 'Contact us for more information.',
+        monthlyPrice: 89,
+        yearlyPrice: 89,
+        features: ['All Growth features', 'Unlimited tracked users', 'Dedicated account manager', 'SLA & compliance support', 'Advanced integrations'],
+        disabledFeatures: [],
         popular: false,
     },
 ];
@@ -130,13 +133,24 @@ const TiersPage = () => {
                                         {feat}
                                     </li>
                                 ))}
+                                {plan.disabledFeatures && plan.disabledFeatures.map((feat) => (
+                                    <li key={`dis-${feat}`} className="tp-feature-muted">
+                                        <span className="tp-minus-icon">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
+                                                <circle cx="12" cy="12" r="10" />
+                                                <line x1="8" y1="12" x2="16" y2="12" />
+                                            </svg>
+                                        </span>
+                                        {feat}
+                                    </li>
+                                ))}
                             </ul>
 
                             <button 
                                 className="tp-choose-btn"
                                 onClick={() => handleChoosePlan(plan)}
                             >
-                                Choose Plan
+                                Join This Plan
                             </button>
                         </div>
                     ))}
