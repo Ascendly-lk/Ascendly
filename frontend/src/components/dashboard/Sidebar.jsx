@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './Sidebar.css';
 
 /* ── Route map ───────────────────────────────────────────────────────────── */
@@ -123,6 +124,7 @@ const ICONS = {
 const Sidebar = () => {
     const navigate = useNavigate();
     const { pathname } = useLocation();
+    const { user } = useAuth();
 
     // Derive active item: match exact route or prefix (for sub-routes like /ai-analytics/upload)
     const isActive = (route) => {
@@ -176,7 +178,7 @@ const Sidebar = () => {
             </nav>
 
             <div className="sidebar-footer">
-                {!isPatentFirm && (
+                {!isPatentFirm && !(user?.plan === 'Pro' || user?.plan === 'Premium') && (
                     <button 
                         className="sidebar-upgrade" 
                         onClick={() => navigate('/dashboard/tiers')}
