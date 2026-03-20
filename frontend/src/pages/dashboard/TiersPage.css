@@ -473,6 +473,17 @@
     flex-shrink: 0;
 }
 
+.tp-feature-muted {
+    color: #64748B !important;
+}
+
+.tp-minus-icon {
+    color: rgba(148, 163, 184, 0.4);
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
 /* ── Choose Plan button ──────────────────────────────────────────────────── */
 .tp-choose-btn {
     width: 100%;
