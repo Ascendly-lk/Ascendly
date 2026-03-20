@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import BookingModal from '../../components/dashboard/BookingModal';
 import './AdvisorsPage.css';
 
 
@@ -12,8 +14,11 @@ const advisors = [
 ];
 
 /* ── Main Page ───────────────────────────────────────────────────────────── */
-const AdvisorsPage = () => (
-    <div className="ap-main">
+const AdvisorsPage = () => {
+    const [selectedAdvisor, setSelectedAdvisor] = useState(null);
+
+    return (
+        <div className="ap-main">
         {/* ── Top Bar ── */}
         <div className="ap-topbar">
             <h2 className="ap-topbar-title">Advisor Network</h2>
@@ -77,7 +82,12 @@ const AdvisorsPage = () => (
                             {adv.rating && (
                                 <div className="ap-rating-badge">{adv.rating}</div>
                             )}
-                            <button className="ap-request-btn">Request Session</button>
+                            <button 
+                                className="ap-request-btn"
+                                onClick={() => setSelectedAdvisor(adv)}
+                            >
+                                Request Session
+                            </button>
                         </div>
                     ))}
                 </div>
@@ -97,8 +107,16 @@ const AdvisorsPage = () => (
                 </ul>
             </div>
 
+            </div>
+
+            {selectedAdvisor && (
+                <BookingModal 
+                    advisor={selectedAdvisor} 
+                    onClose={() => setSelectedAdvisor(null)} 
+                />
+            )}
         </div>
-    </div>
-);
+    );
+};
 
 export default AdvisorsPage;
