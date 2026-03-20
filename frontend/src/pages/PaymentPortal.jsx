@@ -18,19 +18,58 @@ const PaymentPortal = () => {
     const [showSuccess, setShowSuccess] = useState(false);
     const [error, setError] = useState('');
 
+    const formatCardNumber = (value) => {
+        const digits = value.replace(/\D/g, '');
+        const matched = digits.match(/.{1,4}/g);
+        return matched ? matched.join(' ').substring(0, 19) : digits;
+    };
+
+    const getCardType = (number) => {
+        const digits = number.replace(/\D/g, '');
+        if (digits.startsWith('4')) return 'Visa';
+        if (/^(5[1-5]|2[2-7])/.test(digits)) return 'MasterCard';
+        return '';
+    };
+
+    const formatExpiryDate = (value) => {
+        let digits = value.replace(/\D/g, '');
+        if (digits.length >= 2) {
+            let month = parseInt(digits.substring(0, 2));
+            if (month > 12) digits = '12' + digits.substring(2);
+            if (month === 0) digits = '01' + digits.substring(2);
+        }
+        if (digits.length > 2) {
+            return `${digits.substring(0, 2)}/${digits.substring(2, 6)}`;
+        }
+        return digits;
+    };
+
+    const formatCVV = (value) => {
+        return value.replace(/\D/g, '').substring(0, 3);
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        let formattedValue = value;
+
+        if (name === 'cardNumber') formattedValue = formatCardNumber(value);
+        if (name === 'expiryDate') formattedValue = formatExpiryDate(value);
+        if (name === 'cvv') formattedValue = formatCVV(value);
+
+        setFormData(prev => ({ ...prev, [name]: formattedValue }));
         if (error) setError('');
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         
+        // Normalize card number for comparison (remove spaces)
+        const normalizedCardNumber = formData.cardNumber.replace(/\s+/g, '');
+        
         // Exact test case validation
         const isValidTest = 
             formData.cardholderName === 'Janathan' &&
-            formData.cardNumber === '4588 6810 0258 3214' &&
+            normalizedCardNumber === '4588681002583214' &&
             formData.expiryDate === '05/2028' &&
             formData.cvv === '455';
 
@@ -81,7 +120,12 @@ const PaymentPortal = () => {
                     </div>
 
                     <div className="pp-field">
-                        <label htmlFor="cardNumber">Card Number</label>
+                        <div className="pp-label-row">
+                            <label htmlFor="cardNumber">Card Number</label>
+                            {getCardType(formData.cardNumber) && (
+                                <span className="pp-card-type">{getCardType(formData.cardNumber)}</span>
+                            )}
+                        </div>
                         <input
                             type="text"
                             id="cardNumber"

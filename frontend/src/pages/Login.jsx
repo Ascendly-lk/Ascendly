@@ -16,13 +16,7 @@ const Login = () => {
             : ''
     );
 
-    // If already logged in (e.g., from a mock session or valid token), redirect to dashboard
-    useEffect(() => {
-        if (user && user.onboarding_completed) {
-            const route = getRoleDashboardRoute(user.role);
-            navigate(route, { replace: true });
-        }
-    }, [user, navigate]);
+    // If user just registered, show success message
 
 // Form state
 const [formData, setFormData] = useState({
