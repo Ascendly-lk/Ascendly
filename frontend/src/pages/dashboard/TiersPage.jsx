@@ -5,28 +5,28 @@ import './TiersPage.css';
 /* ── Plans data ──────────────────────────────────────────────────────────── */
 const plans = [
     {
-        name: 'Basic',
+        name: 'Free',
         tagline: 'The cheapest way to get started.',
-        monthlyPrice: 29,
-        yearlyPrice: 29,
+        monthlyPrice: 0,
+        yearlyPrice: 0,
         features: ['Core Analytics', 'Limited Use User tracking', 'Simple Dashboard'],
         disabledFeatures: ['Email Support', 'AI Reports'],
         popular: false,
     },
     {
-        name: 'Standard',
+        name: 'Pro',
         tagline: 'The most popular plan.',
-        monthlyPrice: 49,
-        yearlyPrice: 49,
+        monthlyPrice: 20,
+        yearlyPrice: 200,
         features: ['Everything in starter', 'Funnel & drop-off analysis', 'Custom dashboards', 'Team collaboration'],
         disabledFeatures: ['Advanced integrations'],
         popular: true,
     },
     {
-        name: 'Enterprise',
+        name: 'Premium',
         tagline: 'Contact us for more information.',
-        monthlyPrice: 89,
-        yearlyPrice: 89,
+        monthlyPrice: 40,
+        yearlyPrice: 400,
         features: ['All Growth features', 'Unlimited tracked users', 'Dedicated account manager', 'SLA & compliance support', 'Advanced integrations'],
         disabledFeatures: [],
         popular: false,
@@ -101,7 +101,7 @@ const TiersPage = () => {
                         <span className={billingYearly ? 'tp-toggle-label active' : 'tp-toggle-label'}>
                             Yearly
                         </span>
-                        <span className="tp-saving-badge">+2.45%</span>
+                        <span className="tp-saving-badge">2 Months Free</span>
                     </div>
                 </div>
 
@@ -118,7 +118,9 @@ const TiersPage = () => {
                                 <span className="tp-price-amount">
                                     {billingYearly ? plan.yearlyPrice : plan.monthlyPrice}
                                 </span>
-                                <span className="tp-price-period"> / month</span>
+                                <span className="tp-price-period">
+                                    {billingYearly ? ' / year' : ' / month'}
+                                </span>
                             </div>
 
                             <ul className="tp-features">
