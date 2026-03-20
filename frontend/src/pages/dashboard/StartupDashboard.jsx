@@ -18,18 +18,26 @@ const StartupDashboard = () => {
     useEffect(() => {
         const fetchMetrics = async () => {
             try {
-                // ascendly_token is used in auth.js
                 const token = localStorage.getItem("ascendly_token") || localStorage.getItem("access_token");
-                const response = await fetch("http://localhost:8000/dashboard/metrics", {
-                    headers: {
-                        "Authorization": `Bearer ${token}`
-                    }
-                });
+
+                // Only attach Authorization header if a real token exists
+                const headers = token ? { "Authorization": `Bearer ${token}` } : {};
+
+                const response = await fetch("http://localhost:8000/dashboard/metrics", { headers });
                 console.log("Metrics fetch status:", response.status);
-                
+
                 if (response.ok) {
                     const data = await response.json();
-                    setMetrics(data);
+                    // Sanitize all values to numbers to prevent formatting crashes
+                    setMetrics({
+                        active_users:     Number(data.active_users)     || 0,
+                        monthly_revenue:  Number(data.monthly_revenue)  || 0,
+                        engagement_score: Number(data.engagement_score) || 0,
+                        growth:           Number(data.growth)           || 0,
+                    });
+                } else {
+                    const errBody = await response.text();
+                    console.error("Metrics fetch failed:", response.status, errBody);
                 }
             } catch (error) {
                 console.error("Error fetching metrics:", error);
@@ -70,19 +78,26 @@ const StartupDashboard = () => {
         </svg>
     );
 
+    // Safe derived display values - always strings, always valid
+    const activeUsersValue   = String(Number(metrics.active_users) || 0);
+    const monthlyRevenueValue = `$${Number(metrics.monthly_revenue || 0).toLocaleString()}`;
+    const engagementScoreValue = `${Number(metrics.engagement_score) || 0}/100`;
+    const growthNum = Number(metrics.growth) || 0;
+    const growthValue = `${growthNum > 0 ? '+' : ''}${growthNum}%`;
+
     return (
         <>
             <TopBar />
             <div className="dashboard-content">
                 {/* Row 1: Stat Cards */}
                 <div className="dashboard-row dashboard-stats">
-                    <StatCard title="Active users" value={metrics.active_users.toString()} icon={userIcon} variant="dark" />
+                    <StatCard title="Active users" value={activeUsersValue} icon={userIcon} variant="dark" />
 
-                    <StatCard title="Monthly Revenue" value={`$${metrics.monthly_revenue.toLocaleString()}`} icon={null} variant="dark" decoration={miniBars} />
+                    <StatCard title="Monthly Revenue" value={monthlyRevenueValue} icon={null} variant="dark" decoration={miniBars} />
 
-                    <StatCard title="Engagement Score" value={`${metrics.engagement_score}/100`} icon={analyticsIcon} variant="dark" />
+                    <StatCard title="Engagement Score" value={engagementScoreValue} icon={analyticsIcon} variant="dark" />
 
-                    <StatCard title="Growth" value={`+${metrics.growth}%`} icon={null} variant="gradient" decoration={growthCurve} />
+                    <StatCard title="Growth" value={growthValue} icon={null} variant="gradient" decoration={growthCurve} />
                 </div>
 
                 {/* Row 2: AI Forecast & Advisors */}

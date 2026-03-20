@@ -23,6 +23,12 @@ export async function fetchApplications(filters = {}) {
     return response.json();
 }
 
+export async function fetchApplicationById(id) {
+    const response = await apiFetch(`/api/patent-firm/applications/${id}`);
+    if (!response.ok) throw new Error(`Failed to fetch application ${id}`);
+    return response.json();
+}
+
 export async function fetchClients() {
     const response = await apiFetch('/api/patent-firm/clients');
     if (!response.ok) throw new Error('Failed to fetch clients');
