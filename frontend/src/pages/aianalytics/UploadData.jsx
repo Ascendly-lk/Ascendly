@@ -1,5 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import AIAnalyticsSidebar from '../../components/aianalytics/AIAnalyticsSidebar';
+
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
 import { apiFetch } from '../../api';
 import { formatBytes, timeAgo } from '../../utils/format';
@@ -38,6 +40,9 @@ const UploadData = () => {
     const [uploadMsg, setUploadMsg] = useState('');
     const fileInputRef = useRef(null);
 
+    const location = useLocation();
+    const hasAutoOpened = useRef(false);
+
     const fetchRecentFiles = useCallback(() => {
         apiFetch('/api/files/recent?limit=3')
             .then((res) => res.json())
@@ -53,6 +58,17 @@ const UploadData = () => {
     }, []);
 
     useEffect(() => { fetchRecentFiles(); }, [fetchRecentFiles]);
+
+    // Handle auto-open file browser if signaled from Quick Actions
+    useEffect(() => {
+        if (location.state?.autoOpen && !hasAutoOpened.current && fileInputRef.current) {
+            hasAutoOpened.current = true;
+            fileInputRef.current.click();
+            // Clear state so it doesn't re-trigger on refresh/back
+            window.history.replaceState({}, document.title);
+        }
+    }, [location.state]);
+
 
     const uploadFiles = useCallback(async (files) => {
         if (!files || files.length === 0 || uploading) return;
