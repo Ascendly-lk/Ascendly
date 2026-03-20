@@ -1,0 +1,211 @@
+.pp-container {
+    min-height: 100vh;
+    background-color: #0b1220;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #e2e8f0;
+}
+
+.pp-card {
+    width: 100%;
+    max-width: 480px;
+    background: #111b2d;
+    border: 1px solid rgba(0, 255, 229, 0.15);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.pp-header {
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+.pp-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #f8fafc;
+}
+
+.pp-subtitle {
+    font-size: 15px;
+    color: #94a3b8;
+}
+
+.pp-plan-highlight {
+    color: #00ffe5;
+    font-weight: 600;
+}
+
+.pp-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.pp-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pp-field label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #cbd5e1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pp-input {
+    background: #0b1220;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #f8fafc;
+    font-size: 15px;
+    transition: all 0.2s ease;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.pp-input:focus {
+    border-color: #00ffe5;
+    box-shadow: 0 0 0 2px rgba(0, 255, 229, 0.1);
+}
+
+.pp-input::placeholder {
+    color: #475569;
+}
+
+.pp-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.pp-error-msg {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.pp-pay-btn {
+    background: #00ffe5;
+    color: #0b1220;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 10px;
+}
+
+.pp-pay-btn:hover:not(:disabled) {
+    background: #00d1bc;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(0, 255, 229, 0.2);
+}
+
+.pp-pay-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.pp-cancel-btn {
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pp-cancel-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.05);
+    color: #f8fafc;
+}
+
+/* Success Overlay */
+.pp-success-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(11, 18, 32, 0.9);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.pp-success-modal {
+    background: #111b2d;
+    border: 1px solid #00ffe5;
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pp-success-icon {
+    width: 64px;
+    height: 64px;
+    background: rgba(0, 255, 229, 0.1);
+    color: #00ffe5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+}
+
+.pp-success-icon svg {
+    width: 32px;
+    height: 32px;
+}
+
+.pp-success-title {
+    color: #f8fafc;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.pp-success-text {
+    color: #94a3b8;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}

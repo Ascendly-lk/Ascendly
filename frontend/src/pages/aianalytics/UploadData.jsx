@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
+import RecentUploads from '../../components/aianalytics/RecentUploads';
 import { apiFetch } from '../../api';
 import { formatBytes, timeAgo } from '../../utils/format';
 import './UploadData.css';
@@ -162,23 +163,7 @@ const UploadData = () => {
 
                 {/* Bottom row */}
                 <div className="upload-bottom-row">
-                    {/* Recent Uploads */}
-                    <div className="upload-recent-card">
-                        <h3 className="upload-recent-title">Recent Uploads</h3>
-                        <ul className="upload-recent-list">
-                            {recentFiles.map((file, i) => (
-                                <li key={i} className="upload-recent-item">
-                                    <div className="upload-recent-icon">
-                                        <FileIcon />
-                                    </div>
-                                    <div className="upload-recent-info">
-                                        <p className="upload-recent-name">{file.name}</p>
-                                        <p className="upload-recent-meta">{file.meta}</p>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    <RecentUploads />
                     {/* Right side intentionally empty per Figma */}
                 </div>
             </div>

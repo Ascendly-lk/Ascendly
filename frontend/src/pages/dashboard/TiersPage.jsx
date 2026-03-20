@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './TiersPage.css';
 
 /* ── Plans data ──────────────────────────────────────────────────────────── */
@@ -32,6 +33,12 @@ const plans = [
 /* ── Tiers Main Page (sidebar removed — provided by DashboardLayout) ─────── */
 const TiersPage = () => {
     const [billingYearly, setBillingYearly] = useState(false);
+    const navigate = useNavigate();
+
+    const handleChoosePlan = (plan) => {
+        const price = billingYearly ? plan.yearlyPrice : plan.monthlyPrice;
+        navigate('/payment', { state: { plan: plan.name, price } });
+    };
 
     return (
         <div className="tp-main">
@@ -125,7 +132,12 @@ const TiersPage = () => {
                                 ))}
                             </ul>
 
-                            <button className="tp-choose-btn">Choose Plan</button>
+                            <button 
+                                className="tp-choose-btn"
+                                onClick={() => handleChoosePlan(plan)}
+                            >
+                                Choose Plan
+                            </button>
                         </div>
                     ))}
                 </div>
