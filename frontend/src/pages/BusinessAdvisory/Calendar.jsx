@@ -190,10 +190,10 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="calendar-page">
+    <div className="dashboard-container">
       <Sidebar />
 
-      <main className="calendar-main">
+      <main className="calendar-main" style={{ marginLeft: '260px', flexGrow: 1, minWidth: 0, padding: '28px 40px' }}>
         <TopHeader showWelcome={false} />
 
         <header className="calendar-header">
