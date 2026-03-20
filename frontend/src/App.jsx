@@ -27,6 +27,7 @@ import InvestorsPage from './pages/dashboard/InvestorsPage';
 import TiersPage from './pages/dashboard/TiersPage';
 import AdvisorsPage from './pages/dashboard/AdvisorsPage';
 import DocumentReview from './pages/patent-firm/DocumentReview';
+import PaymentPortal from './pages/PaymentPortal';
 
 // Patent Firm
 import PatentFirmDashboard from './pages/patent-firm/Dashboard';
@@ -43,6 +44,7 @@ function App() {
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/payment" element={<PaymentPortal />} />
 
           <Route
             path="/account"
