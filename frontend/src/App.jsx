@@ -141,14 +141,14 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/notifications" element={<NotificationsPage />} />
 
-          <Route
-            path="/business-advisory"
-            element={
-              <ProtectedRoute>
-                <Navigate to="/dashboard" replace />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/business-advisory" element={<Dashboard />} />
+          <Route path="/business-advisory/clients" element={<Clients />} />
+          <Route path="/business-advisory/projects" element={<Projects />} />
+          <Route path="/business-advisory/calendar" element={<CalendarPage />} />
+          <Route path="/business-advisory/payments" element={<Payments />} />
+          <Route path="/business-advisory/settings" element={<Settings />} />
+          <Route path="/business-advisory/notifications" element={<NotificationsPage />} />
+          <Route path="/business-advisory/edit-profile" element={<EditProfile />} />
 
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>

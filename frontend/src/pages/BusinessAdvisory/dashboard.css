@@ -45,7 +45,7 @@ body {
   align-items: stretch;
 }
 
-.dashboard-container > .sidebar {
+.dashboard-container>.sidebar {
   flex: 0 0 220px;
   max-width: 220px;
 }
@@ -522,7 +522,7 @@ body {
     flex-direction: column;
   }
 
-  .dashboard-container > .sidebar {
+  .dashboard-container>.sidebar {
     flex: none;
     max-width: 100%;
   }
