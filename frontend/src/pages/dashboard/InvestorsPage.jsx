@@ -36,8 +36,8 @@ const DUMMY_INVESTORS = [
 /* ── Tier Logic ──────────────────────────────────────────────────────────── */
 function resolveTier() {
     const raw = (getSubscriptionPlan() || 'starter').toLowerCase();
-    if (raw.includes('premium')) return 'premium';
-    if (raw.includes('pro'))     return 'pro';
+    if (raw.includes('enterprise') || raw.includes('premium')) return 'premium';
+    if (raw.includes('standard') || raw.includes('pro'))       return 'pro';
     return 'free';
 }
 
