@@ -3,7 +3,7 @@ Benchmark Query Tool for CrewAI
 ---------------------------------
 Fallback chain (in order):
   1. In-memory TTL cache (cache_manager) — returns immediately if fresh
-  2. Local Supabase startup_benchmarks table — 1050 real startup records (free, always on)
+  2. Local Supabase startup_benchmarks table — 1050 startup records (free, always on)
   3. Google ADK BenchmarkOrchestrator — live multi-source fetch (uses Gemini credits)
   4. Hardcoded defaults — always returns something useful
 
@@ -90,32 +90,38 @@ def query_benchmarks(category: str) -> str:
         client = get_supabase_client()
 
         if category == "industry_growth":
-            # Successful startups — compute median revenue growth Y1→Y3
+            # Query all statuses to compute a meaningful success rate
             response = (
                 client.table("startup_benchmarks")
                 .select("name, country, revenue_year1, revenue_year2, revenue_year3, current_status")
-                .eq("current_status", "Successful")
                 .not_.is_("revenue_year3", "null")
                 .gt("revenue_year3", 0)
-                .limit(200)
+                .limit(300)
                 .execute()
             )
             rows = response.data or []
             if rows:
                 growths = []
+                successful = 0
                 for r in rows:
                     y1 = r.get("revenue_year1") or 0
                     y3 = r.get("revenue_year3") or 0
                     if y1 > 0 and y3 > 0:
                         growths.append(((y3 - y1) / y1) * 100)
+                    if r.get("current_status") == "Successful":
+                        successful += 1
                 if growths:
                     growths.sort()
-                    mid = len(growths) // 2
-                    median_growth = growths[mid]
-                    success_rate = len([r for r in rows if r.get("current_status") == "Successful"]) / max(len(rows), 1) * 100
+                    n = len(growths)
+                    # Correct median: average of two middle values for even-length lists
+                    if n % 2 == 1:
+                        median_growth = growths[n // 2]
+                    else:
+                        median_growth = (growths[n // 2 - 1] + growths[n // 2]) / 2
+                    success_rate = successful / max(len(rows), 1) * 100
                     records = [
                         {"name": "Startup Median Revenue Growth (Y1→Y3)", "metric": "revenue_growth_pct", "value": round(median_growth, 1), "unit": "%", "period": "Y1-Y3", "source": "startup_benchmarks"},
-                        {"name": "Startup Success Rate (sample)", "metric": "success_rate", "value": round(success_rate, 1), "unit": "%", "period": "2024", "source": "startup_benchmarks"},
+                        {"name": "Startup Success Rate", "metric": "success_rate", "value": round(success_rate, 1), "unit": "%", "period": "2024", "source": "startup_benchmarks"},
                         {"name": "Sample Size", "metric": "count", "value": len(rows), "unit": "startups", "period": "2024", "source": "startup_benchmarks"},
                     ]
                     logger.info("Local benchmark table returned %d records for category='%s'", len(records), category)

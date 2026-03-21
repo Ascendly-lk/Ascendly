@@ -154,8 +154,10 @@ class BenchmarkOrchestrator:
         """
         try:
             return asyncio.run(self.run_async(category))
-        except RuntimeError:
-            # Fallback: if an event loop is already running, create a new thread
+        except RuntimeError as e:
+            # Only retry in a thread if the error is due to a running event loop
+            if "cannot be called from a running event loop" not in str(e):
+                raise
             import concurrent.futures
             with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
                 future = pool.submit(asyncio.run, self.run_async(category))

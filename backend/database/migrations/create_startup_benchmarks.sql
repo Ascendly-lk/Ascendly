@@ -1,6 +1,9 @@
 -- Startup Benchmarks Table
--- Seeded from Startup Dataset.csv (1051 rows)
+-- Seeded from Startup Dataset.csv (1050 rows)
 -- Used by benchmark_tool.py Layer 2 (local lookup before ADK agents)
+
+-- Ensure gen_random_uuid() is available
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE IF NOT EXISTS startup_benchmarks (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
