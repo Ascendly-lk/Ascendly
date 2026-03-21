@@ -1,6 +1,7 @@
 import { useState } from "react";
-import Sidebar from "./Sidebar";
+import Sidebar from "../../components/dashboard/Sidebar";
 import TopHeader from "../../components/TopHeader";
+import "./DashboardLayout.css";
 import "./Notifications.css";
 
 export default function NotificationsPage() {
@@ -55,10 +56,10 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="notifications-layout">
+    <div className="dl-shell notifications-layout">
       <Sidebar />
 
-      <main className="notifications-page">
+      <main className="dl-main notifications-page">
         <TopHeader showWelcome={false} />
 
         <div className="notifications-shell">
