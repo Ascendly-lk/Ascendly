@@ -199,21 +199,22 @@
   border: none;
   border-radius: 8px;
   color: #ffffff;
-  padding: 10px 24px;
-  font-size: 0.95rem;
-  font-weight: 600;
+  padding: 8px 18px;
+  font-size: 1rem;
+  font-weight: 500;
+  font-style: italic;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .client-action-buttons button svg {
-  width: 16px;
-  height: 16px;
-  stroke-width: 2.5;
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.2;
 }
 
 .client-action-buttons.large .btn-accept {
@@ -226,32 +227,14 @@
   justify-content: center;
 }
 
-.client-action-buttons.compact .btn-accept {
-  background: transparent;
-  color: #10b981; /* Green */
-  border: 1px solid rgba(16, 185, 129, 0.4);
-}
-
-.client-action-buttons.compact .btn-accept svg {
-  color: #10b981;
-}
-
-.client-action-buttons.compact .btn-decline {
-  background: transparent;
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.4);
-}
-
-.client-action-buttons.compact .btn-decline svg {
-  color: #ef4444;
-}
-
 .btn-accept {
-  background: #0e7465;
+  background: linear-gradient(90deg, #186b53 0%, #0d3839 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .btn-decline {
-  background: #7a1921;
+  background: linear-gradient(90deg, #59161b 0%, #300f13 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .client-tag {
