@@ -81,7 +81,7 @@ const StartupDashboard = () => {
     // Safe derived display values - always strings, always valid
     const activeUsersValue   = String(Number(metrics.active_users) || 0);
     const monthlyRevenueValue = `$${Number(metrics.monthly_revenue || 0).toLocaleString()}`;
-    const engagementScoreValue = `${Number(metrics.engagement_score) || 0}/100`;
+    const engagementScoreValue = String(Number(metrics.engagement_score) || 0);
     const growthNum = Number(metrics.growth) || 0;
     const growthValue = `${growthNum > 0 ? '+' : ''}${growthNum}%`;
 
@@ -95,7 +95,7 @@ const StartupDashboard = () => {
 
                     <StatCard title="Monthly Revenue" value={monthlyRevenueValue} icon={null} variant="dark" decoration={miniBars} />
 
-                    <StatCard title="Engagement Score" value={engagementScoreValue} icon={analyticsIcon} variant="dark" />
+                    <StatCard title="Engagement Score" value={engagementScoreValue} suffix="/100" icon={analyticsIcon} variant="dark" />
 
                     <StatCard title="Growth" value={growthValue} icon={null} variant="gradient" decoration={growthCurve} />
                 </div>
