@@ -1,0 +1,44 @@
+/* ── DashboardLayout — shell only ────────────────────────────────────────── */
+/* Mirrors the layout previously inside StartupDashboard (sidebar + main).    */
+/* Individual page content is scrollable inside dl-content.                   */
+
+.dl-shell {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background: linear-gradient(135deg, #050B14 0%, #0B1220 100%);
+    overflow-x: hidden;
+}
+
+/* Left sidebar is fixed-width (280px matches Sidebar.css .sidebar width) */
+.dl-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    margin-left: 280px;
+    /* matches .sidebar width in Sidebar.css */
+}
+
+/* Page-specific content area */
+.dl-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+/* Responsive: collapse sidebar at ≤1024px */
+@media (max-width: 1024px) {
+    .dl-main {
+        margin-left: 72px;
+        /* matches collapsed .sidebar width */
+    }
+}
+
+@media (max-width: 768px) {
+    .dl-main {
+        margin-left: 0;
+    }
+}
