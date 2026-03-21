@@ -433,6 +433,47 @@
     border-color: #10b981;
 }
 
+/* ── Action Buttons (Insights / PDF) ── */
+.ai-chat-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 12px;
+}
+
+.ai-chat-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0, 255, 229, 0.05);
+    border: 1px solid rgba(0, 255, 229, 0.2);
+    color: #00FFE5;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ai-chat-action-btn:hover {
+    background: rgba(0, 255, 229, 0.15);
+    border-color: rgba(0, 255, 229, 0.4);
+    box-shadow: 0 0 10px rgba(0, 255, 229, 0.1);
+}
+
+.ai-chat-action-btn.pdf {
+    background: rgba(16, 185, 129, 0.05);
+    border-color: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.ai-chat-action-btn.pdf:hover {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.4);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.1);
+}
+
 .ai-chat-file-dropdown option {
     background: #0f1a2e;
     color: #e2e8f0;
@@ -466,4 +507,29 @@
 .ai-chat-chip:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+/* ── Coming Soon Toast ── */
+.ai-toast-popup {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #0a1220;
+    border: 1px solid rgba(0, 255, 229, 0.3);
+    color: #00FFE5;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 255, 229, 0.1);
+    z-index: 500;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+}
+
+.ai-toast-popup.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
 }
