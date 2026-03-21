@@ -13,12 +13,15 @@ Fallback chain (in order):
 The @tool signature is unchanged — no modifications needed in crew.py or agents.py.
 """
 import json
+import logging
 import sys
 import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from crewai.tools import tool
+
+logger = logging.getLogger(__name__)
 
 # Hardcoded defaults — used only when all live sources fail
 _DEFAULTS = {
@@ -79,23 +82,23 @@ def query_benchmarks(category: str) -> str:
         try:
             cached = get_cached_benchmark(category)
             if cached is not None:
-                print(f"[Ascendly] Benchmark cache HIT for category='{category}'")
+                logger.debug("Benchmark cache HIT for category='%s'", category)
                 return cached
-        except Exception as e:
-            print(f"[Ascendly] Cache read failed: {e}")
+        except Exception:
+            logger.exception("Benchmark cache read failed for category='%s'", category)
 
     # ── Layer 2: Google ADK live fetch ────────────────────────────────────────
     try:
         from ai_engine.adk.orchestrator import BenchmarkOrchestrator
-        print(f"[Ascendly] ADK benchmark fetch starting for category='{category}'...")
+        logger.info("ADK benchmark fetch starting for category='%s'", category)
         orchestrator = BenchmarkOrchestrator()
         adk_records = orchestrator.run(category)
-        print(f"[Ascendly] ADK returned {len(adk_records)} benchmark records.")
+        logger.info("ADK returned %d benchmark records for category='%s'", len(adk_records), category)
         if adk_records:
             # TODO: upsert to Supabase benchmarks table with fetched_at=NOW() once columns are added
             return _cache_and_return(adk_records)
-    except Exception as e:
-        print(f"[Ascendly] ADK benchmark fetch failed: {e}")
+    except Exception:
+        logger.exception("ADK benchmark fetch failed for category='%s'", category)
 
     # ── Layer 3: Supabase fallback (last-known-good) ──────────────────────────
     try:
@@ -103,7 +106,7 @@ def query_benchmarks(category: str) -> str:
         response = get_records("benchmarks", {"category": category})
         rows = response.data if response and response.data else []
         if rows:
-            print(f"[Ascendly] ADK failed — using Supabase cached data ({len(rows)} rows).")
+            logger.warning("ADK failed — using Supabase cached data (%d rows) for category='%s'", len(rows), category)
             benchmarks = [
                 {
                     "name": r.get("name"),
@@ -116,9 +119,9 @@ def query_benchmarks(category: str) -> str:
                 for r in rows
             ]
             return _cache_and_return(benchmarks)
-    except Exception as e:
-        print(f"[Ascendly] Supabase fallback failed: {e}")
+    except Exception:
+        logger.exception("Supabase fallback failed for category='%s'", category)
 
     # ── Layer 4: Hardcoded defaults ───────────────────────────────────────────
-    print(f"[Ascendly] All sources failed — using hardcoded defaults for '{category}'.")
+    logger.warning("All sources failed — using hardcoded defaults for category='%s'", category)
     return _cache_and_return(_DEFAULTS.get(category, []))
