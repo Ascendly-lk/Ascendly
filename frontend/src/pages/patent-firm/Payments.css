@@ -1,0 +1,307 @@
+/* Payments.css refinement to match Ascendly dark theme */
+
+.pf-content {
+  padding-top: 16px;
+}
+
+.payment-overdue-highlight {
+  background: #0d1628;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.highlight-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  color: #F59E0B;
+}
+
+.highlight-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.highlight-text {
+  margin-bottom: 16px;
+  color: #d97706;
+  font-size: 14px;
+}
+
+.overdue-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.overdue-item h4 {
+  margin: 0;
+  color: var(--text-white);
+  font-size: 15px;
+}
+
+.overdue-item p {
+  margin: 4px 0 0;
+  color: var(--text-gray);
+  font-size: 13px;
+}
+
+.payment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.payment-card {
+  background: #0d1628;
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+  border-radius: 18px;
+  padding: 24px;
+  transition: all 0.2s ease-out;
+}
+
+.payment-card:hover {
+  box-shadow: 0 8px 32px rgba(0, 229, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.payment-main {
+  width: 100%;
+}
+
+.payment-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.payment-title-group h3 {
+  margin: 0;
+  color: var(--text-white);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.service {
+  margin: 4px 0 0;
+  color: var(--text-gray);
+  font-size: 14px;
+}
+
+.payment-body-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.payment-meta-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-gray);
+  font-size: 13px;
+}
+
+.dot-sep {
+  color: rgba(148, 163, 184, 0.5);
+}
+
+.date-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.paid-meta {
+  color: #34D399;
+}
+
+.payment-amount-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.amount {
+  font-size: 28px;
+  color: var(--text-white);
+  font-weight: 700;
+}
+
+.download-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-gray);
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.download-btn:hover {
+  color: var(--text-white);
+}
+
+/* Analytics Row */
+.payments-analytics-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.analytics-card {
+  background: #0d1628;
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 18px;
+  padding: 24px;
+}
+
+.analytics-header h3 {
+  font-size: 18px;
+  color: var(--text-white);
+  margin-bottom: 4px;
+}
+
+.analytics-header p {
+  font-size: 14px;
+  color: var(--text-gray);
+  margin-bottom: 24px;
+}
+
+.tier-stat-item {
+  margin-bottom: 20px;
+}
+
+.tier-stat-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.tier-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-gray);
+}
+
+.tier-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.tier-value {
+  color: var(--text-white);
+  font-weight: 600;
+}
+
+.tier-progress-bg {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.tier-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.method-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.method-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-gray);
+}
+
+.method-info {
+  flex: 1;
+}
+
+.method-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.method-top h4 {
+  font-size: 15px;
+  color: var(--text-white);
+  margin: 0;
+}
+
+.method-amount {
+  font-weight: 600;
+  color: var(--text-white);
+}
+
+.method-info p {
+  font-size: 13px;
+  color: var(--text-gray);
+  margin: 0;
+}
+
+.empty-note {
+  color: var(--text-gray);
+  text-align: center;
+  padding: 40px 0;
+  font-size: 14px;
+}
+
+/* Status Pill Customizations */
+.cl-badge-gray {
+  background-color: rgba(148, 163, 184, 0.1);
+  color: #94a3b8;
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+.cl-badge-green {
+  background-color: rgba(52, 211, 153, 0.1);
+  color: #34D399;
+  border-color: rgba(52, 211, 153, 0.2);
+}
+
+
+.payment-title-group {
+  text-align: left;
+}
+
+.send-reminder-btn {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  color: #0d1628;
+  border: none;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+}
+
+.send-reminder-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.3);
+  filter: brightness(1.1);
+}

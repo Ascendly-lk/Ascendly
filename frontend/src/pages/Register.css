@@ -1,0 +1,327 @@
+.register-container {
+    display: flex;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #050B14 0%, #0B1220 100%);
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Left Side - Gradient Background with Diagonal Slant */
+.register-left {
+    flex: 1;
+
+    background: linear-gradient(135deg,  #00FFEF 3%, #0E817A 37%, #1A1A1A 94%);
+    background: linear-gradient(135deg, #1A8B7E 0%, #00E5CC 100%);
+
+    background: linear-gradient(200deg, #00FFE5 0%, #23A7B4 45%, #0B1220 100%);
+
+    background: linear-gradient(135deg, #1A8B7E 0%, #00E5CC 100%);
+
+    position: relative;
+    overflow: hidden;
+    /* More aggressive diagonal slant for stronger visual identity */
+    clip-path: polygon(0 0, 100% 0, 65% 100%, 0 100%);
+    /* Subtle glow on the diagonal edge */
+    filter: drop-shadow(2px 0 8px rgba(0, 229, 204, 0.4));
+}
+
+.register-left::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    /* Enhanced gradient glow effect to match Figma */
+    background: radial-gradient(ellipse at 70% 30%, rgba(0, 229, 204, 0.6) 0%, rgba(0, 229, 204, 0.3) 30%, transparent 70%);
+}
+
+/* Right Side - Form */
+.register-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 40px;
+}
+
+.register-form-container {
+    width: 100%;
+    max-width: 480px;
+}
+
+/* Header */
+.register-header {
+    margin-bottom: 24px;
+}
+
+.register-header h1 {
+    font-size: 35px;
+    font-weight: 700;
+    color: #00FFE5;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.register-header h2 {
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--text-white);
+    margin-bottom: 6px;
+    line-height: 1.1;
+}
+
+.register-header p {
+    font-size: 14px;
+    color: var(--text-gray);
+    font-weight: 400;
+}
+
+/* Form */
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-white);
+    margin-bottom: 2px;
+}
+
+/* Input Fields */
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 10px 14px;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--text-white);
+    font-size: 14px;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.form-input::placeholder {
+    color: #6B7280;
+}
+
+.form-input:focus,
+.form-select:focus {
+    border-color: var(--primary-cyan);
+    background-color: #343749;
+    /* Subtle gradient glow on focus */
+    box-shadow: 0 0 0 3px rgba(0, 229, 204, 0.15), 0 0 12px rgba(0, 229, 204, 0.2);
+}
+
+/* Select Dropdown */
+.form-select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+}
+
+.form-select option {
+    background-color: var(--dark-card);
+    color: var(--text-white);
+    padding: 12px;
+}
+
+/* Password Input with Eye Icon */
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input-wrapper .form-input {
+    padding-right: 48px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 16px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-gray);
+    transition: color 0.3s ease;
+}
+
+.password-toggle:hover {
+    color: var(--text-white);
+}
+
+.password-toggle svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Register Button with Gradient Glow */
+.register-button {
+    width: 100%;
+    padding: 12px;
+    /* Gradient background for enhanced visual appeal */
+    background: #00FFE5;
+    color: var(--dark-bg);
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 4px;
+    /* Soft gradient glow effect */
+    box-shadow: 0 4px 12px rgba(0, 229, 204, 0.4), 0 0 20px rgba(0, 229, 204, 0.2);
+}
+
+.register-button:hover {
+    /* Enhanced glow on hover */
+    background: linear-gradient(135deg, #00FFE5 0%, #00E5CC 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 229, 204, 0.5), 0 0 30px rgba(0, 229, 204, 0.3);
+}
+
+.register-button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(0, 229, 204, 0.4), 0 0 20px rgba(0, 229, 204, 0.2);
+}
+
+/* Footer Link */
+.register-footer {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--text-gray);
+}
+
+.register-footer a {
+    color: var(--primary-cyan);
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.register-footer a:hover {
+    color: #00FFE5;
+    text-decoration: underline;
+    /* Subtle text glow effect */
+    text-shadow: 0 0 8px rgba(0, 229, 204, 0.5);
+}
+
+/* Error Messages */
+.error-message {
+    color: #EF4444;
+    font-size: 13px;
+    margin-top: 4px;
+    display: block;
+}
+
+/* Authentication Divider */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    color: var(--text-gray, #64748B);
+    font-size: 13px;
+    margin: 8px 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.auth-divider span {
+    padding: 0 16px;
+    font-weight: 500;
+}
+
+/* Google Auth Button */
+.google-auth-button {
+    width: 100%;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-white, #FFFFFF);
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 4px;
+}
+
+.google-auth-button svg {
+    width: 18px;
+    height: 18px;
+}
+
+.google-auth-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.google-auth-button:active {
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .register-container {
+        flex-direction: column;
+    }
+
+    .register-left {
+        min-height: 200px;
+        /* Remove diagonal slant on mobile for better layout */
+        clip-path: none;
+    }
+
+    .register-right {
+        padding: 40px 24px;
+    }
+
+    .register-header h2 {
+        font-size: 36px;
+    }
+}
+
+@media (max-width: 640px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .register-header h2 {
+        font-size: 32px;
+    }
+}
