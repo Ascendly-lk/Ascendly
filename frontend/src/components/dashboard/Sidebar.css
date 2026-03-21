@@ -95,6 +95,13 @@
     padding: 20px;
     margin-bottom: 16px;
     text-align: center;
+    border: none;
+    cursor: pointer;
+    width: calc(100% - 48px);
+    margin-left: 24px;
+    margin-right: 24px;
+    font-family: inherit;
+    display: block;
 }
 
 .sidebar-upgrade p {

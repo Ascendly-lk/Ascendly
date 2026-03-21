@@ -48,6 +48,7 @@ function App() {
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/payment" element={<PaymentPortal />} />
 
           <Route
             path="/account"
@@ -73,6 +74,7 @@ function App() {
             <Route path="investors" element={<InvestorsPage />} />
             <Route path="tiers" element={<TiersPage />} />
             <Route path="advisors" element={<AdvisorsPage />} />
+            <Route path="marketing-agency" element={<MarketingAgency />} />
             <Route path="clients" element={<Clients />} />
             <Route path="projects" element={<Projects />} />
             <Route path="calendar" element={<CalendarPage />} />
@@ -100,6 +102,11 @@ function App() {
               element={<PatentFirmPayments />}
             />
 
+            {/* AI Analytics Routes */}
+            <Route path="ai-analytics" element={<AIAnalyticsDashboard />} />
+            <Route path="ai-analytics/upload" element={<UploadData />} />
+            <Route path="ai-analytics/assistant" element={<AIAssistant />} />
+
             {/* Role placeholders */}
             <Route path="founder" element={<DashboardPlaceholder />} />
             <Route path="investor" element={<DashboardPlaceholder />} />
@@ -112,31 +119,6 @@ function App() {
             />
             <Route path="marketing-agency/feedbacks" element={<Feedbacks />} />
           </Route>
-
-          <Route
-            path="/dashboard/ai-analytics"
-            element={
-              <ProtectedRoute>
-                <AIAnalyticsDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/ai-analytics/upload"
-            element={
-              <ProtectedRoute>
-                <UploadData />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/ai-analytics/assistant"
-            element={
-              <ProtectedRoute>
-                <AIAssistant />
-              </ProtectedRoute>
-            }
-          />
 
           <Route
             path="/marketing-agency/projects"

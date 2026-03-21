@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import AIAnalyticsSidebar from '../../components/aianalytics/AIAnalyticsSidebar';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
 import AIStatCard from '../../components/aianalytics/AIStatCard';
 import AIAnalyticsChart from '../../components/aianalytics/AIAnalyticsChart';
@@ -65,53 +64,49 @@ const AIAnalyticsDashboard = () => {
     const fmt = (v) => (v >= 0 ? `+${v}%` : `${v}%`);
 
     return (
-        <div className="ai-dashboard">
-            <AIAnalyticsSidebar />
+        <div className="ai-dashboard-main">
+            <AIAnalyticsTopBar />
 
-            <div className="ai-dashboard-main">
-                <AIAnalyticsTopBar />
+            <div className="ai-dashboard-content">
+                {/* Row 1 — Stats */}
+                <div className="ai-stats-row">
+                    <AIStatCard
+                        icon={<UploadIcon />}
+                        title="Files Uploaded"
+                        value={String(m.files_uploaded.value)}
+                        change={fmt(m.files_uploaded.change_percent)}
+                        variant="dark"
+                    />
+                    <AIStatCard
+                        icon={<QueryIcon />}
+                        title="AI Queries"
+                        value={String(m.ai_queries.value)}
+                        change={fmt(m.ai_queries.change_percent)}
+                        variant="dark"
+                    />
+                    <AIStatCard
+                        icon={<DataIcon />}
+                        title="Data Processed"
+                        value={String(m.data_processed.value)}
+                        change={fmt(m.data_processed.change_percent)}
+                        variant="dark"
+                    />
+                    <AIStatCard
+                        icon={<ReportIcon />}
+                        title="Active Reports"
+                        value={String(m.active_reports.value)}
+                        change={fmt(m.active_reports.change_percent)}
+                        variant="highlight"
+                    />
+                </div>
 
-                <div className="ai-dashboard-content">
-                    {/* Row 1 — Stats */}
-                    <div className="ai-stats-row">
-                        <AIStatCard
-                            icon={<UploadIcon />}
-                            title="Files Uploaded"
-                            value={String(m.files_uploaded.value)}
-                            change={fmt(m.files_uploaded.change_percent)}
-                            variant="dark"
-                        />
-                        <AIStatCard
-                            icon={<QueryIcon />}
-                            title="AI Queries"
-                            value={String(m.ai_queries.value)}
-                            change={fmt(m.ai_queries.change_percent)}
-                            variant="dark"
-                        />
-                        <AIStatCard
-                            icon={<DataIcon />}
-                            title="Data Processed"
-                            value={String(m.data_processed.value)}
-                            change={fmt(m.data_processed.change_percent)}
-                            variant="dark"
-                        />
-                        <AIStatCard
-                            icon={<ReportIcon />}
-                            title="Active Reports"
-                            value={String(m.active_reports.value)}
-                            change={fmt(m.active_reports.change_percent)}
-                            variant="highlight"
-                        />
-                    </div>
+                {/* Row 2 — Chart */}
+                <AIAnalyticsChart />
 
-                    {/* Row 2 — Chart */}
-                    <AIAnalyticsChart />
-
-                    {/* Row 3 — Bottom cards */}
-                    <div className="ai-bottom-row">
-                        <RecentUploads />
-                        <QuickActions />
-                    </div>
+                {/* Row 3 — Bottom cards */}
+                <div className="ai-bottom-row">
+                    <RecentUploads />
+                    <QuickActions />
                 </div>
             </div>
         </div>

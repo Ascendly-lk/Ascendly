@@ -1,4 +1,6 @@
+import { useNavigate } from 'react-router-dom';
 import './QuickActions.css';
+
 
 const ACTIONS = [
     {
@@ -44,12 +46,26 @@ const ArrowIcon = () => (
 );
 
 const QuickActions = () => {
+    const navigate = useNavigate();
+
+    const handleAction = (title) => {
+        if (title === 'Upload New Dataset') {
+            navigate('/dashboard/ai-analytics/upload', { state: { autoOpen: true } });
+        } else if (title === 'Generate Report') {
+            navigate('/dashboard/ai-analytics/assistant', { 
+                state: { initialPrompt: "Generate a comprehensive analysis report for my latest data." } 
+            });
+        } else if (title === 'Ask AI Assistant') {
+            navigate('/dashboard/ai-analytics/assistant');
+        }
+    };
+
     return (
         <div className="quick-actions-card">
             <h3 className="quick-actions-title">Quick Actions</h3>
             <ul className="quick-actions-list">
                 {ACTIONS.map((action, i) => (
-                    <li key={i} className="quick-actions-item">
+                    <li key={i} className="quick-actions-item" onClick={() => handleAction(action.title)}>
                         <div className="quick-actions-icon">
                             {action.icon}
                         </div>
@@ -57,7 +73,10 @@ const QuickActions = () => {
                             <p className="quick-actions-name">{action.title}</p>
                             <p className="quick-actions-sub">{action.sub}</p>
                         </div>
-                        <button className="quick-actions-btn" aria-label={action.title}>
+                        <button 
+                            className="quick-actions-btn" 
+                            aria-label={action.title}
+                        >
                             <ArrowIcon />
                         </button>
                     </li>
@@ -66,5 +85,6 @@ const QuickActions = () => {
         </div>
     );
 };
+
 
 export default QuickActions;

@@ -5,9 +5,12 @@ Profiles table schema (existing):
   auth_user_id (added via ALTER TABLE), role (added via ALTER TABLE)
 """
 import os
+import logging
 from dotenv import load_dotenv
 from fastapi import Header, HTTPException
 from supabase import create_client, Client
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -115,15 +118,26 @@ def require_auth(authorization: str = Header(...)):
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Invalid authorization header format")
     token = authorization[7:]
+    
+    # Allow dev bypass
+    if token == "BYPASS" and os.getenv("ENVIRONMENT", "dev") != "production":
+        class DummyUser:
+            id = "00000000-0000-0000-0000-000000000000"
+            email = "dev@bypass.com"
+        return DummyUser()
+
     try:
         client = get_supabase_client()
         response = client.auth.get_user(token)
         if not response or not response.user:
+            logger.warning("[require_auth] Token validation failed: empty or missing user object")
             raise HTTPException(status_code=401, detail="Invalid or expired token")
+        logger.debug("[require_auth] Token verified")
         return response.user
     except HTTPException:
         raise
     except Exception:
+        logger.exception("[require_auth] Unexpected error during token verification")
         raise HTTPException(status_code=401, detail="Authentication failed")
 
 
