@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   CircleDollarSign,
   MapPin,
@@ -6,15 +6,35 @@ import {
   UserRound,
   Users,
 } from "lucide-react";
-import Sidebar from "./Sidebar";
 import TopHeader from "../../components/TopHeader";
+import { apiFetch } from "../../api";
 import "./dashboard.css";
 
 const Dashboard = () => {
+  const [metrics, setMetrics] = useState({
+    active_users: 0,
+    monthly_revenue: 0,
+    engagement_score: 0,
+    growth: 0
+  });
+
+  useEffect(() => {
+    async function fetchMetrics() {
+      try {
+        const response = await apiFetch('/dashboard/metrics');
+        if (response.ok) {
+          const data = await response.json();
+          setMetrics(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch metrics", err);
+      }
+    }
+    fetchMetrics();
+  }, []);
+
   return (
     <div className="dashboard-container">
-      <Sidebar />
-
       {/* Main Content */}
       <main className="dashboard-main">
         <TopHeader />
@@ -27,10 +47,10 @@ const Dashboard = () => {
               <div className="icon-box">
                 <Users />
               </div>
-              <span className="stat-change">+2 ↗</span>
+              <span className="stat-change">{metrics.growth >= 0 ? `+${metrics.growth}%` : `${metrics.growth}%`} ↗</span>
             </div>
             <div className="stat-body">
-              <div className="stat-value">12</div>
+              <div className="stat-value">{metrics.active_users}</div>
               <div className="stat-label">Active Startups</div>
             </div>
           </div>
@@ -44,7 +64,7 @@ const Dashboard = () => {
               <span className="stat-change positive">+15% ↗</span>
             </div>
             <div className="stat-body">
-              <div className="stat-value">$ 3,500</div>
+              <div className="stat-value">$ {metrics.monthly_revenue.toLocaleString()}</div>
               <div className="stat-label">Monthly Revenue</div>
             </div>
           </div>
@@ -58,7 +78,7 @@ const Dashboard = () => {
               <span className="stat-change negative">-5% ↘</span>
             </div>
             <div className="stat-body">
-              <div className="stat-value">45 %</div>
+              <div className="stat-value">{metrics.engagement_score} %</div>
               <div className="stat-label">Success Rate</div>
             </div>
           </div>
