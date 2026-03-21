@@ -11,23 +11,11 @@ import sys
 import time
 import uuid
 
-from crewai import Agent, Task, Crew, Process, LLM
+from crewai import Agent, Task, Crew, Process
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-
-def _make_llm() -> LLM:
-    model = os.getenv("CREWAI_LLM_MODEL", "azure/gpt-4o")
-    if model.startswith("azure/"):
-        api_key = os.getenv("AZURE_API_KEY")
-        endpoint = os.getenv("AZURE_ENDPOINT")
-        api_version = os.getenv("AZURE_API_VERSION")
-        if not api_key or not endpoint:
-            raise EnvironmentError(
-                "AZURE_API_KEY and AZURE_ENDPOINT must be set for Azure models."
-            )
-        return LLM(model=model, api_key=api_key, endpoint=endpoint, api_version=api_version)
-    return LLM(model=model, api_key=os.getenv("OPENAI_API_KEY"))
+from ai_engine.provider import get_crewai_llm as _make_llm
 
 
 def _run_safe(crew: Crew, task: Task, label: str) -> str:
