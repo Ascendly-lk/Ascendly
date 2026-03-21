@@ -27,10 +27,10 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# CORS — allow Vite frontend dev server (port 5173)
+# CORS — allow Vite frontend dev server (port 5173, etc)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1|\[::1\]|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -262,15 +262,23 @@ async def get_me(current_user=Depends(require_auth)):
             upsert_data["created_at"] = datetime.now(timezone.utc).isoformat()
             
         try:
+            print(f"[get_me] Syncing profile for {auth_user_id} ({current_user.email})")
             create_profile(upsert_data)
-        except Exception:
-            pass # Suppress issues if the trigger already handles portions of this seamlessly
+        except Exception as e:
+            print(f"[get_me] Profile sync FAILED for {auth_user_id}: {str(e)}")
+            # `profile` holds the record fetched before the sync attempt.
+            # If it was None the user has no existing profile row, so a sync
+            # failure is fatal — raise immediately.  If a profile already existed,
+            # the user can still log in with that record.
+            if not profile:
+                raise HTTPException(status_code=500, detail=f"Profile synchronization failed: {str(e)}")
             
         profile = get_profile_by_auth_id(auth_user_id)
         is_newly_synced = True
 
     if not profile:
-        raise HTTPException(status_code=404, detail="Profile not found.")
+        print(f"[get_me] Profile NOT FOUND in DB for auth_id: {auth_user_id}")
+        raise HTTPException(status_code=404, detail="Profile not found in our database. Please try registering again.")
 
     full_name = profile.get("full_name", "")
     name_parts = full_name.split(" ", 1) if full_name else ["", ""]
