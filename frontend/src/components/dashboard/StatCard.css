@@ -1,54 +1,25 @@
+/* ── Card Shell (mirrors .ip-stat-card) ─────────────────────────────────── */
 .stat-card {
     border-radius: 22px;
-    padding: 18px 20px;
-    transition: all 0.2s ease-out;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    height: auto;
-    min-height: 100px;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* push decoration to the right */
-    box-sizing: border-box;
-    width: 100%;
-}
-
-.stat-card-content {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 12px; /* user recommendation */
-    flex: 1;
-}
-
-.stat-card-info {
+    padding: 22px 20px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    justify-content: center;
     align-items: flex-start;
+    gap: 10px;
+    min-height: 130px;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease, filter 0.2s ease;
+    cursor: pointer;
+    box-sizing: border-box;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
 }
 
-.stat-card-title {
-    text-align: left;
-}
-
-.stat-card-value {
-    font-size: 24px;
-    font-weight: 700;
-    color: #FFFFFF;
-    line-height: 1;
-    text-align: left; /* align with title */
-}
 .stat-card:hover {
     transform: translateY(-2px);
 }
 
-/* Dark Variant */
+/* ── Dark Variant (mirrors .ip-stat-card--dark) ──────────────────────────── */
 .stat-card-dark {
     background: #0d1628;
     border: 1px solid rgba(148, 163, 184, 0.1);
@@ -56,97 +27,113 @@
 }
 
 .stat-card-dark:hover {
-    /* border-color: rgba(0, 255, 239, 0.25); */
     box-shadow: 0 8px 32px rgba(0, 229, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-/* Gradient Variant */
+/* ── Gradient Variant (mirrors .ip-stat-card--glow) ─────────────────────── */
 .stat-card-gradient {
     background: linear-gradient(150deg, #00FFE5 0%, #23A7B4 45%, #0B1220 100%);
-    border: 1px solid transparent; /* Match dimensions of dark variant */
+    border: 0px solid transparent;
     box-shadow: 0 4px 12px rgba(0, 255, 239, 0.18);
 }
 
 .stat-card-gradient:hover {
-    box-shadow: 0 8px 16px rgb(0, 255, 229, 0.2);
+    box-shadow: 0 8px 16px rgba(0, 255, 229, 0.2);
     filter: brightness(1.05);
 }
 
-.stat-card-content {
-    position: relative;
-    z-index: 2;
+/* ── Top Row: icon + label (mirrors .ip-stat-top) ────────────────────────── */
+.stat-card-top {
     display: flex;
-    align-items: center;
-    gap: 14px;
-    flex: 1;
+    align-items: flex-start;
+    gap: 10px;
 }
 
+/* ── Icon Circle (mirrors .ip-stat-icon, sized 40×40) ───────────────────── */
 .stat-card-icon {
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
-    /* prevent squeeze */
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     background: rgba(0, 229, 255, 0.12);
     border-radius: 50%;
     color: #00FFE5;
-    flex-shrink: 0;
+    filter: drop-shadow(0 0 4px rgba(0, 255, 239, 0.35));
 }
 
 .stat-card-gradient .stat-card-icon {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+    filter: none;
 }
 
-.stat-card-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-self: center;
-    /* vertically centres within row */
-    justify-content: center;
-    /* align items along column axis */
-}
-
+/* ── Label / Title (mirrors .ip-stat-label) ─────────────────────────────── */
 .stat-card-title {
-    font-size: 12px;
-    font-weight: 500;
-    color: #FFFFFF;
-    opacity: 0.85;
-    letter-spacing: 0.6px;
-    line-height: 1.3;
+    font-size: 11px;
+    font-weight: 600;
+    color: #94A3B8;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    white-space: normal;
-    overflow: visible;
+    line-height: 3.5;
     margin: 0;
+    text-align: left;
+    align-self: flex-start;
+    flex: 1;
 }
 
+.stat-card-gradient .stat-card-title {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* ── Large Value (mirrors .ip-stat-value) ────────────────────────────────── */
 .stat-card-value {
-    font-size: 24px;
+    font-size: 36px;
     font-weight: 700;
     color: #FFFFFF;
     line-height: 1;
+    margin-top: 4px;
+    text-align: left;
+    align-self: flex-start;
 }
 
-.stat-card-decoration {
-    position: relative;
+.stat-card-gradient .stat-card-value {
+    color: #ffffff;
+}
+
+/* Dimmer suffix, e.g. "/100" (mirrors .ip-stat-denom) */
+.stat-card-suffix {
+    font-size: 22px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+/* ── Decoration pinned to top-right corner (for no-icon cards) ───────────── */
+.stat-card-deco-corner {
+    position: absolute;
+    right: 18px;
+    top: 18px;
     opacity: 0.6;
     flex-shrink: 0;
-    align-self: center;
-    /* keep decoration vertically centred */
-    margin-left: 8px;
-    /* consistent gap from text column */
 }
 
-/* Responsive */
+/* ── Decoration below value (for icon cards that carry a chart) ─────────── */
+.stat-card-deco-bottom {
+    opacity: 0.6;
+    align-self: flex-start;
+    margin-top: 2px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .stat-card {
-        padding: 14px 16px;
-        height: 90px;
+        padding: 16px;
+        min-height: 110px;
     }
 
     .stat-card-value {
-        font-size: 22px;
+        font-size: 32px;
     }
 }
