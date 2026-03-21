@@ -124,12 +124,12 @@ def require_auth(authorization: str = Header(...)):
         if not response or not response.user:
             logger.warning("[require_auth] Token validation failed: empty or missing user object")
             raise HTTPException(status_code=401, detail="Invalid or expired token")
-        logger.debug("[require_auth] Token verified for user: %s", response.user.id)
+        logger.debug("[require_auth] Token verified")
         return response.user
     except HTTPException:
         raise
-    except Exception as e:
-        logger.error("[require_auth] Unexpected error during token verification: %s", str(e), exc_info=True)
+    except Exception:
+        logger.exception("[require_auth] Unexpected error during token verification")
         raise HTTPException(status_code=401, detail="Authentication failed")
 
 
