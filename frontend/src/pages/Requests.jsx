@@ -13,7 +13,7 @@ const Requests = () => {
       time: "10.00 a.m",
       duration: "01 hour",
       topic: "Fundraising Strategy",
-      message: '"Hi I\'d love tp soikn swrkjgnolik skedfnlknlskgnk sdfffw wa;lskfiknwrgiknwinf olknfnknleedkefm;oljmweiknfp iknmlknm"',
+      message: "Hi I'd love to soikn swrkjgnolik skedfnlknlskgnk sdfffw wa;lskfiknwrgiknwinf olknfnknleedkefm;oljmweiknfp iknmlknm",
     },
     {
       id: 2,
@@ -23,7 +23,7 @@ const Requests = () => {
       time: "10.00 a.m",
       duration: "01 hour",
       topic: "Fundraising Strategy",
-      message: '"Hi I\'d love tp soikn swrkjgnolik skedfnlknlskgnk sdfffw wa;lskfiknwrgiknwinf olknfnknleedkefm;oljmweiknfp iknmlknm"',
+      message: "Hi I'd love to soikn swrkjgnolik skedfnlknlskgnk sdfffw wa;lskfiknwrgiknwinf olknfnknleedkefm;oljmweiknfp iknmlknm",
     },
     {
       id: 3,
@@ -33,7 +33,7 @@ const Requests = () => {
       time: "10.00 a.m",
       duration: "01 hour",
       topic: "Fundraising Strategy",
-      message: '"Hi I\'d love tp soikn swrkjgnolik skedfnlknlskgnk sdfffw wa;lskfiknwrgiknwinf olknfnknleedkefm;oljmweiknfp iknmlknm"',
+      message: "Hi I'd love to soikn swrkjgnolik skedfnlknlskgnk sdfffw wa;lskfiknwrgiknwinf olknfnknleedkefm;oljmweiknfp iknmlknm",
     },
   ];
 

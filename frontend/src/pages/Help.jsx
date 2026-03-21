@@ -16,7 +16,7 @@ const Help = () => {
           
           <div className="help-search">
             <input type="text" placeholder="Search for articles..." />
-            <button><i className="fi fi-rr-search"></i></button>
+            <button aria-label="Search"><i className="fi fi-rr-search"></i></button>
           </div>
         </div>
 

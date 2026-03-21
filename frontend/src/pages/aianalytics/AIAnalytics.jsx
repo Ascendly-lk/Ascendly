@@ -3,7 +3,7 @@ import "./AIAnalytics.css";
 const AIAnalytics = () => {
   return (
     <div className="dashboard-page">
-      <h1 className="page-title">Welcome, Abdullah !</h1>
+      <h1 className="page-title">Welcome, Abdullah!</h1>
 
       <div className="metrics-grid">
         <div className="metric-card">
@@ -101,25 +101,25 @@ const AIAnalytics = () => {
                 <h4>Meet w/ Simmmple</h4>
                 <p>01:00 PM - 02:00 PM</p>
               </div>
-              <a href="#" className="meeting-link">https://sample.edu/da</a>
+              <a href="https://sample.edu/da" className="meeting-link" target="_blank" rel="noopener noreferrer">https://sample.edu/da</a>
             </div>
             <div className="meeting-item">
               <div className="meeting-time">
                 <h4>Fitness Training</h4>
                 <p>02:00 PM - 03:00 PM</p>
               </div>
-              <a href="#" className="meeting-link">https://sample.edu/da</a>
+              <a href="https://sample.edu/da" className="meeting-link" target="_blank" rel="noopener noreferrer">https://sample.edu/da</a>
             </div>
             <div className="meeting-item">
               <div className="meeting-time">
                 <h4>Reading time</h4>
                 <p>03:00 PM - 04:00 PM</p>
               </div>
-              <a href="#" className="meeting-link">https://sample.edu/da</a>
+              <a href="https://sample.edu/da" className="meeting-link" target="_blank" rel="noopener noreferrer">https://sample.edu/da</a>
             </div>
           </div>
           <div className="view-all">
-            <a href="#">View all &gt;&gt;</a>
+            <button type="button">View all &gt;&gt;</button>
           </div>
         </div>
 

@@ -49,7 +49,7 @@
 
 .user-details-text p {
   font-size: 14px;
-  color: var(--color-text-secondary);
+  color: var(--color-text-secondary, #9CA3AF);
 }
 
 .btn-edit-profile {
@@ -57,7 +57,7 @@
   color: #00D9C9;
   border: none;
   padding: 10px 24px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-sm, 6px);
   font-weight: 500;
   font-size: 14px;
   cursor: pointer;
@@ -97,7 +97,7 @@
 .form-control {
   background-color: #121A20;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-md, 8px);
   padding: 14px 16px;
   color: white;
   font-size: 14px;
@@ -129,7 +129,7 @@
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--color-text-secondary);
+  color: var(--color-text-secondary, #9CA3AF);
   pointer-events: none;
 }
 
@@ -173,7 +173,7 @@
 
 .email-details-text .email-time {
   font-size: 12px;
-  color: var(--color-text-secondary);
+  color: var(--color-text-secondary, #9CA3AF);
 }
 
 .btn-add-email {
@@ -181,7 +181,7 @@
   color: #4a7dff;
   border: 1px solid rgba(30, 80, 255, 0.2);
   padding: 12px 24px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-sm, 6px);
   font-weight: 500;
   font-size: 13px;
   cursor: pointer;
@@ -199,7 +199,7 @@
   display: flex;
   justify-content: flex-end;
   margin-top: 24px;
-  padding-right: calc(100% - 1000px); /* Align with max-width somewhat or just right align */
+  padding-right: max(0px, calc(100% - 1000px));
 }
 
 .btn-save-changes {
@@ -207,7 +207,7 @@
   color: #00D9C9;
   border: none;
   padding: 12px 32px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-sm, 6px);
   font-weight: 500;
   font-size: 14px;
   cursor: pointer;

@@ -1,4 +1,3 @@
-import "./PageStyles.css";
 
 const Tiers = () => {
   const tiers = [

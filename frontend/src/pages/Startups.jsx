@@ -1,8 +1,8 @@
 import "./Startups.css";
 
 const Startups = () => {
-  const startups = Array(6).fill({
-    id: 1,
+  const startups = Array.from({ length: 6 }, (_, i) => ({
+    id: i + 1,
     title: "Team Kathaa",
     category: "Saas",
     progress: 75,
@@ -10,7 +10,7 @@ const Startups = () => {
     members: 8,
     patency: "Patency Received",
     marketing: "Marketing exposure Received",
-  });
+  }));
 
   return (
     <div className="startups-page">
@@ -33,7 +33,7 @@ const Startups = () => {
 
       <div className="startups-grid">
         {startups.map((startup, index) => (
-          <div key={index} className="startup-card">
+          <div key={startup.id} className="startup-card">
             <div className="startup-header">
               <div className="startup-avatar">TK</div>
               <div className="startup-info">
