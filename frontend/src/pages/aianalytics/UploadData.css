@@ -3,15 +3,7 @@
    Sidebar is 220px fixed (from AIAnalyticsSidebar.css)
 ══════════════════════════════════════════ */
 
-.upload-page {
-    display: flex;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #050B14 0%, #0B1220 100%);
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-}
-
 .upload-main {
-    margin-left: 220px;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -311,16 +303,7 @@
 /* ══════════════════════════════════════════
    Responsive
 ══════════════════════════════════════════ */
-@media (max-width: 1024px) {
-    .upload-main {
-        margin-left: 68px;
-    }
-}
-
 @media (max-width: 768px) {
-    .upload-main {
-        margin-left: 0;
-    }
 
     .upload-topbar,
     .upload-topbar-divider,

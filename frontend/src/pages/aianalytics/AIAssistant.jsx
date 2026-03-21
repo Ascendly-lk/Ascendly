@@ -1,8 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-import AIAnalyticsSidebar from '../../components/aianalytics/AIAnalyticsSidebar';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
 import { apiFetch } from '../../api';
+import AnalyticsPopup from '../../components/aianalytics/AnalyticsPopup';
+import { generatePDFReport } from '../../utils/pdfGenerator';
+import { BarChart2, FileDown } from 'lucide-react';
 import './AIAssistant.css';
 
 /* ── Helpers ── */
@@ -75,8 +78,14 @@ const AIAssistant = () => {
     const [files, setFiles] = useState([]);
     const [selectedFileId, setSelectedFileId] = useState(null);
     const [showSuggestions, setShowSuggestions] = useState(true);
+    const [showAnalyticsPopup, setShowAnalyticsPopup] = useState(false);
+    const [hasAnalyticsData, setHasAnalyticsData] = useState(false);
+    const [showComingSoon, setShowComingSoon] = useState(false);
+    const location = useLocation();
+    const hasAutoPrompted = useRef(false);
     const messagesEndRef = useRef(null);
     const textareaRef = useRef(null);
+
     // Keep a ref to messages for history building without adding to sendMessage deps
     const messagesRef = useRef(messages);
     useEffect(() => { messagesRef.current = messages; }, [messages]);
@@ -94,18 +103,6 @@ const AIAssistant = () => {
             })
             .catch(() => {});
     }, []);
-
-    useEffect(() => {
-        fetchFiles();
-        const onVisible = () => { if (document.visibilityState === 'visible') fetchFiles(); };
-        document.addEventListener('visibilitychange', onVisible);
-        return () => document.removeEventListener('visibilitychange', onVisible);
-    }, [fetchFiles]);
-
-    /* Auto-scroll to latest message */
-    useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
 
     const sendMessage = useCallback(async (overrideText) => {
         const trimmed = (overrideText || input).trim();
@@ -149,54 +146,78 @@ const AIAssistant = () => {
             const decoder = new TextDecoder();
             let buffer = '';
 
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
+            const processLine = (line) => {
+                if (!line.startsWith('data: ')) return;
+                try {
+                    const event = JSON.parse(line.slice(6));
 
-                buffer += decoder.decode(value, { stream: true });
-                const lines = buffer.split('\n');
-                buffer = lines.pop() ?? '';
-
-                for (const line of lines) {
-                    if (!line.startsWith('data: ')) continue;
-                    try {
-                        const event = JSON.parse(line.slice(6));
-
-                        if (event.type === 'token') {
-                            setMessages((prev) => prev.map((m) =>
-                                m.id === assistantMsgId
-                                    ? { ...m, text: m.text + event.content }
-                                    : m
-                            ));
-                        } else if (event.type === 'progress') {
-                            setMessages((prev) => prev.map((m) =>
-                                m.id === assistantMsgId
-                                    ? { ...m, progress: { step: event.step, total: event.total, label: event.label } }
-                                    : m
-                            ));
-                        } else if (event.type === 'result') {
-                            setMessages((prev) => prev.map((m) =>
-                                m.id === assistantMsgId
-                                    ? { ...m, text: event.text, progress: null }
-                                    : m
-                            ));
-                        } else if (event.type === 'done') {
-                            setMessages((prev) => prev.map((m) =>
-                                m.id === assistantMsgId
-                                    ? { ...m, streaming: false, progress: null }
-                                    : m
-                            ));
-                        } else if (event.type === 'error') {
-                            setMessages((prev) => prev.map((m) =>
-                                m.id === assistantMsgId
-                                    ? { ...m, text: event.content, streaming: false, progress: null }
-                                    : m
-                            ));
+                    if (event.type === 'token') {
+                        setMessages((prev) => prev.map((m) =>
+                            m.id === assistantMsgId
+                                ? { ...m, text: m.text + event.content }
+                                : m
+                        ));
+                    } else if (event.type === 'progress') {
+                        setMessages((prev) => prev.map((m) =>
+                            m.id === assistantMsgId
+                                ? { ...m, progress: { step: event.step, total: event.total, label: event.label } }
+                                : m
+                        ));
+                    } else if (event.type === 'result') {
+                        setMessages((prev) => prev.map((m) =>
+                            m.id === assistantMsgId
+                                ? { ...m, text: event.text, progress: null }
+                                : m
+                        ));
+                        
+                        // Trigger AI Analytics Popup if file is selected and prompt matches keywords
+                        if (selectedFileId && /predict|analysis|analyse|forecast|insights|business data/i.test(trimmed)) {
+                            setHasAnalyticsData(true);
+                            setShowAnalyticsPopup(true);
                         }
-                    } catch {
-                        // Skip malformed SSE lines
+                    } else if (event.type === 'done') {
+                        setMessages((prev) => prev.map((m) =>
+                            m.id === assistantMsgId
+                                ? { ...m, streaming: false, progress: null }
+                                : m
+                        ));
+                    } else if (event.type === 'error') {
+                        setMessages((prev) => prev.map((m) =>
+                            m.id === assistantMsgId
+                                ? { ...m, text: event.content || 'An error occurred.', streaming: false, progress: null }
+                                : m
+                        ));
+                    }
+                } catch {
+                    // Skip malformed SSE lines
+                }
+            };
+
+            try {
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() ?? '';
+
+                    for (const line of lines) {
+                        processLine(line);
                     }
                 }
+
+                // Process any remaining data left in the buffer after stream ends
+                if (buffer.trim()) {
+                    processLine(buffer.trim());
+                }
+            } finally {
+                // Always ensure the assistant message exits streaming state
+                setMessages((prev) => prev.map((m) =>
+                    m.id === assistantMsgId && m.streaming
+                        ? { ...m, streaming: false }
+                        : m
+                ));
             }
         } catch {
             setMessages((prev) => prev.map((m) =>
@@ -209,6 +230,28 @@ const AIAssistant = () => {
             fetchFiles();
         }
     }, [input, isSending, selectedFileId, fetchFiles]);
+
+    useEffect(() => {
+        fetchFiles();
+        const onVisible = () => { if (document.visibilityState === 'visible') fetchFiles(); };
+        document.addEventListener('visibilitychange', onVisible);
+        return () => document.removeEventListener('visibilitychange', onVisible);
+    }, [fetchFiles]);
+
+    // Handle initial prompt from Quick Actions (e.g., Generate Report)
+    useEffect(() => {
+        if (location.state?.initialPrompt && !hasAutoPrompted.current) {
+            hasAutoPrompted.current = true;
+            sendMessage(location.state.initialPrompt);
+            // Clear state so it doesn't re-trigger
+            window.history.replaceState({}, document.title);
+        }
+    }, [location.state, sendMessage]);
+
+    /* Auto-scroll to latest message */
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -225,124 +268,156 @@ const AIAssistant = () => {
     };
 
     return (
-        <div className="ai-assistant-page">
-            <AIAnalyticsSidebar />
+        <div className="ai-assistant-main">
+            <AIAnalyticsTopBar />
 
-            <div className="ai-assistant-main">
-                <AIAnalyticsTopBar />
-
-                <div className="ai-assistant-content">
-                    {/* Chat Card */}
-                    <div className="ai-chat-card">
-                        {/* Card Header */}
-                        <div className="ai-chat-card-header">
-                            <div className="ai-chat-avatar">
-                                <BotIcon />
-                            </div>
-                            <div className="ai-chat-header-info">
-                                <span className="ai-chat-header-name">AI Assistant</span>
-                                <span className="ai-chat-status">
-                                    <span className="ai-chat-status-dot" />
-                                    Online
-                                </span>
-                            </div>
-                            {/* File selector */}
-                            <div className="ai-chat-file-selector">
-                                <select
-                                    value={selectedFileId || ''}
-                                    onChange={(e) => setSelectedFileId(e.target.value || null)}
-                                    className="ai-chat-file-dropdown"
-                                >
-                                    <option value="">No dataset selected</option>
-                                    {files.map((f) => (
-                                        <option key={f.file_id} value={f.file_id}>
-                                            {f.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+            <div className="ai-assistant-content">
+                {/* Chat Card */}
+                <div className="ai-chat-card">
+                    {/* Card Header */}
+                    <div className="ai-chat-card-header">
+                        <div className="ai-chat-avatar">
+                            <BotIcon />
                         </div>
-
-                        {/* Messages area */}
-                        <div className="ai-chat-messages">
-                            {messages.map((msg) => (
-                                <div
-                                    key={msg.id}
-                                    className={`ai-chat-message ${msg.role === 'user' ? 'user' : 'assistant'}`}
-                                >
-                                    {msg.role === 'assistant' && (
-                                        <div className="ai-chat-msg-avatar">
-                                            <BotIcon />
-                                        </div>
-                                    )}
-                                    <div className="ai-chat-bubble-wrap">
-                                        {msg.progress ? (
-                                            <div className="ai-chat-bubble">
-                                                <ProgressStep {...msg.progress} />
-                                            </div>
-                                        ) : (
-                                            <div className="ai-chat-bubble">
-                                                {msg.streaming && !msg.text ? (
-                                                    <div className="ai-chat-typing">
-                                                        <span /><span /><span />
-                                                    </div>
-                                                ) : msg.role === 'assistant' ? (
-                                                    <ReactMarkdown>{msg.text}</ReactMarkdown>
-                                                ) : (
-                                                    msg.text
-                                                )}
-                                            </div>
-                                        )}
-                                        <span className="ai-chat-time">{msg.time}</span>
-                                    </div>
-                                </div>
-                            ))}
-
-                            <div ref={messagesEndRef} />
+                        <div className="ai-chat-header-info">
+                            <span className="ai-chat-header-name">AI Assistant</span>
+                            <span className="ai-chat-status">
+                                <span className="ai-chat-status-dot" />
+                                Online
+                            </span>
                         </div>
-
-                        {/* Suggestion chips */}
-                        {showSuggestions && (
-                            <div className="ai-chat-suggestions">
-                                {(selectedFileId ? SUGGESTIONS_WITH_FILE : SUGGESTIONS_NO_FILE).map((s) => (
-                                    <button
-                                        key={s}
-                                        className="ai-chat-chip"
-                                        onClick={() => sendMessage(s)}
-                                        disabled={isSending}
-                                    >
-                                        {s}
-                                    </button>
+                        {/* File selector */}
+                        <div className="ai-chat-file-selector">
+                            <select
+                                value={selectedFileId || ''}
+                                onChange={(e) => setSelectedFileId(e.target.value || null)}
+                                className="ai-chat-file-dropdown"
+                            >
+                                <option value="">No dataset selected</option>
+                                {files.map((f) => (
+                                    <option key={f.file_id} value={f.file_id}>
+                                        {f.name}
+                                    </option>
                                 ))}
-                            </div>
-                        )}
-
-                        {/* Composer */}
-                        <div className="ai-chat-composer">
-                            <div className="ai-chat-input-wrap">
-                                <textarea
-                                    ref={textareaRef}
-                                    className="ai-chat-input"
-                                    placeholder="Ask me anything about your data..."
-                                    value={input}
-                                    onChange={handleInput}
-                                    onKeyDown={handleKeyDown}
-                                    rows={1}
-                                />
-                                <button
-                                    className="ai-chat-send-btn"
-                                    onClick={sendMessage}
-                                    disabled={!input.trim() || isSending}
-                                    aria-label="Send message"
+                            </select>
+                        </div>
+                        
+                        {/* Action Buttons (Insights / PDF) */}
+                        {hasAnalyticsData && (
+                            <div className="ai-chat-actions">
+                                <button 
+                                    className="ai-chat-action-btn"
+                                    onClick={() => setShowAnalyticsPopup(!showAnalyticsPopup)}
+                                    title={showAnalyticsPopup ? "Close Analytics" : "Open Analytics"}
                                 >
-                                    <SendIcon />
+                                    <BarChart2 size={16} />
+                                    {showAnalyticsPopup ? "Close Insights" : "Open Insights"}
+                                </button>
+                                <button 
+                                    className="ai-chat-action-btn pdf"
+                                    onClick={() => {
+                                        setShowComingSoon(true);
+                                        setTimeout(() => setShowComingSoon(false), 3000);
+                                    }}
+                                    title="Download Business Insights Report"
+                                >
+                                    <FileDown size={16} />
+                                    Export PDF
                                 </button>
                             </div>
-                            <p className="ai-chat-hint">Press Enter to send, Shift + Enter for new line</p>
+                        )}
+                    </div>
+
+                    {/* Messages area */}
+                    <div className="ai-chat-messages">
+                        {messages.map((msg) => (
+                            <div
+                                key={msg.id}
+                                className={`ai-chat-message ${msg.role === 'user' ? 'user' : 'assistant'}`}
+                            >
+                                {msg.role === 'assistant' && (
+                                    <div className="ai-chat-msg-avatar">
+                                        <BotIcon />
+                                    </div>
+                                )}
+                                <div className="ai-chat-bubble-wrap">
+                                    {msg.progress ? (
+                                        <div className="ai-chat-bubble">
+                                            <ProgressStep {...msg.progress} />
+                                        </div>
+                                    ) : (
+                                        <div className="ai-chat-bubble">
+                                            {msg.streaming && !msg.text ? (
+                                                <div className="ai-chat-typing">
+                                                    <span /><span /><span />
+                                                </div>
+                                            ) : msg.role === 'assistant' ? (
+                                                <ReactMarkdown>{msg.text}</ReactMarkdown>
+                                            ) : (
+                                                msg.text
+                                            )}
+                                        </div>
+                                    )}
+                                    <span className="ai-chat-time">{msg.time}</span>
+                                </div>
+                            </div>
+                        ))}
+
+                        <div ref={messagesEndRef} />
+                    </div>
+
+                    {/* Suggestion chips */}
+                    {showSuggestions && (
+                        <div className="ai-chat-suggestions">
+                            {(selectedFileId ? SUGGESTIONS_WITH_FILE : SUGGESTIONS_NO_FILE).map((s) => (
+                                <button
+                                    key={s}
+                                    className="ai-chat-chip"
+                                    onClick={() => sendMessage(s)}
+                                    disabled={isSending}
+                                >
+                                    {s}
+                                </button>
+                            ))}
                         </div>
+                    )}
+
+                    {/* Composer */}
+                    <div className="ai-chat-composer">
+                        <div className="ai-chat-input-wrap">
+                            <textarea
+                                ref={textareaRef}
+                                className="ai-chat-input"
+                                placeholder="Ask me anything about your data..."
+                                value={input}
+                                onChange={handleInput}
+                                onKeyDown={handleKeyDown}
+                                rows={1}
+                            />
+                            <button
+                                className="ai-chat-send-btn"
+                                onClick={sendMessage}
+                                disabled={!input.trim() || isSending}
+                                aria-label="Send message"
+                            >
+                                <SendIcon />
+                            </button>
+                        </div>
+                        <p className="ai-chat-hint">Press Enter to send, Shift + Enter for new line</p>
+                    </div>
+
+                    {/* Toast Notification */}
+                    <div className={`ai-toast-popup ${showComingSoon ? 'visible' : ''}`}>
+                        This feature will come soon!
                     </div>
                 </div>
             </div>
+            
+            <AnalyticsPopup 
+                isOpen={showAnalyticsPopup} 
+                onClose={() => setShowAnalyticsPopup(false)} 
+                onSuggestionClick={sendMessage} 
+            />
         </div>
     );
 };

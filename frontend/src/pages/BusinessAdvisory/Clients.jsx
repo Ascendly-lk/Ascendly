@@ -12,7 +12,7 @@ import {
   X,
 } from "lucide-react";
 import Sidebar from "./Sidebar";
-import TopHeader from "../components/TopHeader";
+import TopHeader from "../../components/TopHeader";
 import "./clients.css";
 
 const clientRequests = [
@@ -212,9 +212,8 @@ export default function Clients() {
                   <button
                     key={thread.id}
                     type="button"
-                    className={`chat-thread-item ${
-                      activeThread.id === thread.id ? "active" : ""
-                    }`}
+                    className={`chat-thread-item ${activeThread.id === thread.id ? "active" : ""
+                      }`}
                     onClick={() => setActiveThreadId(thread.id)}
                   >
                     <span className="chat-avatar">{thread.initials}</span>

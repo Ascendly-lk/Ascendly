@@ -8,7 +8,7 @@ import {
   Users,
 } from "lucide-react";
 import Sidebar from "./Sidebar";
-import TopHeader from "../components/TopHeader";
+import TopHeader from "../../components/TopHeader";
 import "./Calendar.css";
 
 const dayHeaders = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];

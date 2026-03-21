@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './Sidebar.css';
 
 /* ── Route map ───────────────────────────────────────────────────────────── */
@@ -19,6 +20,12 @@ const PATENT_FIRM_MENU_ITEMS = [
     { name: 'Applications', icon: 'fileText', route: '/dashboard/patent-firm/applications' },
     { name: 'Document review', icon: 'search', route: '/dashboard/patent-firm/document-review' },
     { name: 'Payments', icon: 'dollarSign', route: '/dashboard/patent-firm/payments' },
+];
+
+const AI_ANALYTICS_MENU_ITEMS = [
+    { name: 'Dashboard', icon: 'grid', route: '/dashboard/ai-analytics' },
+    { name: 'Upload Files', icon: 'upload', route: '/dashboard/ai-analytics/upload' },
+    { name: 'AI Assistant', icon: 'bot', route: '/dashboard/ai-analytics/assistant' },
 ];
 
 /* ── SVG icons ───────────────────────────────────────────────────────────── */
@@ -95,25 +102,64 @@ const ICONS = {
             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
         </svg>
     ),
+    upload: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
+    ),
+    bot: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="11" width="18" height="10" rx="2" />
+            <circle cx="12" cy="5" r="2" />
+            <line x1="12" y1="7" x2="12" y2="11" />
+            <line x1="8" y1="15" x2="8" y2="17" />
+            <line x1="16" y1="15" x2="16" y2="17" />
+        </svg>
+    ),
 };
 
 /* ── Component ───────────────────────────────────────────────────────────── */
 const Sidebar = () => {
     const navigate = useNavigate();
     const { pathname } = useLocation();
+    const { user } = useAuth();
 
     // Derive active item: match exact route or prefix (for sub-routes like /ai-analytics/upload)
-    const isActive = (route) => pathname === route || pathname.startsWith(route + '/');
+    const isActive = (route) => {
+        // Use exact match for index-like routes to avoid parent highlighting when on a sub-route
+        if (route === '/dashboard/ai-analytics' || route === '/dashboard/startup' || route === '/dashboard/patent-firm/dashboard') {
+            return pathname === route;
+        }
+        return pathname === route || pathname.startsWith(route + '/');
+    };
 
     // Determine which menu items to use based on path
     const isPatentFirm = pathname.startsWith('/dashboard/patent-firm');
-    const menuItems = isPatentFirm ? PATENT_FIRM_MENU_ITEMS : STARTUP_MENU_ITEMS;
-    const dashboardTitle = isPatentFirm ? "PATENT FIRM APP" : "STARTUPS DASHBOARD";
+    const isAIAnalytics = pathname.startsWith('/dashboard/ai-analytics');
+
+    let menuItems = STARTUP_MENU_ITEMS;
+    let dashboardTitle = "STARTUPS DASHBOARD";
+
+    if (isPatentFirm) {
+        menuItems = PATENT_FIRM_MENU_ITEMS;
+        dashboardTitle = "PATENT FIRM APP";
+    } else if (isAIAnalytics) {
+        menuItems = AI_ANALYTICS_MENU_ITEMS;
+        dashboardTitle = "AI ANALYTICS DASHBOARD";
+    }
 
     return (
         <div className="sidebar">
             <div className="sidebar-header">
-                <h1 className="sidebar-logo">Ascendly</h1>
+                <h1 
+                    className="sidebar-logo" 
+                    onClick={() => navigate('/dashboard/startup')}
+                    style={{ cursor: 'pointer' }}
+                >
+                    Ascendly
+                </h1>
                 <p className="sidebar-subtitle">{dashboardTitle}</p>
             </div>
 
@@ -132,10 +178,13 @@ const Sidebar = () => {
             </nav>
 
             <div className="sidebar-footer">
-                {!isPatentFirm && (
-                    <div className="sidebar-upgrade">
+                {!isPatentFirm && !(user?.plan === 'Standard' || user?.plan === 'Enterprise' || user?.plan === 'Pro' || user?.plan === 'Premium') && (
+                    <button 
+                        className="sidebar-upgrade" 
+                        onClick={() => navigate('/dashboard/tiers')}
+                    >
                         <p>Upgrade to PRO to get access to all features!</p>
-                    </div>
+                    </button>
                 )}
                 <a href="#" className="sidebar-help">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

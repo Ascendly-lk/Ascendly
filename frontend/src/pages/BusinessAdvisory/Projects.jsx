@@ -1,5 +1,5 @@
 import Sidebar from "./Sidebar";
-import TopHeader from "../components/TopHeader";
+import TopHeader from "../../components/TopHeader";
 import {
   CircleArrowOutUpRight,
   DollarSign,

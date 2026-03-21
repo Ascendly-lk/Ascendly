@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
     Users,
@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import TopBar from "../../components/dashboard/TopBar";
 import StatCard from "../../components/dashboard/StatCard";
+import { fetchClients } from "../../utils/patent-api";
 import "./Dashboard.css"; // Shared Ascendly theme styles
 import "./Clients.css";   // Client specific CSS
 
@@ -27,15 +28,6 @@ const Button = ({ children, className = "", variant = "primary", size = "default
 const Badge = ({ children, className = "" }) => <span className={`cl-badge ${className}`}>{children}</span>;
 const Input = ({ className = "", ...props }) => <input className={`cl-input ${className}`} {...props} />;
 
-const clients = [
-    { id: "CL-001", name: "TechCo AI", industry: "Artificial Intelligence", tier: "Tier 3", activeApplications: 3, revenue: "$14,997", since: "Jan 2025", status: "Active", logo: "TA" },
-    { id: "CL-002", name: "IoT Innovations", industry: "Hardware / IoT", tier: "Tier 2", activeApplications: 2, revenue: "$3,998", since: "Feb 2025", status: "Active", logo: "II" },
-    { id: "CL-003", name: "DataFlow Inc", industry: "Data Analytics", tier: "Tier 2", activeApplications: 1, revenue: "$1,999", since: "Mar 2026", status: "Active", logo: "DF" },
-    { id: "CL-004", name: "BioTech Labs", industry: "Biotechnology", tier: "Tier 3", activeApplications: 4, revenue: "$19,996", since: "Dec 2024", status: "Active", logo: "BL" },
-    { id: "CL-005", name: "GreenEnergy Co", industry: "Clean Energy", tier: "Tier 1", activeApplications: 1, revenue: "$499", since: "Mar 2026", status: "Active", logo: "GE" },
-    { id: "CL-006", name: "FinTech Solutions", industry: "Financial Technology", tier: "Tier 2", activeApplications: 2, revenue: "$3,998", since: "Jan 2026", status: "Active", logo: "FS" },
-];
-
 const tierColors = {
     "Tier 1": "cl-tier-1",
     "Tier 2": "cl-tier-2",
@@ -43,15 +35,31 @@ const tierColors = {
 };
 
 export default function Clients() {
+    const [clients, setClients] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadClients = async () => {
+            try {
+                const data = await fetchClients();
+                setClients(data);
+            } catch (error) {
+                console.error("Failed to load clients:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadClients();
+    }, []);
 
     const filteredClients = clients.filter((client) =>
-        client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        client.industry.toLowerCase().includes(searchQuery.toLowerCase())
+        (client.name?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+        (client.industry?.toLowerCase() || "").includes(searchQuery.toLowerCase())
     );
 
-    const totalRevenue = clients.reduce((sum, client) => sum + parseFloat(client.revenue.replace(/[$,]/g, "")), 0);
-    const totalApplications = clients.reduce((sum, client) => sum + client.activeApplications, 0);
+    const totalRevenue = clients.reduce((sum, client) => sum + parseFloat(String(client.revenue || 0).replace(/[$,]/g, "")), 0);
+    const totalApplications = clients.reduce((sum, client) => sum + (client.activeApplications || 0), 0);
 
     return (
         <div className="startup-dashboard">

@@ -17,6 +17,7 @@ export const supabase = supabaseUrl && supabaseAnonKey
 
 const STORAGE_TOKEN_KEY = 'ascendly_token';
 const STORAGE_USER_KEY = 'ascendly_user';
+const STORAGE_PLAN_KEY = 'ascendly_subscription_plan';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -37,10 +38,21 @@ export function getToken() {
 export function getCurrentUser() {
     const raw = localStorage.getItem(STORAGE_USER_KEY);
     try {
-        return raw ? JSON.parse(raw) : null;
+        if (!raw) return null;
+        const user = JSON.parse(raw);
+        user.plan = getSubscriptionPlan();
+        return user;
     } catch {
         return null;
     }
+}
+
+export function saveSubscriptionPlan(plan) {
+    localStorage.setItem(STORAGE_PLAN_KEY, plan);
+}
+
+export function getSubscriptionPlan() {
+    return localStorage.getItem(STORAGE_PLAN_KEY) || 'Free';
 }
 
 // ─── API calls ────────────────────────────────────────────────────────────────
@@ -97,11 +109,17 @@ export async function completeProfile(data) {
  * @returns {{ access_token, user }}
  */
 export async function login(data) {
-    const response = await fetch(`${API_URL}/auth/signin`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-    });
+    let response;
+    try {
+        response = await fetch(`${API_URL}/auth/signin`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+    } catch (networkError) {
+        console.error("Login fetch error:", networkError);
+        throw new Error('Unable to connect to the server. Please ensure the backend is running.');
+    }
 
     const body = await response.json();
 
@@ -167,6 +185,8 @@ export async function fetchMe() {
         }
 
         const user = await response.json();
+        // Merge locally stored plan info
+        user.plan = getSubscriptionPlan();
         // Refresh stored user data with latest from server
         localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(user));
         return user;
@@ -179,13 +199,16 @@ export async function fetchMe() {
  * Map role string to the correct dashboard route.
  */
 export function getRoleDashboardRoute(role) {
-    const roleRoutes = {
-        'Startup Founder': '/dashboard/startup',
-        'Investor': '/dashboard/investors',
-        'Marketing Agency': '/dashboard/marketing-agency/projects',
-        'Business Advisor': '/dashboard/advisors',
-        'Patent Firm': '/dashboard/patent-firm/dashboard',
-        'Admin': '/dashboard/admin',
-    };
-    return roleRoutes[role] || '/dashboard/startup';
+    if (!role) return '/dashboard/startup';
+    
+    const r = role.toLowerCase();
+    
+    if (r.includes('startup') || r.includes('founder')) return '/dashboard/startup';
+    if (r.includes('investor')) return '/dashboard/investor';
+    if (r.includes('marketing') || r.includes('agency')) return '/dashboard/marketing-agency/projects';
+    if (r.includes('business') || r.includes('advisor')) return '/dashboard/advisor';
+    if (r.includes('admin')) return '/dashboard/admin';
+    
+    // Default fallback
+    return '/dashboard/startup';
 }
