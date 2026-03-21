@@ -33,6 +33,23 @@
   background: #11161D;
   border-radius: 16px;
   padding: 24px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.meeting-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 255, 239, 0.1) inset;
+}
+
+.meeting-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 100%;
+  background: linear-gradient(180deg, rgba(0, 255, 239, 0.03) 0%, transparent 100%);
+  pointer-events: none;
+  border-radius: 16px;
 }
 
 .meeting-card h2 {
@@ -62,6 +79,12 @@
   gap: 6px;
   font-size: 0.75rem;
   cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.create-meeting-btn:hover {
+  box-shadow: 0 0 16px rgba(0, 255, 239, 0.6);
+  transform: translateY(-2px);
 }
 
 .create-meeting-btn svg {
@@ -74,6 +97,15 @@
   margin-top: 16px;
   border-left: 3px solid #00FFEF;
   padding-left: 14px;
+  transition: transform 0.3s ease, background 0.3s ease;
+  border-radius: 0 8px 8px 0;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.meeting-item:hover {
+  background: rgba(0, 255, 239, 0.04);
+  transform: translateX(4px);
 }
 
 .meeting-item h3 {
@@ -109,6 +141,24 @@
   border-radius: 16px;
   background: #11161D;
   padding: 24px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.month-panel:hover,
+.agenda-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 255, 239, 0.05) inset;
+}
+
+.month-panel::before,
+.agenda-panel::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, transparent 100%);
+  pointer-events: none;
 }
 
 .month-panel-head {
@@ -192,6 +242,17 @@
   justify-items: center;
 }
 
+@keyframes pulseBorder {
+  0% { box-shadow: 0 0 0 0 rgba(0, 255, 239, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(0, 255, 239, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 255, 239, 0); }
+}
+
+@keyframes fadeUpGrid {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
 .day-cell {
   border: none;
   border-radius: 10px;
@@ -206,11 +267,21 @@
   flex-direction: column;
   position: relative;
   cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeUpGrid 0.4s ease-out backwards;
+}
+
+.day-cell:not(.blank):hover {
+  background: #1c2533;
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  z-index: 2;
 }
 
 .day-cell.blank {
   background: transparent;
   cursor: default;
+  animation: none;
 }
 
 .day-cell span {
@@ -222,12 +293,20 @@
   background: #00FFEF;
   color: #000;
   border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 255, 239, 0.35);
+  transform: scale(1.02);
+}
+
+.day-cell.active:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 255, 239, 0.5);
 }
 
 .day-cell.outlined {
   background: transparent;
   border: 1px solid #00FFEF;
   color: #fff;
+  animation: pulseBorder 2s infinite, fadeUpGrid 0.4s ease-out backwards;
 }
 
 .dots-container {
@@ -255,6 +334,13 @@
   padding: 24px;
   background: var(--gradient-cyan, linear-gradient(135deg, #00ffef 0%, #0f1720 100%));
   color: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.agenda-card:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 10px 24px rgba(0, 255, 239, 0.2);
 }
 
 .agenda-card:last-child {
@@ -280,9 +366,12 @@
   font-size: 0.7rem;
   font-weight: 600;
   color: #fff;
-  background: rgba(0,0,0,0.2);
-  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 4px 10px;
   border-radius: 6px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .agenda-card p {
