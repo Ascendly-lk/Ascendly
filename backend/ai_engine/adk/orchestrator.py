@@ -30,9 +30,9 @@ from google.adk.sessions import InMemorySessionService
 from google.genai import types
 
 from ai_engine.adk.agents import (
-    industry_benchmark_agent,
-    competitor_benchmark_agent,
-    market_data_agent,
+    make_industry_benchmark_agent,
+    make_competitor_benchmark_agent,
+    make_market_data_agent,
 )
 
 APP_NAME = "ascendly_benchmarks"
@@ -83,12 +83,15 @@ class BenchmarkOrchestrator:
     """
 
     def __init__(self):
+        # Fresh agent instances each time — ADK tracks parent agent as instance
+        # state, so reusing module-level singletons causes a ValidationError on
+        # the second call ("already has a parent agent").
         self._parallel_agent = ParallelAgent(
             name="benchmark_parallel",
             sub_agents=[
-                industry_benchmark_agent,
-                competitor_benchmark_agent,
-                market_data_agent,
+                make_industry_benchmark_agent(),
+                make_competitor_benchmark_agent(),
+                make_market_data_agent(),
             ],
         )
 

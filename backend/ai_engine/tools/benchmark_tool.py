@@ -1,13 +1,10 @@
 """
 Benchmark Query Tool for CrewAI
 ---------------------------------
-Replaces the static Supabase lookup with a live Google ADK multi-agent pipeline
-that fetches data from World Bank, Alpha Vantage, SerpAPI, and Yahoo Finance.
-
 Fallback chain (in order):
   1. In-memory TTL cache (cache_manager) — returns immediately if fresh
-  2. Google ADK BenchmarkOrchestrator — live multi-source fetch
-  3. Cached Supabase rows — last-known-good data
+  2. Local Supabase startup_benchmarks table — 1050 real startup records (free, always on)
+  3. Google ADK BenchmarkOrchestrator — live multi-source fetch (uses Gemini credits)
   4. Hardcoded defaults — always returns something useful
 
 The @tool signature is unchanged — no modifications needed in crew.py or agents.py.
@@ -87,7 +84,74 @@ def query_benchmarks(category: str) -> str:
         except Exception:
             logger.exception("Benchmark cache read failed for category='%s'", category)
 
-    # ── Layer 2: Google ADK live fetch ────────────────────────────────────────
+    # ── Layer 2: Local startup_benchmarks table ───────────────────────────────
+    try:
+        from database.supabase_client import get_supabase_client
+        client = get_supabase_client()
+
+        if category == "industry_growth":
+            # Successful startups — compute median revenue growth Y1→Y3
+            response = (
+                client.table("startup_benchmarks")
+                .select("name, country, revenue_year1, revenue_year2, revenue_year3, current_status")
+                .eq("current_status", "Successful")
+                .not_.is_("revenue_year3", "null")
+                .gt("revenue_year3", 0)
+                .limit(200)
+                .execute()
+            )
+            rows = response.data or []
+            if rows:
+                growths = []
+                for r in rows:
+                    y1 = r.get("revenue_year1") or 0
+                    y3 = r.get("revenue_year3") or 0
+                    if y1 > 0 and y3 > 0:
+                        growths.append(((y3 - y1) / y1) * 100)
+                if growths:
+                    growths.sort()
+                    mid = len(growths) // 2
+                    median_growth = growths[mid]
+                    success_rate = len([r for r in rows if r.get("current_status") == "Successful"]) / max(len(rows), 1) * 100
+                    records = [
+                        {"name": "Startup Median Revenue Growth (Y1→Y3)", "metric": "revenue_growth_pct", "value": round(median_growth, 1), "unit": "%", "period": "Y1-Y3", "source": "startup_benchmarks"},
+                        {"name": "Startup Success Rate (sample)", "metric": "success_rate", "value": round(success_rate, 1), "unit": "%", "period": "2024", "source": "startup_benchmarks"},
+                        {"name": "Sample Size", "metric": "count", "value": len(rows), "unit": "startups", "period": "2024", "source": "startup_benchmarks"},
+                    ]
+                    logger.info("Local benchmark table returned %d records for category='%s'", len(records), category)
+                    return _cache_and_return(records)
+
+        elif category == "competitor":
+            # Top revenue performers — Y3 revenue as competitor proxy
+            response = (
+                client.table("startup_benchmarks")
+                .select("name, country, revenue_year1, revenue_year2, revenue_year3, current_status")
+                .eq("current_status", "Successful")
+                .not_.is_("revenue_year3", "null")
+                .gt("revenue_year3", 0)
+                .order("revenue_year3", desc=True)
+                .limit(10)
+                .execute()
+            )
+            rows = response.data or []
+            if rows:
+                records = [
+                    {
+                        "name": r["name"],
+                        "metric": "revenue_year3",
+                        "value": r["revenue_year3"],
+                        "unit": "USD",
+                        "period": "Year 3",
+                        "source": "startup_benchmarks",
+                    }
+                    for r in rows
+                ]
+                logger.info("Local benchmark table returned %d competitor records", len(records))
+                return _cache_and_return(records)
+    except Exception:
+        logger.exception("Local startup_benchmarks query failed for category='%s'", category)
+
+    # ── Layer 3: Google ADK live fetch ────────────────────────────────────────
     try:
         from ai_engine.adk.orchestrator import BenchmarkOrchestrator
         logger.info("ADK benchmark fetch starting for category='%s'", category)
@@ -95,32 +159,9 @@ def query_benchmarks(category: str) -> str:
         adk_records = orchestrator.run(category)
         logger.info("ADK returned %d benchmark records for category='%s'", len(adk_records), category)
         if adk_records:
-            # TODO: upsert to Supabase benchmarks table with fetched_at=NOW() once columns are added
             return _cache_and_return(adk_records)
     except Exception:
         logger.exception("ADK benchmark fetch failed for category='%s'", category)
-
-    # ── Layer 3: Supabase fallback (last-known-good) ──────────────────────────
-    try:
-        from database.supabase_client import get_records
-        response = get_records("benchmarks", {"category": category})
-        rows = response.data if response and response.data else []
-        if rows:
-            logger.warning("ADK failed — using Supabase cached data (%d rows) for category='%s'", len(rows), category)
-            benchmarks = [
-                {
-                    "name": r.get("name"),
-                    "metric": r.get("metric"),
-                    "value": r.get("value"),
-                    "unit": r.get("unit"),
-                    "period": r.get("period"),
-                    "source": r.get("source"),
-                }
-                for r in rows
-            ]
-            return _cache_and_return(benchmarks)
-    except Exception:
-        logger.exception("Supabase fallback failed for category='%s'", category)
 
     # ── Layer 4: Hardcoded defaults ───────────────────────────────────────────
     logger.warning("All sources failed — using hardcoded defaults for category='%s'", category)
