@@ -14,49 +14,31 @@ import "./Calendar.css";
 const dayHeaders = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const meetingSeed = {
-  "2026-03-07": [
+  "2024-12-05": [
+    {
+      title: "Client Strategy Meeting",
+      time: "10:00 AM - 11:30 AM",
+      location: "Zoom",
+      attendees: 5,
+      type: "meeting",
+    },
+  ],
+  "2024-12-12": [{ color: "orange" }],
+  "2024-12-16": [
     {
       title: "Morning Standup",
       time: "09:00 AM - 10:00 AM",
-      location: "Zoom",
-      attendees: 4,
-      type: "meeting",
+      location: "https://meet.google.com/xyz",
+      color: "purple",
     },
     {
       title: "Client Strategy Session",
       time: "01:00 PM - 02:00 PM",
-      location: "Zoom",
-      attendees: 5,
-      type: "session",
+      location: "https://zoom.us/j/123456",
     },
   ],
-  "2026-03-12": [
-    {
-      title: "Marketing Review",
-      time: "11:00 AM - 12:00 PM",
-      location: "Meet",
-      attendees: 3,
-      type: "review",
-    },
-  ],
-  "2026-03-20": [
-    {
-      title: "Product Planning",
-      time: "03:00 PM - 04:00 PM",
-      location: "Zoom",
-      attendees: 6,
-      type: "planning",
-    },
-  ],
-  "2026-03-28": [
-    {
-      title: "Investor Check-in",
-      time: "04:00 PM - 05:00 PM",
-      location: "Board Room",
-      attendees: 5,
-      type: "meeting",
-    },
-  ],
+  "2024-12-20": [{ color: "green" }],
+  "2024-12-28": [{ color: "cyan" }],
 };
 
 function getDateKey(date) {
@@ -81,20 +63,21 @@ function isSameDay(a, b) {
 }
 
 export default function CalendarPage() {
-  const today = useMemo(() => new Date(), []);
+  const todayDateObj = new Date(2024, 11, 16);
+  const today = useMemo(() => todayDateObj, []);
   const [viewDate, setViewDate] = useState(
     () => new Date(today.getFullYear(), today.getMonth(), 1),
   );
-  const [selectedDate, setSelectedDate] = useState(today);
+  const [selectedDate, setSelectedDate] = useState(() => new Date(2024, 11, 5));
 
   const monthLabel = useMemo(
     () =>
       viewDate.toLocaleDateString("en-US", {
         month: "long",
-        year: "numeric",
       }),
     [viewDate],
   );
+  const yearLabel = useMemo(() => viewDate.getFullYear(), [viewDate]);
 
   const monthCells = useMemo(() => {
     const year = viewDate.getFullYear();
@@ -143,6 +126,8 @@ export default function CalendarPage() {
     }
     return meetings;
   }, [today]);
+  
+  const validSelectedMeetings = selectedMeetings.filter((m) => m.title);
 
   const selectedDateLabel = useMemo(
     () =>
@@ -174,16 +159,17 @@ export default function CalendarPage() {
   };
 
   const renderMeetingList = (list) => {
-    if (list.length === 0) {
+    const validList = list.filter((m) => m.title);
+    if (validList.length === 0) {
       return <p className="agenda-empty">No meetings scheduled.</p>;
     }
 
-    return list.map((meeting, index) => (
+    return validList.map((meeting, index) => (
       <div key={`${meeting.title}-${index}`} className="meeting-item">
-        <div>
+        <div className="meeting-item-content">
           <h3>{meeting.title}</h3>
           <p>{meeting.time}</p>
-          <small>{meeting.location}</small>
+          <a href="#" className="meeting-link-text">{meeting.location}</a>
         </div>
       </div>
     ));
@@ -221,7 +207,10 @@ export default function CalendarPage() {
         <section className="calendar-content-row">
           <article className="month-panel">
             <div className="month-panel-head">
-              <h2>{monthLabel.replace(" ", "\n")}</h2>
+              <div className="month-heading">
+                <span className="month-part">{monthLabel}</span>
+                <span className="year-part">{yearLabel}</span>
+              </div>
 
               <div className="month-nav">
                 <button
@@ -256,7 +245,8 @@ export default function CalendarPage() {
                 }
 
                 const key = getDateKey(cell.date);
-                const hasMeetings = Boolean(meetingSeed[key]);
+                const dayMeetings = meetingSeed[key] || [];
+                const colors = dayMeetings.map((m) => m.color).filter(Boolean);
                 const isToday = isSameDay(cell.date, today);
                 const isActive = isSameDay(cell.date, selectedDate);
 
@@ -270,7 +260,13 @@ export default function CalendarPage() {
                     onClick={() => setSelectedDate(cell.date)}
                   >
                     <span>{cell.day}</span>
-                    {hasMeetings && <i className="dot cyan"></i>}
+                    {colors.length > 0 && (
+                      <div className="dots-container">
+                        {colors.map((color, i) => (
+                          <i key={i} className={`dot ${color}`}></i>
+                        ))}
+                      </div>
+                    )}
                   </button>
                 );
               })}
@@ -280,28 +276,34 @@ export default function CalendarPage() {
           <article className="agenda-panel">
             <h2>{selectedDateLabel}</h2>
 
-            {selectedMeetings.length === 0 ? (
+            {validSelectedMeetings.length === 0 ? (
               <p className="agenda-empty">No meeting details for this day.</p>
             ) : (
-              selectedMeetings.map((meeting, index) => (
+              validSelectedMeetings.map((meeting, index) => (
                 <div key={`${meeting.title}-${index}`} className="agenda-card">
                   <div className="agenda-head">
                     <h3>{meeting.title}</h3>
-                    <span>{meeting.type}</span>
+                    {meeting.type && <span>{meeting.type}</span>}
                   </div>
 
-                  <p>
-                    <Clock3 />
-                    {meeting.time}
-                  </p>
-                  <p>
-                    <MapPin />
-                    {meeting.location}
-                  </p>
-                  <p>
-                    <Users />
-                    {meeting.attendees} attendees
-                  </p>
+                  {meeting.time && (
+                    <p>
+                      <Clock3 />
+                      {meeting.time}
+                    </p>
+                  )}
+                  {meeting.location && (
+                    <p>
+                      <MapPin />
+                      {meeting.location}
+                    </p>
+                  )}
+                  {meeting.attendees && (
+                    <p>
+                      <Users />
+                      {meeting.attendees} attendees
+                    </p>
+                  )}
                 </div>
               ))
             )}
