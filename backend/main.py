@@ -6,9 +6,12 @@ Profiles table: id, email, full_name, avatar_url, is_active, created_at, updated
 from datetime import datetime, timezone
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, EmailStr
 from sqlalchemy import text
 from sqlalchemy.orm import Session
+import os
 
 from database import get_db, get_supabase_client
 from database.supabase_client import (
@@ -19,7 +22,6 @@ from app.api.endpoints.analysis import router as analysis_router
 from app.api.endpoints.dashboard import router as dashboard_router
 from app.api.endpoints.chat import router as chat_router
 from app.api.insights import router as insights_router
-# from app.api.endpoints.patent_firm import router as patent_firm_router
 
 app = FastAPI(
     title="Ascendly API",
@@ -51,6 +53,14 @@ app.include_router(chat_router)
 app.include_router(insights_router)
 # app.include_router(patent_firm_router)
 
+# ============ STATIC FILES ============
+# Path to the frontend build directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FRONTEND_DIST = os.path.join(BASE_DIR, "..", "frontend", "dist")
+
+if os.path.exists(FRONTEND_DIST):
+    app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIST, "assets")), name="assets")
+
 
 # ============ SCHEMAS ============
 
@@ -71,6 +81,13 @@ class ProfileCompleteRequest(BaseModel):
     first_name: str
     last_name: str
     role: str
+
+
+class ProfileUpdateRequest(BaseModel):
+    first_name: str = None
+    last_name: str = None
+    role: str = None
+    avatar_url: str = None
 
 
 # ============ HEALTH CHECK ============
@@ -338,6 +355,39 @@ async def complete_profile(payload: ProfileCompleteRequest, current_user=Depends
     }
 
 
+@app.put("/auth/profile")
+async def update_user_profile(payload: ProfileUpdateRequest, current_user=Depends(require_auth)):
+    """
+    Update the current user's profile.
+    """
+    auth_user_id = str(current_user.id)
+    update_data = {"updated_at": datetime.now(timezone.utc).isoformat()}
+    
+    if payload.first_name is not None or payload.last_name is not None:
+        # Get current profile to preserve one if only other is provided
+        profile = get_profile_by_auth_id(auth_user_id)
+        current_full_name = profile.get("full_name", "") if profile else ""
+        name_parts = current_full_name.split(" ", 1) if current_full_name else ["", ""]
+        
+        fname = payload.first_name if payload.first_name is not None else name_parts[0]
+        lname = payload.last_name if payload.last_name is not None else (name_parts[1] if len(name_parts) > 1 else "")
+        update_data["full_name"] = f"{fname.strip()} {lname.strip()}".strip()
+        
+    if payload.role is not None:
+        update_data["role"] = payload.role
+        
+    if payload.avatar_url is not None:
+        update_data["avatar_url"] = payload.avatar_url
+        
+    from database.supabase_client import update_profile
+    try:
+        update_profile(auth_user_id, update_data)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to update profile.")
+        
+    return {"message": "Profile updated successfully"}
+
+
 @app.get("/dashboard/user-count")
 async def get_user_count(current_user=Depends(require_auth)):
     """Fetch the total count of registered users from the profiles table."""
@@ -446,6 +496,21 @@ async def get_dashboard_metrics(current_user=Depends(require_auth)):
         "engagement_score": engagement_score,
         "growth": growth
     }
+
+# ============ SPA CATCH-ALL ============
+
+@app.get("/{full_path:path}")
+async def serve_spa(full_path: str):
+    """
+    Serve index.html for any path that doesn't match an API route.
+    This allows React SPA routing to work.
+    """
+    if os.path.exists(FRONTEND_DIST):
+        index_file = os.path.join(FRONTEND_DIST, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+    
+    return {"message": "Frontend build not found. Please run 'npm run build' in the frontend directory."}
 
 
 # ============ RUN SERVER ============
