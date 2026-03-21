@@ -11,12 +11,12 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardPlaceholder from './pages/DashboardPlaceholder';
 import Dashboard from './pages/BusinessAdvisory/Dashboard';
-import Clients from './pages/BusinessAdvisory/Clients';
-import Projects from './pages/BusinessAdvisory/Projects';
+import Requests from './pages/BusinessAdvisory/Requests';
+import Startups from './pages/BusinessAdvisory/Startups';
 import MarketingAgencyProjects from './pages/marketing-agency/Projects';
 import CalendarPage from './pages/BusinessAdvisory/Calendar';
 import Payments from './pages/BusinessAdvisory/Payments';
-import EditProfile from './pages/BusinessAdvisory/editProfile';
+import Profile from './pages/BusinessAdvisory/Profile';
 import Settings from './pages/BusinessAdvisory/Settings';
 import NotificationsPage from './pages/BusinessAdvisory/Notifications';
 import AccountPage from './pages/AccountPage';
@@ -75,11 +75,13 @@ function App() {
             <Route path="investors" element={<InvestorsPage />} />
             <Route path="tiers" element={<TiersPage />} />
             <Route path="advisors" element={<AdvisorsPage />} />
-            <Route path="clients" element={<Clients />} />
-            <Route path="projects" element={<Projects />} />
+            <Route path="investor" element={<Dashboard />} />
+            <Route path="requests" element={<Requests />} />
+            <Route path="startups" element={<Startups />} />
             <Route path="calendar" element={<CalendarPage />} />
             <Route path="payments" element={<Payments />} />
-            <Route path="profile" element={<DashboardPlaceholder />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="settings" element={<Settings />} />
             <Route path="help" element={<DashboardPlaceholder />} />
 
             {/* Patent Firm Dashboard Routes */}
@@ -137,18 +139,9 @@ function App() {
             }
           />
 
-          <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/notifications" element={<NotificationsPage />} />
-
-          <Route path="/business-advisory" element={<Dashboard />} />
-          <Route path="/business-advisory/clients" element={<Clients />} />
-          <Route path="/business-advisory/projects" element={<Projects />} />
-          <Route path="/business-advisory/calendar" element={<CalendarPage />} />
-          <Route path="/business-advisory/payments" element={<Payments />} />
-          <Route path="/business-advisory/settings" element={<Settings />} />
-          <Route path="/business-advisory/notifications" element={<NotificationsPage />} />
-          <Route path="/business-advisory/edit-profile" element={<EditProfile />} />
 
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
