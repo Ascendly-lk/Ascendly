@@ -38,11 +38,7 @@ const Sidebar = () => {
       icon: <CalendarDays size={16} strokeWidth={2} />,
       label: "Calendar",
     },
-    {
-      path: "/business-advisory/payments",
-      icon: <Wallet size={16} strokeWidth={2} />,
-      label: "Payments",
-    },
+
   ];
 
   const footerItems = [

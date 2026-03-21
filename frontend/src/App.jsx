@@ -15,7 +15,7 @@ import Clients from "./pages/BusinessAdvisory/Clients";
 import Projects from "./pages/BusinessAdvisory/Projects";
 import MarketingAgencyProjects from "./pages/marketing-agency/Projects";
 import CalendarPage from "./pages/BusinessAdvisory/Calendar";
-import Payments from "./pages/BusinessAdvisory/Payments";
+
 import EditProfile from "./pages/BusinessAdvisory/editProfile";
 import Settings from "./pages/BusinessAdvisory/Settings";
 import NotificationsPage from "./pages/BusinessAdvisory/Notifications";
@@ -76,7 +76,7 @@ function App() {
             <Route path="clients" element={<Clients />} />
             <Route path="projects" element={<Projects />} />
             <Route path="calendar" element={<CalendarPage />} />
-            <Route path="payments" element={<Payments />} />
+
             <Route path="profile" element={<DashboardPlaceholder />} />
             <Route path="help" element={<DashboardPlaceholder />} />
 
@@ -163,7 +163,7 @@ function App() {
           <Route path="/business-advisory/clients" element={<Clients />} />
           <Route path="/business-advisory/projects" element={<Projects />} />
           <Route path="/business-advisory/calendar" element={<CalendarPage />} />
-          <Route path="/business-advisory/payments" element={<Payments />} />
+
           <Route path="/business-advisory/settings" element={<Settings />} />
           <Route path="/business-advisory/notifications" element={<NotificationsPage />} />
           <Route path="/business-advisory/edit-profile" element={<EditProfile />} />
