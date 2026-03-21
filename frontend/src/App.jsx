@@ -20,6 +20,8 @@ import EditProfile from './components/dashboard/editProfile';
 import Settings from './components/dashboard/Settings';
 import NotificationsPage from './pages/BusinessAdvisory/Notifications';
 import AccountPage from './pages/AccountPage';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import DashboardLayout from './pages/BusinessAdvisory/DashboardLayout';
 import StartupDashboard from './pages/dashboard/StartupDashboard';
 import AIAnalyticsDashboard from './pages/aianalytics/AIAnalyticsDashboard';
@@ -50,6 +52,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/payment" element={<PaymentPortal />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           <Route
             path="/account"
