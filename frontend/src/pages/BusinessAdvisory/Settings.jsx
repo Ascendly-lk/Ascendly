@@ -1,6 +1,6 @@
 import React from "react";
 import Sidebar from "./Sidebar";
-import TopHeader from "../../components/TopHeader";
+import TopHeader from "../../components/dashboard/TopBar";
 import "./Settings.css";
 
 const Settings = () => {
@@ -9,7 +9,7 @@ const Settings = () => {
       <Sidebar />
 
       <main className="settings-main">
-        <TopHeader showWelcome={false} />
+        <TopBar showWelcome={false} />
 
         <div className="settings-header">
           <h2 className="settings-title">Settings</h2>
