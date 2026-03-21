@@ -1,0 +1,5 @@
+# Code Owners
+# These owners will be required reviewers for PRs touching these paths.
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+/backend/ @sandhamitha
