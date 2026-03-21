@@ -1,15 +1,16 @@
 import React from "react";
 import Sidebar from "./Sidebar";
-import TopHeader from "../../components/TopHeader";
+import TopBar from "./TopBar";
+import "../../pages/BusinessAdvisory/DashboardLayout.css";
 import "./editProfile.css";
 
 const EditProfile = () => {
   return (
-    <div className="app-container">
+    <div className="dl-shell app-container">
       <Sidebar />
 
-      <main className="main-content">
-        <TopHeader showWelcome={false} />
+      <main className="dl-main main-content">
+        <TopBar />
 
         <div className="content-wrapper">
           <div className="page-header">
