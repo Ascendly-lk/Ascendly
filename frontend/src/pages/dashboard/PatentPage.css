@@ -169,6 +169,7 @@
     border-bottom: 1px solid rgba(148, 163, 184, 0.1);
     flex-shrink: 0;
     gap: 16px;
+    width: 100%;
 }
 
 .pp-topbar-title {
@@ -248,6 +249,9 @@
     flex-direction: column;
     gap: 24px;
     flex: 1;
+    width: 100%;
+    align-items: stretch;
+    justify-content: flex-start;
 }
 
 /* ── Scrollbar — same style as Dashboard ─────────────────────────────────── */
@@ -280,8 +284,10 @@
 .pp-stats-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
+    gap: 20px;
     align-items: stretch;
+    justify-items: stretch;
+    width: 100%;
 }
 
 .pp-stat-card {
@@ -291,6 +297,7 @@
     flex-direction: column;
     gap: 8px;
     min-height: 140px;
+    width: 100%;
     transition: transform 0.2s ease-out, box-shadow 0.2s ease, filter 0.2s ease;
     cursor: pointer;
 }
@@ -407,7 +414,7 @@
 /* ══════════════════════════════════════════════════════════════════════════
    GENERIC CARD — matches Dashboard AIForecastCard style
    ══════════════════════════════════════════════════════════════════════════ */
-.pp-card {
+.pp-card-1 {
     background: linear-gradient(160deg, #0f172a 0%, #0c1527 100%);
     border: 1px solid rgba(148, 163, 184, 0.08);
     border-radius: 22px;
@@ -416,9 +423,10 @@
         0 4px 6px rgba(0, 0, 0, 0.3),
         0 20px 60px rgba(0, 0, 0, 0.55);
     transition: transform 0.2s ease-out, box-shadow 0.2s ease, border-color 0.2s ease;
+    width: 100%;
 }
 
-.pp-card:hover {
+.pp-card-1:hover {
     transform: translateY(-2px);
     box-shadow:
         0 4px 6px rgba(0, 0, 0, 0.3),
@@ -435,15 +443,21 @@
 
 /* ── Middle Row ──────────────────────────────────────────────────────────── */
 .pp-mid-row {
-    display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    display: flex !important;
     gap: 20px;
-    align-items: start;
+    align-items: stretch;
+    width: 100% !important;
 }
 
 /* ── Filing Activity Chart ───────────────────────────────────────────────── */
 .pp-chart-card {
+    flex: 6 !important;
+    min-width: 0 !important;
+    /* Allow flex shrinking if needed */
     min-height: 280px;
+    width: 100% !important;
+    display: flex;
+    flex-direction: column;
 }
 
 .pp-chart-header {
@@ -509,6 +523,15 @@
     display: block;
 }
 
+
+.pp-renewals-card {
+    flex: 6 !important;
+    min-width: 0 !important;
+    min-height: 280px;
+    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+}
 
 /* ── Upcoming Renewals ───────────────────────────────────────────────────── */
 .pp-renewal-list {
@@ -611,7 +634,11 @@
    RECENT FILINGS TABLE
    ══════════════════════════════════════════════════════════════════════════ */
 .pp-filings-card {
+    width: 100%;
+    min-width: 100%;
+    flex: 1;
     overflow: hidden;
+    margin: 0;
 }
 
 .pp-filings-header {

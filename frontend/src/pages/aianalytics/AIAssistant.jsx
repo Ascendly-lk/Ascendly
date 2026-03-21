@@ -3,6 +3,9 @@ import { useLocation } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
 import { apiFetch } from '../../api';
+import AnalyticsPopup from '../../components/aianalytics/AnalyticsPopup';
+import { generatePDFReport } from '../../utils/pdfGenerator';
+import { BarChart2, FileDown } from 'lucide-react';
 import './AIAssistant.css';
 
 /* ── Helpers ── */
@@ -75,6 +78,9 @@ const AIAssistant = () => {
     const [files, setFiles] = useState([]);
     const [selectedFileId, setSelectedFileId] = useState(null);
     const [showSuggestions, setShowSuggestions] = useState(true);
+    const [showAnalyticsPopup, setShowAnalyticsPopup] = useState(false);
+    const [hasAnalyticsData, setHasAnalyticsData] = useState(false);
+    const [showComingSoon, setShowComingSoon] = useState(false);
     const location = useLocation();
     const hasAutoPrompted = useRef(false);
     const messagesEndRef = useRef(null);
@@ -140,54 +146,78 @@ const AIAssistant = () => {
             const decoder = new TextDecoder();
             let buffer = '';
 
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
+            const processLine = (line) => {
+                if (!line.startsWith('data: ')) return;
+                try {
+                    const event = JSON.parse(line.slice(6));
 
-                buffer += decoder.decode(value, { stream: true });
-                const lines = buffer.split('\n');
-                buffer = lines.pop() ?? '';
-
-                for (const line of lines) {
-                    if (!line.startsWith('data: ')) continue;
-                    try {
-                        const event = JSON.parse(line.slice(6));
-
-                        if (event.type === 'token') {
-                            setMessages((prev) => prev.map((m) =>
-                                m.id === assistantMsgId
-                                    ? { ...m, text: m.text + event.content }
-                                    : m
-                            ));
-                        } else if (event.type === 'progress') {
-                            setMessages((prev) => prev.map((m) =>
-                                m.id === assistantMsgId
-                                    ? { ...m, progress: { step: event.step, total: event.total, label: event.label } }
-                                    : m
-                            ));
-                        } else if (event.type === 'result') {
-                            setMessages((prev) => prev.map((m) =>
-                                m.id === assistantMsgId
-                                    ? { ...m, text: event.text, progress: null }
-                                    : m
-                            ));
-                        } else if (event.type === 'done') {
-                            setMessages((prev) => prev.map((m) =>
-                                m.id === assistantMsgId
-                                    ? { ...m, streaming: false, progress: null }
-                                    : m
-                            ));
-                        } else if (event.type === 'error') {
-                            setMessages((prev) => prev.map((m) =>
-                                m.id === assistantMsgId
-                                    ? { ...m, text: event.content, streaming: false, progress: null }
-                                    : m
-                            ));
+                    if (event.type === 'token') {
+                        setMessages((prev) => prev.map((m) =>
+                            m.id === assistantMsgId
+                                ? { ...m, text: m.text + event.content }
+                                : m
+                        ));
+                    } else if (event.type === 'progress') {
+                        setMessages((prev) => prev.map((m) =>
+                            m.id === assistantMsgId
+                                ? { ...m, progress: { step: event.step, total: event.total, label: event.label } }
+                                : m
+                        ));
+                    } else if (event.type === 'result') {
+                        setMessages((prev) => prev.map((m) =>
+                            m.id === assistantMsgId
+                                ? { ...m, text: event.text, progress: null }
+                                : m
+                        ));
+                        
+                        // Trigger AI Analytics Popup if file is selected and prompt matches keywords
+                        if (selectedFileId && /predict|analysis|analyse|forecast|insights|business data/i.test(trimmed)) {
+                            setHasAnalyticsData(true);
+                            setShowAnalyticsPopup(true);
                         }
-                    } catch {
-                        // Skip malformed SSE lines
+                    } else if (event.type === 'done') {
+                        setMessages((prev) => prev.map((m) =>
+                            m.id === assistantMsgId
+                                ? { ...m, streaming: false, progress: null }
+                                : m
+                        ));
+                    } else if (event.type === 'error') {
+                        setMessages((prev) => prev.map((m) =>
+                            m.id === assistantMsgId
+                                ? { ...m, text: event.content || 'An error occurred.', streaming: false, progress: null }
+                                : m
+                        ));
+                    }
+                } catch {
+                    // Skip malformed SSE lines
+                }
+            };
+
+            try {
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() ?? '';
+
+                    for (const line of lines) {
+                        processLine(line);
                     }
                 }
+
+                // Process any remaining data left in the buffer after stream ends
+                if (buffer.trim()) {
+                    processLine(buffer.trim());
+                }
+            } finally {
+                // Always ensure the assistant message exits streaming state
+                setMessages((prev) => prev.map((m) =>
+                    m.id === assistantMsgId && m.streaming
+                        ? { ...m, streaming: false }
+                        : m
+                ));
             }
         } catch {
             setMessages((prev) => prev.map((m) =>
@@ -271,6 +301,31 @@ const AIAssistant = () => {
                                 ))}
                             </select>
                         </div>
+                        
+                        {/* Action Buttons (Insights / PDF) */}
+                        {hasAnalyticsData && (
+                            <div className="ai-chat-actions">
+                                <button 
+                                    className="ai-chat-action-btn"
+                                    onClick={() => setShowAnalyticsPopup(!showAnalyticsPopup)}
+                                    title={showAnalyticsPopup ? "Close Analytics" : "Open Analytics"}
+                                >
+                                    <BarChart2 size={16} />
+                                    {showAnalyticsPopup ? "Close Insights" : "Open Insights"}
+                                </button>
+                                <button 
+                                    className="ai-chat-action-btn pdf"
+                                    onClick={() => {
+                                        setShowComingSoon(true);
+                                        setTimeout(() => setShowComingSoon(false), 3000);
+                                    }}
+                                    title="Download Business Insights Report"
+                                >
+                                    <FileDown size={16} />
+                                    Export PDF
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                     {/* Messages area */}
@@ -350,8 +405,19 @@ const AIAssistant = () => {
                         </div>
                         <p className="ai-chat-hint">Press Enter to send, Shift + Enter for new line</p>
                     </div>
+
+                    {/* Toast Notification */}
+                    <div className={`ai-toast-popup ${showComingSoon ? 'visible' : ''}`}>
+                        This feature will come soon!
+                    </div>
                 </div>
             </div>
+            
+            <AnalyticsPopup 
+                isOpen={showAnalyticsPopup} 
+                onClose={() => setShowAnalyticsPopup(false)} 
+                onSuggestionClick={sendMessage} 
+            />
         </div>
     );
 };
