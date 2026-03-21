@@ -26,7 +26,6 @@ import AIAnalyticsDashboard from './pages/aianalytics/AIAnalyticsDashboard';
 import UploadData from './pages/aianalytics/UploadData';
 import AIAssistant from './pages/aianalytics/AIAssistant';
 import Feedbacks from './pages/marketing-agency/Feedbacks';
-import LogisticsPage from './pages/dashboard/LogisticsPage';
 import PatentPage from './pages/dashboard/PatentPage';
 import InvestorsPage from './pages/dashboard/InvestorsPage';
 import TiersPage from './pages/dashboard/TiersPage';
@@ -71,7 +70,6 @@ function App() {
           >
             <Route index element={<Navigate to="startup" replace />} />
             <Route path="startup" element={<StartupDashboard />} />
-            <Route path="logistics" element={<LogisticsPage />} />
             <Route path="patent" element={<PatentPage />} />
             <Route path="investors" element={<InvestorsPage />} />
             <Route path="tiers" element={<TiersPage />} />
