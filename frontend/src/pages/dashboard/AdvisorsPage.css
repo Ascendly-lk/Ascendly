@@ -516,3 +516,227 @@
         font-size: 20px;
     }
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   REQUEST ADVISOR SESSION — Booking Panel  (prefix: ap-rb-)
+   All styles are scoped; zero impact on existing classes.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Active state for the top "Request Advisor Session" button */
+.ap-request-session-btn.active {
+    background: rgba(0, 255, 239, 0.1);
+    border-color: #00FFEF;
+    box-shadow: 0 0 14px rgba(0, 255, 239, 0.25);
+}
+
+/* ── Panel wrapper ─────────────────────────────────────────────────────────── */
+.ap-rb-panel {
+    background: linear-gradient(160deg, #0d1525 0%, #0b1220 100%);
+    border: 1px solid rgba(0, 255, 239, 0.18);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.35),
+        0 20px 60px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(0, 255, 239, 0.05);
+    animation: ap-rb-slideDown 0.25s ease-out both;
+}
+
+@keyframes ap-rb-slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0);     }
+}
+
+/* ── Tier banner ──────────────────────────────────────────────────────────── */
+.ap-rb-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 22px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+}
+
+.ap-rb-banner--free    { background: rgba(100, 116, 139, 0.12); }
+.ap-rb-banner--pro     { background: rgba(6, 182, 212, 0.09);   }
+.ap-rb-banner--premium { background: rgba(0, 255, 239, 0.07);  }
+
+.ap-rb-tier-badge {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    flex-shrink: 0;
+}
+
+.ap-rb-banner--free .ap-rb-tier-badge {
+    background: rgba(148, 163, 184, 0.2);
+    color: #94A3B8;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.ap-rb-banner--pro .ap-rb-tier-badge {
+    background: rgba(6, 182, 212, 0.2);
+    color: #22d3ee;
+    border: 1px solid rgba(6, 182, 212, 0.4);
+}
+
+.ap-rb-banner--premium .ap-rb-tier-badge {
+    background: rgba(0, 255, 239, 0.15);
+    color: #00FFEF;
+    border: 1px solid rgba(0, 255, 239, 0.45);
+    box-shadow: 0 0 8px rgba(0, 255, 239, 0.2);
+}
+
+.ap-rb-banner-text {
+    font-size: 13px;
+    color: #CBD5E1;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* ── Advisor list ─────────────────────────────────────────────────────────── */
+.ap-rb-list {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Single advisor row ───────────────────────────────────────────────────── */
+.ap-rb-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 22px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.06);
+    transition: background 0.15s ease;
+}
+
+.ap-rb-row:last-child {
+    border-bottom: none;
+}
+
+.ap-rb-row:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* ── Avatar ───────────────────────────────────────────────────────────────── */
+.ap-rb-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0D7A6E 0%, #00FFEF 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: #050B14;
+    flex-shrink: 0;
+}
+
+/* ── Info block ───────────────────────────────────────────────────────────── */
+.ap-rb-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.ap-rb-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #E2E8F0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ap-rb-specialty {
+    font-size: 12px;
+    color: #64748B;
+}
+
+/* ── Rating badge ─────────────────────────────────────────────────────────── */
+.ap-rb-rating {
+    flex-shrink: 0;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #00FFEF;
+    background: rgba(0, 255, 239, 0.08);
+    border: 1px solid rgba(0, 255, 239, 0.25);
+    white-space: nowrap;
+}
+
+.ap-rb-rating--gold {
+    color: #FFD700;
+    background: rgba(255, 215, 0, 0.1);
+    border-color: rgba(255, 215, 0, 0.3);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.15);
+}
+
+/* ── Action column ────────────────────────────────────────────────────────── */
+.ap-rb-action {
+    flex-shrink: 0;
+    min-width: 140px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Book Session button */
+.ap-rb-book-btn {
+    padding: 8px 18px;
+    background: transparent;
+    border: 1px solid rgba(0, 255, 239, 0.45);
+    border-radius: 8px;
+    color: #00FFEF;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease-out;
+    white-space: nowrap;
+}
+
+.ap-rb-book-btn:hover {
+    background: rgba(0, 255, 239, 0.1);
+    border-color: #00FFEF;
+    box-shadow: 0 0 12px rgba(0, 255, 239, 0.22);
+    transform: translateY(-1px);
+}
+
+/* Success feedback */
+.ap-rb-success {
+    font-size: 12px;
+    font-weight: 700;
+    color: #00FFEF;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+/* Blocked feedback (free tier) */
+.ap-rb-blocked {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94A3B8;
+    font-style: italic;
+    white-space: nowrap;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+    .ap-rb-row {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 14px 16px;
+    }
+
+    .ap-rb-action {
+        min-width: unset;
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
