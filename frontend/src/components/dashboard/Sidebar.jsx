@@ -29,6 +29,18 @@ const AI_ANALYTICS_MENU_ITEMS = [
 ];
 
 /* ── SVG icons ───────────────────────────────────────────────────────────── */
+const INVESTOR_MENU_ITEMS = [
+    { name: 'Dashboard', icon: 'grid', route: '/dashboard/investor' },
+    { name: 'Requests', icon: 'users', route: '/dashboard/requests' },
+    { name: 'Startups', icon: 'trending', route: '/dashboard/startups' },
+    { name: 'AI Analytics', icon: 'brain', route: '/dashboard/ai-analytics' },
+    { name: 'Calendar', icon: 'calendar', route: '/dashboard/calendar' },
+    { name: 'Payments', icon: 'dollarSign', route: '/dashboard/payments' },
+    { name: 'Profile', icon: 'user-check', route: '/dashboard/profile' },
+    { name: 'Settings', icon: 'shield', route: '/dashboard/settings' },
+];
+
+/* ── SVG icons ───────────────────────────────────────────────────────────── */
 const ICONS = {
     grid: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -138,6 +150,7 @@ const Sidebar = () => {
     // Determine which menu items to use based on path
     const isPatentFirm = pathname.startsWith('/dashboard/patent-firm');
     const isAIAnalytics = pathname.startsWith('/dashboard/ai-analytics');
+    const isInvestor = pathname.startsWith('/dashboard/requests') || pathname.startsWith('/dashboard/startups') || pathname.startsWith('/business-advisory');
 
     let menuItems = STARTUP_MENU_ITEMS;
     let dashboardTitle = "STARTUPS DASHBOARD";
@@ -148,6 +161,9 @@ const Sidebar = () => {
     } else if (isAIAnalytics) {
         menuItems = AI_ANALYTICS_MENU_ITEMS;
         dashboardTitle = "AI ANALYTICS DASHBOARD";
+    } else if (isInvestor || user?.role === 'Investor' || user?.role === 'Business Advisor') {
+        menuItems = INVESTOR_MENU_ITEMS;
+        dashboardTitle = "INVESTOR NETWORK";
     }
 
     return (
