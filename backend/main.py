@@ -266,9 +266,12 @@ async def get_me(current_user=Depends(require_auth)):
             create_profile(upsert_data)
         except Exception as e:
             print(f"[get_me] Profile sync FAILED for {auth_user_id}: {str(e)}")
-            # If this is a first-time Google login, we NEED this profile. 
-            # If it fails, we should let the user know why instead of a 404 later.
-            raise HTTPException(status_code=500, detail=f"Profile synchronization failed: {str(e)}")
+            # `profile` holds the record fetched before the sync attempt.
+            # If it was None the user has no existing profile row, so a sync
+            # failure is fatal — raise immediately.  If a profile already existed,
+            # the user can still log in with that record.
+            if not profile:
+                raise HTTPException(status_code=500, detail=f"Profile synchronization failed: {str(e)}")
             
         profile = get_profile_by_auth_id(auth_user_id)
         is_newly_synced = True
@@ -445,4 +448,4 @@ async def get_dashboard_metrics(current_user=Depends(require_auth)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
