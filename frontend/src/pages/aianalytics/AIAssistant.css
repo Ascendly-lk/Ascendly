@@ -1,18 +1,9 @@
-git
 /* ══════════════════════════════════════════
    AI Assistant — Page Layout
    Sidebar: 220px fixed (from AIAnalyticsSidebar.css)
 ══════════════════════════════════════════ */
 
-.ai-assistant-page {
-    display: flex;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #050B14 0%, #0B1220 100%);
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-}
-
 .ai-assistant-main {
-    margin-left: 220px;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -409,16 +400,7 @@ git
 /* ══════════════════════════════════════════
    Responsive
 ══════════════════════════════════════════ */
-@media (max-width: 1024px) {
-    .ai-assistant-main {
-        margin-left: 68px;
-    }
-}
-
 @media (max-width: 768px) {
-    .ai-assistant-main {
-        margin-left: 0;
-    }
 
     .ai-assistant-content {
         padding: 14px;

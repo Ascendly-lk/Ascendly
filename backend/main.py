@@ -19,7 +19,7 @@ from app.api.endpoints.analysis import router as analysis_router
 from app.api.endpoints.dashboard import router as dashboard_router
 from app.api.endpoints.chat import router as chat_router
 from app.api.insights import router as insights_router
-from app.api.endpoints.patent_firm import router as patent_firm_router
+# from app.api.endpoints.patent_firm import router as patent_firm_router
 
 app = FastAPI(
     title="Ascendly API",
@@ -30,7 +30,7 @@ app = FastAPI(
 # CORS — allow Vite frontend dev server (port 5173, etc)
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$",
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1|\[::1\]|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -42,7 +42,7 @@ app.include_router(analysis_router)
 app.include_router(dashboard_router)
 app.include_router(chat_router)
 app.include_router(insights_router)
-app.include_router(patent_firm_router)
+# app.include_router(patent_firm_router)
 
 
 # ============ SCHEMAS ============
@@ -262,15 +262,20 @@ async def get_me(current_user=Depends(require_auth)):
             upsert_data["created_at"] = datetime.now(timezone.utc).isoformat()
             
         try:
+            print(f"[get_me] Syncing profile for {auth_user_id} ({current_user.email})")
             create_profile(upsert_data)
-        except Exception:
-            pass # Suppress issues if the trigger already handles portions of this seamlessly
+        except Exception as e:
+            print(f"[get_me] Profile sync FAILED for {auth_user_id}: {str(e)}")
+            # If this is a first-time Google login, we NEED this profile. 
+            # If it fails, we should let the user know why instead of a 404 later.
+            raise HTTPException(status_code=500, detail=f"Profile synchronization failed: {str(e)}")
             
         profile = get_profile_by_auth_id(auth_user_id)
         is_newly_synced = True
 
     if not profile:
-        raise HTTPException(status_code=404, detail="Profile not found.")
+        print(f"[get_me] Profile NOT FOUND in DB for auth_id: {auth_user_id}")
+        raise HTTPException(status_code=404, detail="Profile not found in our database. Please try registering again.")
 
     full_name = profile.get("full_name", "")
     name_parts = full_name.split(" ", 1) if full_name else ["", ""]
@@ -440,4 +445,4 @@ async def get_dashboard_metrics(current_user=Depends(require_auth)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

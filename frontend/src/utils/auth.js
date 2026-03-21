@@ -17,6 +17,7 @@ export const supabase = supabaseUrl && supabaseAnonKey
 
 const STORAGE_TOKEN_KEY = 'ascendly_token';
 const STORAGE_USER_KEY = 'ascendly_user';
+const STORAGE_PLAN_KEY = 'ascendly_subscription_plan';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -37,10 +38,21 @@ export function getToken() {
 export function getCurrentUser() {
     const raw = localStorage.getItem(STORAGE_USER_KEY);
     try {
-        return raw ? JSON.parse(raw) : null;
+        if (!raw) return null;
+        const user = JSON.parse(raw);
+        user.plan = getSubscriptionPlan();
+        return user;
     } catch {
         return null;
     }
+}
+
+export function saveSubscriptionPlan(plan) {
+    localStorage.setItem(STORAGE_PLAN_KEY, plan);
+}
+
+export function getSubscriptionPlan() {
+    return localStorage.getItem(STORAGE_PLAN_KEY) || 'Free';
 }
 
 // ─── API calls ────────────────────────────────────────────────────────────────
@@ -173,6 +185,8 @@ export async function fetchMe() {
         }
 
         const user = await response.json();
+        // Merge locally stored plan info
+        user.plan = getSubscriptionPlan();
         // Refresh stored user data with latest from server
         localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(user));
         return user;
