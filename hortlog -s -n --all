@@ -1,0 +1,92 @@
+f326548 - Janathans, 2 minutes ago : feat/User/frontend/Tiers page CSS and jsx organized
+6efb5d5 - Janathans, 4 minutes ago : feat/User/frontend/Investors page jsx organized
+5a99798 - Janathans, 5 minutes ago : feat/User/frontend/Advisorpage jsx organized
+9afaa2a - Janathans, 9 minutes ago : feat/User/frontend/Sidebar Uprgrade pro changes fix
+b8ca1ba - Janathans, 31 minutes ago : feat/User/frontend/Investors page Booking model fix
+fdfb4cb - Janathans, 32 minutes ago : feat/User/frontend/BookingModal CSS Fix
+5443504 - Janathans, 88 minutes ago : feat/User/frontend/Advisor page Tier wise Selection jsx
+6b5f6e8 - Janathans, 89 minutes ago : feat/User/frontend/Advisor page Tier wise Selection CSS
+862f210 - Janathans, 3 hours ago : feat/User/frontend/tier logic fix
+df0037a - Janathans, 3 hours ago : feat/User/Payment
+cebd416 - Janathans, 8 hours ago : feat/User/frontend/Payment Portal
+ff2bd95 - Janathans, 8 hours ago : feat/user/frontend/Side Bar CSS fix
+212ce21 - Janathan Sachchithanantham, 8 hours ago : Merge branch 'Main' into User
+0f8069f - Janathans, 8 hours ago : feat/User/frontend/Payment portal CSS
+44c26ee - Janathan Sachchithanantham, 12 hours ago : Merge pull request #46 from Ascendly-lk/User
+ceb33e5 - Janathans, 12 hours ago : feat/User/frontend/Business advisor session booking card
+20dc2ec - Janathan Sachchithanantham, 13 hours ago : Merge pull request #45 from Ascendly-lk/User
+343a21c - Janathans, 13 hours ago : feat/User/frontend/Reusable content - Side Bar
+5a8b3d8 - Janathan Sachchithanantham, 13 hours ago : Merge pull request #44 from Ascendly-lk/User
+9398308 - Janathans, 13 hours ago : feat/frontend/AI Analytics routing logic
+aa45922 - Janathan Sachchithanantham, 13 hours ago : Merge pull request #43 from Ascendly-lk/User
+e790845 - Janathans, 13 hours ago : feat/backend/Main python file bug fix
+e993945 - Janithya Vinuthmi, 3 days ago : Merge pull request #40 from Ascendly-lk/Vinuthmi-backup
+89a9bf4 - Janithya Vinuthmi, 3 days ago : Merge branch 'Main' into Vinuthmi-backup
+2faef62 - Janithya Vinuthmi, 3 days ago : Merge pull request #41 from Ascendly-lk/business-advisory-updates
+eaf8c98 - Janithya Vinuthmi, 3 days ago : Potential fix for pull request finding
+6e62efc - Janithya Vinuthmi, 3 days ago : Potential fix for pull request finding
+82b50d9 - Janithya Vinuthmi, 3 days ago : Potential fix for pull request finding
+dd4131e - J Vinuthmi, 3 days ago : Improve UI layout and styling for Settings, Notifications, and Edit Profile pages
+6f10422 - J Vinuthmi, 3 days ago : Fix Business Advisory sidebar Dashboard link
+9c0f467 - J Vinuthmi, 3 days ago : Update ProtectedRoute.jsx
+b0178d3 - J Vinuthmi, 3 days ago : Added to a folder
+1172599 - J Vinuthmi, 3 days ago : Merge branch 'Main' of https://github.com/Ascendly-lk/Ascendly into Vinuthmi-backup
+c62e227 - J Vinuthmi, 4 days ago : Added to the folder
+6422205 - Janathan Sachchithanantham, 4 days ago : Merge pull request #37 from Ascendly-lk/User
+5e2e0e4 - Janathans, 4 days ago : feat/User/frontend/AIAnalytics Sidebar Routing
+b131747 - Janathan Sachchithanantham, 5 days ago : Merge pull request #36 from Ascendly-lk/User
+c531042 - Janathans, 5 days ago : feat/User/frontend/routing fixes
+0355fc7 - Janathan Sachchithanantham, 5 days ago : Merge pull request #35 from Ascendly-lk/User
+ef54f02 - Janathans, 5 days ago : feat/User/frontend/sidebar fix
+111e8e8 - Janathan Sachchithanantham, 5 days ago : Merge pull request #34 from Ascendly-lk/User
+1abc156 - Janathans, 5 days ago : feat/User/frontend/dashboard routing
+58b914c - Janathan Sachchithanantham, 5 days ago : Merge pull request #33 from Ascendly-lk/User
+e049fc4 - Janathans, 5 days ago : feat/User/frontend/dashboard route logic
+65c10c9 - Janathans, 5 days ago : feat/User/backend/veryfiy_metrics fixes
+05e2bb8 - Janathans, 5 days ago : feat/User/backend/inspect_tables changes
+04a9d51 - Janathan Sachchithanantham, 5 days ago : Merge pull request #31 from Ascendly-lk/patency-firm-portal
+8914b13 - sanavi-nk, 5 days ago : feat/patencyfirm-portal fronend design Clients.jsx
+6c23a20 - Janathan Sachchithanantham, 5 days ago : Merge pull request #30 from Ascendly-lk/patency-firm-portal
+1d2062e - sanavi-nk, 5 days ago : feat/patencyfirm-portal fronend design
+0366063 - sanavi-nk, 5 days ago : feat/patencyfirm-portal backend connection with display client numbers
+d4b26a5 - Janathan Sachchithanantham, 5 days ago : Merge pull request #29 from Ascendly-lk/User
+fe2a12c - Janathan Sachchithanantham, 5 days ago : Merge branch 'Main' into User
+54ef495 - Janathans, 5 days ago : feat/User/Frontend/Authenticaton fix
+4409c51 - Janathan Sachchithanantham, 5 days ago : Merge pull request #28 from Ascendly-lk/User
+f18f981 - Janathans, 5 days ago : feat/User/Frontend/StartupDAshboardStats
+506b63a - Janathan Sachchithanantham, 5 days ago : Merge pull request #27 from Ascendly-lk/User
+dbd795a - Janathans, 5 days ago : feat/User/Monthlyrevenue Fetch/Backend
+3cbf9da - Sandhamitha Jayasinghe, 5 days ago : chore: add CODEOWNERS to protect backend directory
+b1275f8 - Sandhamitha Jayasinghe, 5 days ago : Merge pull request #25 from Ascendly-lk/feat/caching
+b222065 - Sandhamitha Jayasinghe, 5 days ago : fix: resolve Copilot review comments on caching layer
+d0811ed - Sandhamitha Jayasinghe, 5 days ago : chore: add .local-qa to gitignore for internal QA agent
+5ae0d6b - Sandhamitha Jayasinghe, 5 days ago : feat: add in-memory TTL caching layer
+84182f5 - Sandhamitha Jayasinghe, 5 days ago : chore: remove debug scripts, fix env.example, add CONTRIBUTING.md
+15157da - Sandhamitha Jayasinghe, 5 days ago : Merge remote-tracking branch 'origin/Main' into feat/ai-analytics-integration
+3947370 - Sanavi Kulathilake, 6 days ago : Merge pull request #24 from Ascendly-lk/patency-firm-portal
+7e234f9 - sanavi-nk, 6 days ago : fix: resolve merge conflicts, fix duplicate identifiers, and refine patent firm access
+a6b089e - sanavi-nk, 6 days ago : completed patenct firm payment and document review pages
+960518d - sanavi-nk, 10 days ago : added applications for patency firm
+f161b92 - sanavi-nk, 10 days ago : added client pages to patency-firm
+279c2a9 - sanavi-nk, 12 days ago : feat: Implement Patent Firm Dashboard layout and routing
+f6c011d - sanavi-nk, 6 days ago : Saved my recent frontend updates
+cd21c04 - Janathan Sachchithanantham, 8 days ago : Merge pull request #23 from Ascendly-lk/User
+5167ccb - Janathans, 8 days ago : feat/User/statcard backend and fronend fetch
+29d276f - Janithya Vinuthmi, 10 days ago : Merge pull request #2 from Ascendly-lk/Vinuthmi-backup
+9180a62 - J Vinuthmi, 10 days ago : Resolve merge conflicts
+957cff4 - J Vinuthmi, 11 days ago : Update dashboard subpages and UI consistency
+bc9022c - J Vinuthmi, 11 days ago : Merge branch 'Main' into Vinuthmi-backup
+7f8c4b2 - Sandhamitha Jayasinghe, 12 days ago : docs: update README to reflect current stack and features
+9c0252a - Sandhamitha Jayasinghe, 12 days ago : docs: update README to reflect current stack and features
+9d25482 - Sandhamitha Jayasinghe, 12 days ago : Revert "docs: update README to reflect current stack and features"
+e6f423b - Sandhamitha Jayasinghe, 12 days ago : docs: update README to reflect current stack and features
+0291919 - Sandhamitha Jayasinghe, 12 days ago : Merge pull request #21 from Ascendly-lk/feat/ai-analytics-integration
+f08d0fd - Sandhamitha Jayasinghe, 12 days ago : Merge branch 'feat/ai-analytics-integration' of https://github.com/Ascendly-lk/Ascendly into feat/ai-analytics-integration
+b802bb7 - Sandhamitha Jayasinghe, 12 days ago : fix: resolve Copilot review round 2 comments
+d980ed0 - Sandhamitha Jayasinghe, 12 days ago : Merge branch 'Main' into feat/ai-analytics-integration
+c0d5430 - Sandhamitha Jayasinghe, 12 days ago : chore: merge Main, add issue templates, remove debug scripts
+0da3555 - Sandhamitha Jayasinghe, 12 days ago : Update issue templates
+b76afe6 - Sandhamitha Jayasinghe, 12 days ago : fix: address Copilot review comments on chat endpoint and AI assistant
+d436964 - Sandhamitha Jayasinghe, 12 days ago : feat: add SSE streaming and conversation memory to AI chat
+362af2e - Sandhamitha Jayasinghe, 12 days ago : Merge pull request #20 from Ascendly-lk/feat/ai-analytics-integration
+7681
