@@ -1,0 +1,8 @@
+--- Testing Stats ---
+{'active_applications': 4, 'total_clients': 3, 'pending_reviews': 2, 'revenue': 4999.0, 'revenue_formatted': '$5.0K'}
+--- Testing Urgent ---
+[{'id': 'PAT-2026-004', 'company_name': 'TechCo AI', 'title': 'Machine Learning Training Algorithm', 'due_date': '2026-03-23T06:29:10.156413+00:00', 'file_url': 'https://example.com/mock_file_2.png', 'priority': 'urgent'}, {'id': 'PAT-2026-001', 'company_name': 'TechCo AI', 'title': 'AI-Powered Task Automation Engine', 'due_date': '2026-03-23T06:29:10.156413+00:00', 'file_url': 'https://example.com/mock_file_1.pdf', 'priority': 'high'}]
+--- Testing Pipeline ---
+{'pending_review': 2, 'in_progress': 1, 'filing_ready': 1, 'filed_completed': 1}
+--- Testing Activities ---
+[{'id': '04b670bb-e5d0-4391-be19-ea9dcbbcd2fa', 'action': 'Application moved to review', 'description': 'Emily Watson approved the baseline claims for Blockchain system.', 'application_id': 'PAT-2026-003', 'client_name': 'DataFlow Inc', 'created_at': '2026-03-19T06:29:10.156413+00:00'}, {'id': 'b7317827-f9f7-4f73-a23c-2c13a26703e1', 'action': 'Application submitted', 'description': 'New patent architecture drafted for ML Engine.', 'application_id': 'PAT-2026-004', 'client_name': 'TechCo AI', 'created_at': '2026-03-19T06:29:10.156413+00:00'}, {'id': '4368e632-9f99-41c8-a112-f0a5a0743cc0', 'action': 'Document uploaded', 'description': 'Technical Specifications.pdf was verified by our system.', 'application_id': 'PAT-2026-001', 'client_name': 'TechCo AI', 'created_at': '2026-03-19T06:29:10.156413+00:00'}]

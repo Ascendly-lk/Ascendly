@@ -1,29 +1,19 @@
-import os
-import sys
-from sqlalchemy import text
-from dotenv import load_dotenv
-from datetime import datetime, timedelta
-
-# Add the current directory to sys.path to import local modules
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from backend.database.sqlalchemy_client import engine
-
-def init_patent_tables():
-    if not engine:
-        print("Error: DATABASE_URL not found in .env")
-        return
-
-    # Use robust CHECK constraints over ENUM types to avoid "type already exists" on reruns.
-    schema_sql = """
     DROP TABLE IF EXISTS patent_activities CASCADE;
     DROP TABLE IF EXISTS patent_payments CASCADE;
     DROP TABLE IF EXISTS patent_reviews CASCADE;
     DROP TABLE IF EXISTS patent_documents CASCADE;
     DROP TABLE IF EXISTS patent_applications CASCADE;
     DROP TABLE IF EXISTS patent_clients CASCADE;
+    DROP TYPE IF EXISTS patent_app_status CASCADE;
+    DROP TYPE IF EXISTS patent_priority CASCADE;
+    DROP TYPE IF EXISTS payment_status CASCADE;
 
-    -- 1. Patent Clients Table
+    CREATE TYPE patent_app_status AS ENUM (
+        'pending_review', 'in_progress', 'filing_ready', 'filed', 'approved', 'rejected'
+    );
+    CREATE TYPE patent_priority AS ENUM ('low', 'medium', 'high', 'urgent');
+    CREATE TYPE payment_status AS ENUM ('pending', 'paid', 'overdue');
+
     CREATE TABLE patent_clients (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         name TEXT NOT NULL,
@@ -36,23 +26,21 @@ def init_patent_tables():
         updated_at TIMESTAMPTZ DEFAULT now()
     );
 
-    -- 2. Patent Applications Table
     CREATE TABLE patent_applications (
         id TEXT PRIMARY KEY,
         client_id UUID REFERENCES patent_clients(id) ON DELETE CASCADE,
         title TEXT NOT NULL,
         type TEXT,
-        status patent_app_status,
+        status patent_app_status DEFAULT 'pending_review',
         progress INTEGER DEFAULT 0,
         due_date TIMESTAMPTZ,
         assigned_to TEXT,
         filing_type TEXT,
-        priority patent_priority,
+        priority patent_priority DEFAULT 'medium',
         created_at TIMESTAMPTZ DEFAULT now(),
         updated_at TIMESTAMPTZ DEFAULT now()
     );
 
-    -- 3. Patent Documents Table
     CREATE TABLE patent_documents (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         application_id TEXT REFERENCES patent_applications(id) ON DELETE CASCADE,
@@ -65,7 +53,6 @@ def init_patent_tables():
         created_at TIMESTAMPTZ DEFAULT now()
     );
 
-    -- 4. Patent Reviews Table
     CREATE TABLE patent_reviews (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         application_id TEXT REFERENCES patent_applications(id) ON DELETE CASCADE,
@@ -74,7 +61,6 @@ def init_patent_tables():
         created_at TIMESTAMPTZ DEFAULT now()
     );
 
-    -- 5. Patent Payments Table
     CREATE TABLE patent_payments (
         id TEXT PRIMARY KEY,
         client_id UUID REFERENCES patent_clients(id) ON DELETE CASCADE,
@@ -84,12 +70,11 @@ def init_patent_tables():
         due_date TIMESTAMPTZ,
         paid_date TIMESTAMPTZ,
         amount DECIMAL(12, 2),
-        status TEXT CHECK (status IN ('pending', 'paid', 'overdue')),
+        status payment_status DEFAULT 'pending',
         payment_method TEXT,
         created_at TIMESTAMPTZ DEFAULT now()
     );
 
-    -- 6. Patent Activities Table
     CREATE TABLE patent_activities (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         action TEXT NOT NULL,
@@ -98,19 +83,7 @@ def init_patent_tables():
         client_name TEXT,
         created_at TIMESTAMPTZ DEFAULT now()
     );
-    """
 
-    # We will compute safe relative dates for dummy data (today, tomorrow, etc) inline in Python
-    # so we can inject them right into the SQL context.
-    now = datetime.utcnow()
-    d_minus_5 = (now - timedelta(days=5)).strftime('%Y-%m-%d %H:%M:%S+00')
-    d_minus_2 = (now - timedelta(days=2)).strftime('%Y-%m-%d %H:%M:%S+00')
-    d_plus_2 = (now + timedelta(days=2)).strftime('%Y-%m-%d %H:%M:%S+00')
-    d_plus_10 = (now + timedelta(days=10)).strftime('%Y-%m-%d %H:%M:%S+00')
-    d_minus_10 = (now - timedelta(days=10)).strftime('%Y-%m-%d %H:%M:%S+00')
-
-    seed_sql = f"""
-    -- Insert Clients and cast returning id into CTEs so we can use their FKs
     WITH ins_client1 AS (
         INSERT INTO patent_clients (name, industry, tier, revenue, logo_letter)
         VALUES ('TechCo AI', 'Artificial Intelligence', 'Tier 3', 14997.00, 'TA')
@@ -126,35 +99,31 @@ def init_patent_tables():
         VALUES ('DataFlow Inc', 'Data Analytics', 'Tier 2', 1999.00, 'DF')
         RETURNING id
     ),
-    
-    -- Insert Applications
     ins_app1 AS (
         INSERT INTO patent_applications (id, client_id, title, type, status, progress, due_date, assigned_to, filing_type, priority, created_at)
-        VALUES ('PAT-2026-001', (SELECT id FROM ins_client1), 'AI-Powered Task Automation Engine', 'Software', 'pending_review', 20, '{d_plus_2}', 'Dr. Sarah Chen', 'Non-Provisional', 'high', '{d_minus_5}')
+        VALUES ('PAT-2026-001', (SELECT id FROM ins_client1), 'AI-Powered Task Automation Engine', 'Software', 'pending_review', 20, now() + interval '2 days', 'Dr. Sarah Chen', 'Non-Provisional', 'high', now() - interval '5 days')
         RETURNING id
     ),
     ins_app2 AS (
         INSERT INTO patent_applications (id, client_id, title, type, status, progress, due_date, assigned_to, filing_type, priority, created_at)
-        VALUES ('PAT-2026-002', (SELECT id FROM ins_client2), 'Smart IoT Sensor Hardware Design', 'Hardware', 'in_progress', 60, '{d_plus_10}', 'Michael Rodriguez', 'Provisional', 'medium', '{d_minus_5}')
+        VALUES ('PAT-2026-002', (SELECT id FROM ins_client2), 'Smart IoT Sensor Hardware Design', 'Hardware', 'in_progress', 60, now() + interval '10 days', 'Michael Rodriguez', 'Provisional', 'medium', now() - interval '5 days')
         RETURNING id
     ),
     ins_app3 AS (
         INSERT INTO patent_applications (id, client_id, title, type, status, progress, due_date, assigned_to, filing_type, priority, created_at)
-        VALUES ('PAT-2026-003', (SELECT id FROM ins_client3), 'Blockchain Data Verification', 'Software', 'filing_ready', 90, '{d_plus_10}', 'Emily Watson', 'Non-Provisional', 'low', '{d_minus_10}')
+        VALUES ('PAT-2026-003', (SELECT id FROM ins_client3), 'Blockchain Data Verification', 'Software', 'filing_ready', 90, now() + interval '10 days', 'Emily Watson', 'Non-Provisional', 'low', now() - interval '10 days')
         RETURNING id
     ),
     ins_app4 AS (
         INSERT INTO patent_applications (id, client_id, title, type, status, progress, due_date, assigned_to, filing_type, priority, created_at)
-        VALUES ('PAT-2026-004', (SELECT id FROM ins_client1), 'Machine Learning Training Algorithm', 'Software', 'pending_review', 10, '{d_plus_2}', 'Unassigned', 'Provisional', 'urgent', '{d_minus_2}')
+        VALUES ('PAT-2026-004', (SELECT id FROM ins_client1), 'Machine Learning Training Algorithm', 'Software', 'pending_review', 10, now() + interval '2 days', 'Unassigned', 'Provisional', 'urgent', now() - interval '2 days')
         RETURNING id
     ),
     ins_app5 AS (
         INSERT INTO patent_applications (id, client_id, title, type, status, progress, due_date, assigned_to, filing_type, priority, created_at)
-        VALUES ('PAT-2026-005', (SELECT id FROM ins_client2), 'Automated Fleet Tracking', 'Software', 'approved', 100, '{d_minus_10}', 'System', 'Non-Provisional', 'high', '{d_minus_10}')
+        VALUES ('PAT-2026-005', (SELECT id FROM ins_client2), 'Automated Fleet Tracking', 'Software', 'approved', 100, now() - interval '10 days', 'System', 'Non-Provisional', 'high', now() - interval '10 days')
         RETURNING id
     ),
-
-    -- Insert Documents
     ins_doc1 AS (
         INSERT INTO patent_documents (application_id, name, type, size, file_url, status, reviewer)
         VALUES ('PAT-2026-001', 'Technical Specifications.pdf', 'pdf', '2.4 MB', 'https://example.com/mock_file_1.pdf', 'uploaded', 'Dr. Sarah Chen')
@@ -163,41 +132,24 @@ def init_patent_tables():
         INSERT INTO patent_documents (application_id, name, type, size, file_url, status, reviewer)
         VALUES ('PAT-2026-004', 'Architecture Diagram.png', 'image', '1.1 MB', 'https://example.com/mock_file_2.png', 'uploaded', 'Unassigned')
     ),
-    
-    -- Insert Payments
     ins_pay1 AS (
         INSERT INTO patent_payments (id, client_id, application_id, service, tier, due_date, paid_date, amount, status, payment_method)
-        VALUES ('INV-2026-001', (SELECT id FROM ins_client1), 'PAT-2026-001', 'Non-Provisional Filing', 'Tier 3', '{d_minus_2}', '{d_minus_5}', 4999.00, 'paid', 'Credit Card')
+        VALUES ('INV-2026-001', (SELECT id FROM ins_client1), 'PAT-2026-001', 'Non-Provisional Filing', 'Tier 3', now() - interval '2 days', now() - interval '5 days', 4999.00, 'paid', 'Credit Card')
     ),
     ins_pay2 AS (
         INSERT INTO patent_payments (id, client_id, application_id, service, tier, due_date, paid_date, amount, status, payment_method)
-        VALUES ('INV-2026-002', (SELECT id FROM ins_client2), 'PAT-2026-002', 'Provisional Patent', 'Tier 2', '{d_plus_2}', NULL, 1999.00, 'pending', 'Credit Card')
+        VALUES ('INV-2026-002', (SELECT id FROM ins_client2), 'PAT-2026-002', 'Provisional Patent', 'Tier 2', now() + interval '2 days', NULL, 1999.00, 'pending', 'Credit Card')
     ),
-
-    -- Insert Activities
     ins_act1 AS (
         INSERT INTO patent_activities (action, description, application_id, client_name, created_at)
-        VALUES ('Document uploaded', 'Technical Specifications.pdf was verified by our system.', 'PAT-2026-001', 'TechCo AI', '{d_minus_2}')
+        VALUES ('Document uploaded', 'Technical Specifications.pdf was verified by our system.', 'PAT-2026-001', 'TechCo AI', now() - interval '2 days')
     ),
     ins_act2 AS (
         INSERT INTO patent_activities (action, description, application_id, client_name, created_at)
-        VALUES ('Application submitted', 'New patent architecture drafted for ML Engine.', 'PAT-2026-004', 'TechCo AI', '{d_minus_2}')
+        VALUES ('Application submitted', 'New patent architecture drafted for ML Engine.', 'PAT-2026-004', 'TechCo AI', now() - interval '2 days')
     ),
     ins_act3 AS (
         INSERT INTO patent_activities (action, description, application_id, client_name, created_at)
-        VALUES ('Application moved to review', 'Emily Watson approved the baseline claims for Blockchain system.', 'PAT-2026-003', 'DataFlow Inc', '{d_minus_2}')
+        VALUES ('Application moved to review', 'Emily Watson approved the baseline claims for Blockchain system.', 'PAT-2026-003', 'DataFlow Inc', now() - interval '2 days')
     )
     SELECT 1;
-    """
-
-    with engine.connect() as connection:
-        print("Initializing normalized tables...")
-        connection.execute(text(schema_sql))
-        connection.commit()
-        print("Seeding initial data...")
-        connection.execute(text(seed_sql))
-        connection.commit()
-        print("Database normalization and seeding complete!")
-
-if __name__ == "__main__":
-    init_patent_tables()

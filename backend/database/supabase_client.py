@@ -115,6 +115,14 @@ def require_auth(authorization: str = Header(...)):
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Invalid authorization header format")
     token = authorization[7:]
+    
+    # Allow dev bypass
+    if token == "BYPASS" and os.getenv("ENVIRONMENT", "dev") != "production":
+        class DummyUser:
+            id = "00000000-0000-0000-0000-000000000000"
+            email = "dev@bypass.com"
+        return DummyUser()
+
     try:
         client = get_supabase_client()
         response = client.auth.get_user(token)

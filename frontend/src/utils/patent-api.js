@@ -34,3 +34,33 @@ export async function fetchClients() {
     if (!response.ok) throw new Error('Failed to fetch clients');
     return response.json();
 }
+
+export async function fetchUrgentActions() {
+    const response = await apiFetch('/api/patent-firm/dashboard/urgent');
+    if (!response.ok) throw new Error('Failed to fetch urgent actions');
+    return response.json();
+}
+
+export async function fetchDashboardPipeline() {
+    const response = await apiFetch('/api/patent-firm/dashboard/pipeline');
+    if (!response.ok) throw new Error('Failed to fetch dashboard pipeline');
+    return response.json();
+}
+
+export async function fetchActivities() {
+    const response = await apiFetch('/api/patent-firm/activities');
+    if (!response.ok) throw new Error('Failed to fetch activities');
+    return response.json();
+}
+
+export async function fetchDocuments() {
+    const response = await apiFetch('/api/patent-firm/documents');
+    if (!response.ok) throw new Error('Failed to fetch documents');
+    return response.json();
+}
+
+export async function fetchPayments() {
+    const response = await apiFetch('/api/patent-firm/payments');
+    if (!response.ok) throw new Error('Failed to fetch payments');
+    return response.json();
+}

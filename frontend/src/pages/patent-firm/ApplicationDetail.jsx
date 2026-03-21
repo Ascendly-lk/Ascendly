@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
     ArrowLeft,
@@ -11,6 +12,7 @@ import {
     CheckCircle2
 } from "lucide-react";
 import TopBar from "../../components/dashboard/TopBar";
+import { fetchApplicationById } from "../../utils/patent-api";
 import "./Dashboard.css";
 import "./Clients.css";
 
@@ -50,47 +52,32 @@ const StatusTracker = ({ steps }) => (
     </div>
 );
 
-// Mock data
-const applicationData = {
-    "PAT-2026-001": {
-        id: "PAT-2026-001",
-        title: "AI-Powered Task Automation Engine",
-        type: "Software",
-        status: "Expert Review",
-        progress: 60,
-        lastUpdated: "March 3, 2026",
-        filingType: "Non-Provisional",
-        tier: "Tier 2",
-        assignedExpert: "Dr. Sarah Chen",
-        description: "An intelligent task automation system that uses machine learning to predict and automate repetitive workflows across enterprise applications.",
-        steps: [
-            { name: "Application Submitted", status: "completed", date: "February 20, 2026" },
-            { name: "Initial Review", status: "completed", date: "February 22, 2026" },
-            { name: "Expert Assignment", status: "completed", date: "February 24, 2026" },
-            { name: "Novelty Assessment", status: "current", date: "In Progress" },
-            { name: "Patent Drafting", status: "upcoming" },
-            { name: "USPTO Filing", status: "upcoming" },
-            { name: "Examination", status: "upcoming" },
-        ],
-        documents: [
-            { name: "Technical Specifications.pdf", size: "2.4 MB", date: "Feb 20, 2026" },
-            { name: "System Architecture.png", size: "1.1 MB", date: "Feb 20, 2026" },
-            { name: "Prior Art Research.docx", size: "856 KB", date: "Feb 21, 2026" },
-        ],
-        notes: [
-            { date: "March 3, 2026", author: "Dr. Sarah Chen", text: "Completed initial novelty search. Found 3 related patents but your approach is sufficiently distinct. Recommending to proceed with claims focused on the ML prediction algorithm." },
-            { date: "February 24, 2026", author: "System", text: "Application assigned to Dr. Sarah Chen for expert review." },
-        ],
-    },
-};
-
 export default function ApplicationDetail() {
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const application = id ? applicationData[id] : null;
+    const [application, setApplication] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    if (!application) {
+    useEffect(() => {
+        if (id) {
+            fetchApplicationById(id)
+                .then(data => {
+                    setApplication(data);
+                    setLoading(false);
+                })
+                .catch(err => {
+                    console.error("Failed to fetch application", err);
+                    setLoading(false);
+                });
+        }
+    }, [id]);
+
+    if (loading) {
+        return <div className="startup-dashboard" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'white' }}>Loading...</div>;
+    }
+
+    if (!application || application.error) {
         return (
             <div className="startup-dashboard" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ textAlign: 'center' }}>
@@ -164,7 +151,14 @@ export default function ApplicationDetail() {
                             <CardDescription>Track your patent application progress</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <StatusTracker steps={application.steps} />
+                            <StatusTracker steps={[
+                                { name: "Application Submitted", status: "completed", date: application.created_at ? new Date(application.created_at).toLocaleDateString() : 'N/A' },
+                                { name: "Pending Review", status: application.status === "pending_review" ? "current" : "completed" },
+                                { name: "Expert Drafting / In Progress", status: application.status === "pending_review" ? "upcoming" : (application.status === "in_progress" ? "current" : "completed") },
+                                { name: "Filing Ready", status: ['pending_review', 'in_progress'].includes(application.status) ? "upcoming" : (application.status === "filing_ready" ? "current" : "completed") },
+                                { name: "USPTO Filed", status: ['filed', 'approved'].includes(application.status) ? "completed" : "upcoming" },
+                                { name: "Approved", status: application.status === "approved" ? "completed" : "upcoming" }
+                            ]} />
                         </CardContent>
                     </Card>
 
@@ -190,7 +184,7 @@ export default function ApplicationDetail() {
                         </CardHeader>
                         <CardContent>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                {application.documents.map((doc, i) => (
+                                {(application.documents || []).map((doc, i) => (
                                     <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderRadius: '12px', border: '1px solid var(--input-border)', backgroundColor: 'rgba(255,255,255,0.02)' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                                             <div style={{ padding: '8px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
@@ -216,7 +210,7 @@ export default function ApplicationDetail() {
                         </CardHeader>
                         <CardContent>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                                {application.notes.map((note, i) => (
+                                {(application.notes || []).map((note, i) => (
                                     <div key={i} style={{ paddingBottom: '16px', borderBottom: i < application.notes.length - 1 ? '1px solid var(--input-border)' : 'none' }}>
                                         <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
                                             <MessageSquare size={16} color="var(--text-gray)" style={{ marginTop: '4px' }} />

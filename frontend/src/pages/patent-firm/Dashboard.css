@@ -59,7 +59,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 8px;
+    margin-bottom: 24px;
 }
 
 .pf-urgent-header h2 {
@@ -197,7 +197,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 4px;
+    margin-bottom: 24px;
 }
 
 .pf-card-header h3 {
