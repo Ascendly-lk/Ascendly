@@ -13,4 +13,7 @@ python-multipart
 litellm
 azure-ai-inference>=1.0.0b9
 cachetools
+google-adk
+yfinance
 openai
+requests
