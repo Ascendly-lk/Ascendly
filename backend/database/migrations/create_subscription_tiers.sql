@@ -19,9 +19,14 @@ CREATE TABLE IF NOT EXISTS subscription_tiers (
 );
 
 -- 3. Seed default tiers
-INSERT INTO subscription_tiers (id, name, price_monthly, analyses_per_month, chat_queries_per_month, features, is_popular)
+INSERT INTO subscription_tiers (id, name, price_monthly, analyses_per_month, chat_queries_per_month, is_popular)
 VALUES
-  ('free',    'Free',    0,    3,  10, '["3 dataset analyses/month","10 AI chat queries/month","Revenue forecasting","Industry benchmarks"]', FALSE),
-  ('starter', 'Starter', 29,  10,  50, '["10 dataset analyses/month","50 AI chat queries/month","Revenue forecasting","Industry benchmarks","Priority support"]', TRUE),
-  ('pro',     'Pro',     79,  -1,  -1, '["Unlimited analyses","Unlimited AI chat","Revenue forecasting","Industry benchmarks","Priority support","Custom integrations"]', FALSE)
+  ('free',    'Free',    0,    3,  10, FALSE),
+  ('starter', 'Starter', 29,  10,  50, TRUE),
+  ('pro',     'Pro',     79,  -1,  -1, FALSE)
 ON CONFLICT (id) DO NOTHING;
+
+-- 4. Set features using json_build_array (avoids copy-paste newline issues)
+UPDATE subscription_tiers SET features = json_build_array('3 analyses/month','10 chats/month','Revenue forecasting','Industry benchmarks') WHERE id = 'free';
+UPDATE subscription_tiers SET features = json_build_array('10 analyses/month','50 chats/month','Revenue forecasting','Industry benchmarks','Priority support') WHERE id = 'starter';
+UPDATE subscription_tiers SET features = json_build_array('Unlimited analyses','Unlimited chat','Revenue forecasting','Industry benchmarks','Priority support','Custom integrations') WHERE id = 'pro';
