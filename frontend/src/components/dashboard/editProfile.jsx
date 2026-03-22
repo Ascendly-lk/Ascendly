@@ -2,7 +2,7 @@ import React from "react";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import "../../pages/BusinessAdvisory/DashboardLayout.css";
-import "./editProfile.css";
+import "./EditProfile.css";
 
 const EditProfile = () => {
   return (
