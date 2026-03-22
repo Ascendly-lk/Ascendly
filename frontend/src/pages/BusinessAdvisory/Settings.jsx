@@ -1,6 +1,6 @@
 import React from "react";
 import Sidebar from "./Sidebar";
-import TopHeader from "../../components/dashboard/TopBar";
+import TopBar from "../../components/dashboard/TopBar";
 import "./Settings.css";
 
 const Settings = () => {
