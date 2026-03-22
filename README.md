@@ -1,145 +1,180 @@
-# Ascendly
+# Ascendly — AI Analytics Platform for Startups
 
-AI-powered financial analytics platform for startups — upload your data, get revenue forecasts, strategic recommendations, and chat with an AI assistant about your business metrics.
+Ascendly is an AI-powered business analytics platform that helps startups analyze financial data, forecast revenue, benchmark against industry peers, and receive strategic recommendations — all through a conversational AI interface.
+
+---
+
+## Features
+
+- **AI Chat Assistant** — conversational interface powered by Azure GPT-4o
+- **3-Agent Analysis Pipeline** — Analyst → Forecaster → Strategist (CrewAI)
+- **Interactive Analysis UI** — Thesys C1 renders live charts, KPI cards, and recommendation cards inside the chat
+- **Revenue Forecasting** — SARIMAX time-series forecasting on uploaded datasets
+- **Industry Benchmarks** — Google ADK multi-agent system + 1,050-row startup benchmark database
+- **File Upload** — CSV, XLSX, XLS, JSON dataset support
+- **Dashboard** — metrics overview, activity chart, contextual AI nudge chips
+- **Multi-role Auth** — Startup, Investor, Marketing Agency, Patent Firm, Business Advisor, Admin
+- **Google OAuth** — sign in with Google via Supabase
+
+---
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| **Backend** | Python 3.12, FastAPI, CrewAI, Statsmodels (SARIMAX), Pandas |
-| **Database** | Supabase (PostgreSQL + Auth + Storage) |
-| **LLM** | Azure OpenAI GPT-4o via LiteLLM + CrewAI |
-| **Frontend** | React 19, Vite, React Router |
+| Frontend | React 18, Vite, React Router, ReactMarkdown |
+| Backend | FastAPI, Python 3.12, Uvicorn |
+| AI Pipeline | CrewAI, Azure OpenAI GPT-4o |
+| Interactive UI | Thesys C1 (`@thesysai/genui-sdk`) |
+| Benchmarks | Google ADK, Gemini 2.0 Flash |
+| Database | Supabase (PostgreSQL) |
+| Auth | Supabase Auth + JWT |
+| Caching | `cachetools` TTLCache (in-memory) |
+
+---
 
 ## Project Structure
 
 ```
-ascendly/
+ascendly-main/
 ├── backend/
-│   ├── main.py                        # FastAPI app entry point, auth endpoints
+│   ├── main.py                         # FastAPI app entry point
 │   ├── requirements.txt
-│   ├── .env.example
+│   ├── ai_engine/
+│   │   ├── agents.py                   # CrewAI agent definitions
+│   │   ├── crew.py                     # Pipeline runner
+│   │   ├── tasks.py                    # CrewAI task definitions
+│   │   ├── provider.py                 # AI provider config (Azure/OpenAI)
+│   │   ├── c1_client.py                # Thesys C1 API client
+│   │   ├── adk/                        # Google ADK benchmark agents
+│   │   └── tools/                      # CrewAI tools (benchmark, data, SARIMAX)
 │   ├── app/api/endpoints/
-│   │   ├── analysis.py                # File upload, analysis, file listing
-│   │   └── chat.py                    # SSE streaming AI chat endpoint
+│   │   ├── chat.py                     # SSE streaming chat + analysis
+│   │   ├── dashboard.py                # Dashboard metrics
+│   │   ├── analysis.py                 # Analysis trigger
+│   │   └── patent_firm.py
+│   ├── cache/
+│   │   └── cache_manager.py            # TTL cache for analysis + chat
 │   ├── database/
-│   │   └── supabase_client.py         # Supabase auth & CRUD helpers
-│   └── ai_engine/
-│       ├── agents.py                  # CrewAI agent definitions
-│       ├── tasks.py                   # CSV-based analysis pipeline
-│       ├── crew.py                    # DB-based analysis pipeline (step functions)
-│       └── tools/
-│           ├── data_tools.py          # growth_calculator tool
-│           ├── query_tool.py          # query_dataset tool (loads from Supabase)
-│           ├── sarimax_tool.py        # forecast_revenue tool
-│           └── benchmark_tool.py     # query_benchmarks tool
+│   │   ├── supabase_client.py          # Supabase client + require_auth
+│   │   └── seed_startup_benchmarks.py  # One-time DB seeder (run once after DB setup)
+│   └── models/
+│       └── user.py
+│
 └── frontend/
-    ├── src/
-    │   ├── pages/
-    │   │   ├── Login.jsx / Register.jsx
-    │   │   └── aianalytics/
-    │   │       ├── AIAssistant.jsx    # SSE streaming chat UI
-    │   │       ├── UploadData.jsx     # File upload page
-    │   │       └── Dashboard.jsx      # Analytics dashboard
-    │   ├── components/
-    │   │   └── aianalytics/           # Sidebar, TopBar, charts, stat cards
-    │   ├── context/AuthContext.jsx    # Auth state (email + Google OAuth)
-    │   └── api.js                     # apiFetch, token helpers
-    └── package.json
+    └── src/
+        ├── api.js                      # apiFetch, getToken, setToken helpers
+        ├── App.jsx                     # Route definitions
+        ├── main.jsx                    # React app entry point
+        ├── components/
+        │   ├── aianalytics/            # AI dashboard components
+        │   │   ├── AIStatCard          # Metric stat cards
+        │   │   ├── AIAnalyticsChart    # Activity bar chart
+        │   │   ├── AIInsightNudges     # Contextual prompt chips
+        │   │   ├── C1Message           # Thesys C1 interactive renderer
+        │   │   ├── FileUploadZone      # C1 custom upload component
+        │   │   ├── RecentUploads       # Recent file list
+        │   │   └── QuickActions        # Action shortcut buttons
+        │   └── dashboard/              # Role dashboard components
+        │       ├── Sidebar, TopBar, StatCard, RevenueTrendCard, etc.
+        ├── pages/
+        │   ├── aianalytics/
+        │   │   ├── AIAnalyticsDashboard.jsx
+        │   │   ├── AIAssistant.jsx     # Chat + C1 streaming interface
+        │   │   └── UploadData.jsx
+        │   ├── dashboard/              # Role-specific dashboards
+        │   │   ├── StartupDashboard, InvestorsPage, MarketingAgency, PatentPage, etc.
+        │   ├── BusinessAdvisory/       # Business advisor role pages
+        │   ├── marketing-agency/       # Marketing agency role pages
+        │   ├── patent-firm/            # Patent firm role pages
+        │   ├── Login.jsx, Register.jsx
+        │   ├── ForgotPassword.jsx, ResetPassword.jsx
+        │   └── Profile.jsx, AccountPage.jsx
+        └── utils/
+            └── auth.js                 # Auth helpers, Supabase client, role routing
 ```
 
-## Features
+---
 
-- **File upload** — CSV, XLSX, XLS, JSON up to 50MB; rows stored in Supabase for agent pipeline
-- **3-agent AI pipeline** — Data Analyst → Forecaster → Strategist powered by CrewAI + Azure GPT-4o
-- **SARIMAX revenue forecasting** — 3-month forecast with confidence intervals; SES fallback for small datasets
-- **SSE streaming chat** — Token-by-token streaming response with step-by-step progress for analysis mode
-- **Conversation memory** — Last 10 messages sent as history context to the LLM
-- **Industry benchmarks** — Strategic recommendations with competitor and sector comparisons
-- **User authentication** — Email/password + Google OAuth via Supabase Auth
-
-## API Endpoints
-
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| `GET` | `/` | No | Health check |
-| `GET` | `/health/db` | Yes | Database connection check |
-| `POST` | `/auth/signup` | No | Register with email & password |
-| `POST` | `/auth/signin` | No | Login, returns JWT |
-| `POST` | `/auth/signout` | Yes | Logout |
-| `GET` | `/auth/me` | Yes | Current user profile |
-| `POST` | `/auth/profile/complete` | Yes | Complete onboarding (Google OAuth users) |
-| `POST` | `/api/upload` | Yes | Upload dataset file |
-| `POST` | `/api/analyze` | Yes | Upload CSV and run full analysis pipeline |
-| `GET` | `/api/files/recent` | Yes | List user's uploaded files |
-| `POST` | `/api/chat` | Yes | SSE streaming AI chat |
-
-## Getting Started
+## Setup
 
 ### Prerequisites
-
-- Python 3.12+
 - Node.js 18+
-- [Supabase](https://supabase.com) project
-- Azure OpenAI deployment (GPT-4o)
+- Python 3.12+
+- A Supabase project
 
-### Backend Setup
+### Backend
 
 ```bash
 cd backend
-python -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
+python3 -m venv venv
+source venv/bin/activate      # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env       # Fill in your credentials
-uvicorn main:app --reload  # Runs on http://localhost:8000
+
+cp .env.example .env
+# Fill in your keys (see .env.example)
+
+uvicorn main:app --reload --port 8000
 ```
 
-### Frontend Setup
+### Frontend
 
 ```bash
 cd frontend
 npm install
-npm run dev                # Runs on http://localhost:5173
+
+# Create frontend/.env
+VITE_API_URL=http://localhost:8000
+VITE_SUPABASE_URL=your-supabase-url
+VITE_SUPABASE_ANON_KEY=your-anon-key
+
+npm run dev
 ```
 
-## Environment Variables
+### Required Environment Variables
 
-| Variable | Description |
-|----------|-------------|
-| `SUPABASE_URL` | Supabase project URL |
-| `SUPABASE_KEY` | Supabase anon/public key |
-| `SUPABASE_SERVICE_KEY` | Supabase service role key (bypasses RLS for uploads) |
-| `AZURE_API_KEY` | Azure OpenAI API key |
-| `AZURE_ENDPOINT` | Full deployment URL e.g. `https://<resource>.cognitiveservices.azure.com/openai/deployments/gpt-4o` |
-| `AZURE_API_VERSION` | Azure API version e.g. `2024-02-01` |
-| `CREWAI_LLM_MODEL` | LLM model identifier (default: `azure/gpt-4o`) |
+**`backend/.env`**
+```env
+SUPABASE_URL=...
+SUPABASE_KEY=...
+SUPABASE_SERVICE_KEY=...
 
-## How the AI Pipeline Works
+AI_PROVIDER=azure
+AZURE_API_KEY=...
+AZURE_ENDPOINT=...
+AZURE_API_VERSION=...
+AZURE_DEPLOYMENT_NAME=gpt-4o
 
-```
-Dataset (uploaded to Supabase)
-        │
-        ▼
-┌──────────────┐   Loads rows via query_dataset,
-│ Data Analyst │── calculates MoM growth & metrics
-└──────┬───────┘
-       │
-       ▼
-┌──────────────┐   SARIMAX (≥12 data points) or SES fallback,
-│  Forecaster  │── 3-month forecast with confidence intervals
-└──────┬───────┘
-       │
-       ▼
-┌──────────────┐   Compares against industry benchmarks,
-│  Strategist  │── generates 3 actionable recommendations
-└──────┬───────┘
-       │
-       ▼
-  SSE Stream → Frontend
-  (progress events → result event → done event)
+THESYS_API_KEY=...
+THESYS_C1_MODEL=c1-exp/anthropic/claude-haiku-4.5
+
+GEMINI_API_KEY=...
+GOOGLE_ADK_MODEL=gemini-2.0-flash
 ```
 
-### Chat Modes
+### Database Setup
 
-- **Quick mode** — Conversational questions answered token-by-token via LiteLLM streaming
-- **Analysis mode** — Triggered by keywords (`analyze`, `forecast`, `trend`, etc.) with a dataset selected; runs the full 3-agent pipeline with step progress updates
+Run the following SQL in your Supabase SQL editor to create the required tables (`startup_benchmarks`, `subscription_tiers`, and profile columns). SQL scripts are available from the project team or maintainer.
+
+Then seed the startup benchmarks data:
+
+```bash
+cd backend
+python3 database/seed_startup_benchmarks.py
+```
+
+---
+
+## Development
+
+| Command | Where | Description |
+|---------|-------|-------------|
+| `uvicorn main:app --reload` | `backend/` | Start API server (port 8000) |
+| `npm run dev` | `frontend/` | Start Vite dev server (port 5173) |
+| `npm run build` | `frontend/` | Production build check |
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).

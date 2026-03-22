@@ -5,14 +5,12 @@
 .app-container {
   display: flex;
   min-height: 100vh;
-  background: #050509;
 }
 
 /* ── Main Content ────────────────────────────────────────────────────────── */
 .main-content {
   flex: 1;
   min-width: 0;
-  padding: 24px 40px;
   overflow-x: hidden;
   overflow-y: auto;
 }
