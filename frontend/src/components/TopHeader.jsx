@@ -2,14 +2,16 @@ import { Link } from "react-router-dom";
 import { Bell, Search, Settings, UserRound } from "lucide-react";
 import "./TopHeader.css";
 
-export default function TopHeader({ showWelcome = true }) {
+export default function TopHeader({ showWelcome = true, title }) {
   return (
-    <header className={`top-header ${!showWelcome ? "no-title" : ""}`}>
-      {showWelcome && (
+    <header className={`top-header ${!showWelcome && !title ? "no-title" : ""}`}>
+      {showWelcome ? (
         <h1>
           Welcome, <span>Abdullah !</span>
         </h1>
-      )}
+      ) : title ? (
+        <h1 className="page-title">{title}</h1>
+      ) : null}
 
       <div className="top-header-actions">
         <label className="top-header-search" aria-label="Search">

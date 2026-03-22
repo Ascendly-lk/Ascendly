@@ -73,11 +73,7 @@ export default function Projects() {
 
       <main className="projects-main" style={{ marginLeft: '260px', flexGrow: 1, minWidth: 0, padding: '28px 40px', display: 'flex', justifyContent: 'center' }}>
         <div style={{ width: '100%', maxWidth: '1400px' }}>
-          <TopHeader showWelcome={false} />
-
-        <header className="projects-header">
-          <h1>Projects</h1>
-        </header>
+          <TopHeader showWelcome={false} title="Projects" />
 
         <section className="projects-stats-grid">
           {projectStats.map((stat) => (

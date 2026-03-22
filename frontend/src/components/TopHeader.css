@@ -18,6 +18,10 @@
   color: #ffffff;
 }
 
+.top-header h1.page-title {
+  color: #00ffef;
+}
+
 .top-header h1 span {
   color: #1de6dc;
 }

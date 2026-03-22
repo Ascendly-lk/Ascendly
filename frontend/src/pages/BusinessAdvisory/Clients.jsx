@@ -270,11 +270,7 @@ export default function Clients() {
       <Sidebar />
 
       <main className="clients-main" style={{ marginLeft: '260px', flexGrow: 1, minWidth: 0, padding: '28px 40px' }}>
-        <TopHeader showWelcome={false} />
-
-        <header className="clients-header">
-          <h1>{activeTab === "session" ? "Clients" : "Chats"}</h1>
-        </header>
+        <TopHeader showWelcome={false} title={activeTab === "session" ? "Clients" : "Chats"} />
 
         <div className="clients-tabs">
           <button
