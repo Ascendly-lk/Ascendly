@@ -111,13 +111,13 @@ const messageThreads = [
 export default function Clients() {
   const [activeTab, setActiveTab] = useState("session");
   const [activeThreadId, setActiveThreadId] = useState(messageThreads[0].id);
-  
+
   // Real-time Chat States
   const [searchTerm, setSearchTerm] = useState("");
   const [newMessageText, setNewMessageText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [attachment, setAttachment] = useState(null);
-  
+
   const [messagesState, setMessagesState] = useState({
     1: [
       { id: 1, text: "dhndrubholi asetgjbho slirgh osiu se;ojo agjhJh sklj silk", type: "incoming", timestamp: "10:30 AM", seen: false },
@@ -133,7 +133,7 @@ export default function Clients() {
   const [isLoadingRequests, setIsLoadingRequests] = useState(true);
   const [actionLoading, setActionLoading] = useState({ id: null, type: null });
   const [toastConfig, setToastConfig] = useState({ show: false, message: '', type: '' });
-  
+
   const [sessionSearchTerm, setSessionSearchTerm] = useState("");
   const [sessionSortOrder, setSessionSortOrder] = useState("soonest");
 
@@ -165,26 +165,26 @@ export default function Clients() {
   const formatDynamicDate = (dateStr) => {
     const dt = parseDateStr(dateStr);
     const today = new Date();
-    today.setHours(0,0,0,0);
-    
+    today.setHours(0, 0, 0, 0);
+
     const tmrw = new Date(today);
     tmrw.setDate(tmrw.getDate() + 1);
-    
+
     if (dt.getTime() === tmrw.getTime()) return "Tomorrow";
     if (dt.getTime() === today.getTime()) return "Today";
-    
+
     return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
-  let processedRequests = requests.filter(r => 
+  let processedRequests = requests.filter(r =>
     r.name.toLowerCase().includes(sessionSearchTerm.toLowerCase()) ||
     r.tag.toLowerCase().includes(sessionSearchTerm.toLowerCase())
   );
-  
+
   processedRequests.sort((a, b) => {
     const da = parseDateStr(a.date).getTime();
     const db = parseDateStr(b.date).getTime();
-    return sessionSortOrder === "soonest" ? da - db : db - da; 
+    return sessionSortOrder === "soonest" ? da - db : db - da;
   });
 
   const messagesEndRef = useRef(null);
@@ -232,7 +232,7 @@ export default function Clients() {
     setNewMessageText("");
     setAttachment(null);
     setIsTyping(false);
-    
+
     // Simulate mock reply
     setTimeout(() => {
       const mockReply = {
@@ -261,7 +261,7 @@ export default function Clients() {
     }
   };
 
-  const filteredThreads = messageThreads.filter(t => 
+  const filteredThreads = messageThreads.filter(t =>
     t.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -302,16 +302,16 @@ export default function Clients() {
             <div className="session-filters" style={{ display: 'flex', gap: '16px', marginBottom: '20px', alignItems: 'center' }}>
               <div className="chat-search" style={{ flex: 1, margin: 0, padding: '10px 14px' }}>
                 <Search size={16} />
-                <input 
-                  type="text" 
-                  placeholder="Search by name or category..." 
+                <input
+                  type="text"
+                  placeholder="Search by name or category..."
                   value={sessionSearchTerm}
                   onChange={(e) => setSessionSearchTerm(e.target.value)}
                 />
               </div>
               <div style={{ background: '#17222d', borderRadius: '8px', padding: '0 12px', display: 'flex', alignItems: 'center' }}>
-                <select 
-                  value={sessionSortOrder} 
+                <select
+                  value={sessionSortOrder}
                   onChange={(e) => setSessionSortOrder(e.target.value)}
                   style={{ background: 'transparent', border: 'none', color: '#e2e8f0', padding: '10px 0', outline: 'none', cursor: 'pointer' }}
                 >
@@ -334,78 +334,78 @@ export default function Clients() {
                 </article>
               ))
             ) : processedRequests.length === 0 ? (
-               <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
-                 <p>No matching requests found.</p>
-               </div>
+              <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
+                <p>No matching requests found.</p>
+              </div>
             ) : (
               processedRequests.map((request) => (
-              <article key={request.id} className="client-request-card">
-                <div className="client-avatar">{request.initials}</div>
+                <article key={request.id} className="client-request-card">
+                  <div className="client-avatar">{request.initials}</div>
 
-                <div className="client-request-content">
-                  <div className="client-request-top">
-                    <div>
-                      <h3>{request.name}</h3>
-                      <div className="client-meta-row">
-                        <span>
-                          <CalendarDays /> {formatDynamicDate(request.date)}
-                        </span>
-                        <span>at</span>
-                        <span>{request.time}</span>
-                        <span>
-                          <Clock3 /> {request.duration}
-                        </span>
+                  <div className="client-request-content">
+                    <div className="client-request-top">
+                      <div>
+                        <h3>{request.name}</h3>
+                        <div className="client-meta-row">
+                          <span>
+                            <CalendarDays /> {formatDynamicDate(request.date)}
+                          </span>
+                          <span>at</span>
+                          <span>{request.time}</span>
+                          <span>
+                            <Clock3 /> {request.duration}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className={`client-action-buttons ${request.variant}`}>
+                        <button
+                          type="button"
+                          className="btn-accept"
+                          disabled={actionLoading.id === request.id}
+                          onClick={() => handleRequestAction(request.id, "accept", request.name)}
+                        >
+                          {actionLoading.id === request.id && actionLoading.type === "accept" ? (
+                            "Sending..."
+                          ) : (
+                            <>
+                              <CheckCircle2 size={18} strokeWidth={2.2} /> Accept
+                            </>
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn-decline"
+                          disabled={actionLoading.id === request.id}
+                          onClick={() => handleRequestAction(request.id, "decline", request.name)}
+                        >
+                          {actionLoading.id === request.id && actionLoading.type === "decline" ? (
+                            "Sending..."
+                          ) : (
+                            <>
+                              <X size={18} strokeWidth={2.8} /> Decline
+                            </>
+                          )}
+                        </button>
                       </div>
                     </div>
 
-                    <div className={`client-action-buttons ${request.variant}`}>
-                      <button 
-                        type="button" 
-                        className="btn-accept"
-                        disabled={actionLoading.id === request.id}
-                        onClick={() => handleRequestAction(request.id, "accept", request.name)}
-                      >
-                        {actionLoading.id === request.id && actionLoading.type === "accept" ? (
-                          "Sending..."
-                        ) : (
-                          <>
-                            <CheckCircle2 size={18} strokeWidth={2.2} /> Accept
-                          </>
-                        )}
-                      </button>
-                      <button 
-                        type="button" 
-                        className="btn-decline"
-                        disabled={actionLoading.id === request.id}
-                        onClick={() => handleRequestAction(request.id, "decline", request.name)}
-                      >
-                        {actionLoading.id === request.id && actionLoading.type === "decline" ? (
-                          "Sending..."
-                        ) : (
-                          <>
-                            <X size={18} strokeWidth={2.8} /> Decline
-                          </>
-                        )}
-                      </button>
-                    </div>
+                    <span className="client-tag">{request.tag}</span>
+                    <p className="client-message">
+                      &quot;{request.message}&quot;
+                    </p>
                   </div>
-
-                  <span className="client-tag">{request.tag}</span>
-                  <p className="client-message">
-                    &quot;{request.message}&quot;
-                  </p>
-                </div>
-              </article>
-            )))}
+                </article>
+              )))}
           </section>
         ) : (
           <section className="clients-messages-layout">
             <aside className="chat-thread-list">
               <div className="chat-search">
                 <Search />
-                <input 
-                  type="text" 
-                  placeholder="search" 
+                <input
+                  type="text"
+                  placeholder="search"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -487,7 +487,7 @@ export default function Clients() {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {isTyping && <div style={{ fontSize: '0.8rem', color: '#0bd19d', marginLeft: '12px', fontStyle: 'italic' }}>Typing...</div>}
-                
+
                 {attachment && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#1c2733', padding: '8px 12px', borderRadius: '8px', alignSelf: 'flex-start', marginLeft: '10px' }}>
                     {attachment.startsWith('blob:') ? <ImageIcon size={16} color="#00FFEF" /> : <Paperclip size={16} />}
@@ -501,19 +501,19 @@ export default function Clients() {
                 )}
 
                 <form className="chat-composer" onSubmit={handleSendMessage} style={{ margin: 0, width: '100%' }}>
-                  <input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    style={{ display: 'none' }} 
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
                     onChange={handleFileChange}
                     accept="image/*"
                   />
                   <button type="button" aria-label="Attach file" onClick={() => fileInputRef.current?.click()}>
                     <Paperclip />
                   </button>
-                  <input 
-                    type="text" 
-                    placeholder="Type a message..." 
+                  <input
+                    type="text"
+                    placeholder="Type a message..."
                     value={newMessageText}
                     onChange={handleTyping}
                   />
