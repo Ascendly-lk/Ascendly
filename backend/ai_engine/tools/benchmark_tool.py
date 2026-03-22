@@ -3,7 +3,7 @@ Benchmark Query Tool for CrewAI
 ---------------------------------
 Fallback chain (in order):
   1. In-memory TTL cache (cache_manager) — returns immediately if fresh
-  2. Local Supabase startup_benchmarks table — 1050 startup records (free, always on)
+  2. Local Supabase startup_benchmarks table — 1051 startup records (free, always on)
   3. Google ADK BenchmarkOrchestrator — live multi-source fetch (uses Gemini credits)
   4. Hardcoded defaults — always returns something useful
 
@@ -39,12 +39,13 @@ _DEFAULTS = {
 @tool("query_benchmarks")
 def query_benchmarks(category: str) -> str:
     """
-    Fetch industry or competitor benchmark data from live sources.
-    Uses a Google ADK multi-agent pipeline (World Bank, Alpha Vantage, SerpAPI, Yahoo Finance).
+    Fetch industry or competitor benchmark data using a 4-layer fallback chain:
+    in-memory cache → local Supabase startup_benchmarks table → Google ADK multi-agent
+    pipeline (World Bank, Alpha Vantage, SerpAPI, Yahoo Finance) → hardcoded defaults.
 
     Input: category string — must be one of:
-      - "industry_growth"  → average MoM/annual growth rates by sector (SaaS, E-commerce, etc.)
-      - "competitor"        → revenue and growth data for known competitor companies
+      - "industry_growth"  → startup revenue growth stats and success rate from local dataset
+      - "competitor"        → top-revenue successful startups as competitor proxies
 
     Output: JSON array of benchmark records, each with: name, metric, value, unit, period, source.
 
@@ -86,30 +87,35 @@ def query_benchmarks(category: str) -> str:
 
     # ── Layer 2: Local startup_benchmarks table ───────────────────────────────
     try:
-        from database.supabase_client import get_supabase_client
-        client = get_supabase_client()
+        from database.supabase_client import get_supabase_admin
+        client = get_supabase_admin()
 
         if category == "industry_growth":
-            # Query all statuses to compute a meaningful success rate
-            response = (
+            # Query revenue rows for growth calculation (ordered for determinism)
+            revenue_resp = (
                 client.table("startup_benchmarks")
-                .select("name, country, revenue_year1, revenue_year2, revenue_year3, current_status")
+                .select("revenue_year1, revenue_year3")
                 .not_.is_("revenue_year3", "null")
                 .gt("revenue_year3", 0)
-                .limit(300)
+                .order("name")
+                .limit(500)
                 .execute()
             )
-            rows = response.data or []
-            if rows:
+            # Separate query for overall success rate (unfiltered denominator)
+            success_resp = (
+                client.table("startup_benchmarks")
+                .select("current_status")
+                .execute()
+            )
+            revenue_rows = revenue_resp.data or []
+            all_rows = success_resp.data or []
+            if revenue_rows and all_rows:
                 growths = []
-                successful = 0
-                for r in rows:
+                for r in revenue_rows:
                     y1 = r.get("revenue_year1") or 0
                     y3 = r.get("revenue_year3") or 0
                     if y1 > 0 and y3 > 0:
                         growths.append(((y3 - y1) / y1) * 100)
-                    if r.get("current_status") == "Successful":
-                        successful += 1
                 if growths:
                     growths.sort()
                     n = len(growths)
@@ -118,11 +124,12 @@ def query_benchmarks(category: str) -> str:
                         median_growth = growths[n // 2]
                     else:
                         median_growth = (growths[n // 2 - 1] + growths[n // 2]) / 2
-                    success_rate = successful / max(len(rows), 1) * 100
+                    successful = sum(1 for r in all_rows if r.get("current_status") == "Successful")
+                    success_rate = successful / max(len(all_rows), 1) * 100
                     records = [
                         {"name": "Startup Median Revenue Growth (Y1→Y3)", "metric": "revenue_growth_pct", "value": round(median_growth, 1), "unit": "%", "period": "Y1-Y3", "source": "startup_benchmarks"},
                         {"name": "Startup Success Rate", "metric": "success_rate", "value": round(success_rate, 1), "unit": "%", "period": "2024", "source": "startup_benchmarks"},
-                        {"name": "Sample Size", "metric": "count", "value": len(rows), "unit": "startups", "period": "2024", "source": "startup_benchmarks"},
+                        {"name": "Sample Size", "metric": "count", "value": len(all_rows), "unit": "startups", "period": "2024", "source": "startup_benchmarks"},
                     ]
                     logger.info("Local benchmark table returned %d records for category='%s'", len(records), category)
                     return _cache_and_return(records)

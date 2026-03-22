@@ -16,3 +16,4 @@ cachetools
 google-adk
 yfinance
 openai
+requests

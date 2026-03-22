@@ -20,7 +20,6 @@ The orchestrator reads all three keys after the parallel run completes.
 """
 import asyncio
 import json
-import os
 import re
 import uuid
 
@@ -160,5 +159,5 @@ class BenchmarkOrchestrator:
                 raise
             import concurrent.futures
             with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
-                future = pool.submit(asyncio.run, self.run_async(category))
+                future = pool.submit(lambda: asyncio.run(self.run_async(category)))
                 return future.result(timeout=60)

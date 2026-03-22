@@ -25,17 +25,20 @@ _ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
 def parse_revenue(val: str) -> float | None:
-    """Convert $10M / $500k / $0 → float USD. Returns None if unparseable."""
+    """Convert $10M / $500K / $1.2B / $0 → float USD. Returns None if unparseable."""
     if not val:
         return None
     val = val.strip().replace("$", "").replace(",", "")
     if val in ("", "0"):
         return 0.0
     try:
-        if val.endswith("M"):
+        suffix = val[-1].upper()
+        if suffix == "M":
             return float(val[:-1]) * 1_000_000
-        elif val.endswith("k"):
+        elif suffix == "K":
             return float(val[:-1]) * 1_000
+        elif suffix == "B":
+            return float(val[:-1]) * 1_000_000_000
         return float(val)
     except ValueError:
         return None
@@ -52,7 +55,7 @@ def parse_date(val: str) -> str | None:
 def load_csv(path: str) -> list[dict]:
     rows = []
     skipped = 0
-    with open(path, newline="", encoding="utf-8") as f:
+    with open(path, newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         for row in reader:
             name = row.get("Name", "").strip()
@@ -79,6 +82,12 @@ def load_csv(path: str) -> list[dict]:
 
 
 def seed():
+    if not os.path.exists(CSV_PATH):
+        logger.error("CSV file not found at %s. Ensure 'Startup Dataset.csv' exists in the repo root.", CSV_PATH)
+        sys.exit(1)
+    if not os.access(CSV_PATH, os.R_OK):
+        logger.error("CSV file is not readable: %s", CSV_PATH)
+        sys.exit(1)
     logger.info("Reading CSV: %s", CSV_PATH)
     rows = load_csv(CSV_PATH)
     logger.info("Loaded %d rows", len(rows))
