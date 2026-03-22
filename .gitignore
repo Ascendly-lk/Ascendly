@@ -1,4 +1,9 @@
 # =====================
+# Git Worktrees
+# =====================
+.worktrees/
+
+# =====================
 # Node / Frontend
 # =====================
 node_modules
@@ -77,6 +82,11 @@ git_status.txt
 # Internal QA agent (local only)
 # =====================
 .local-qa/
+
+# =====================
+# Claude sessions / local agents (local only)
+# =====================
+.claude-sessions/
 
 # =====================
 # Dev / debug scripts (local only)
