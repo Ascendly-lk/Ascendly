@@ -20,6 +20,8 @@ from app.api.endpoints.dashboard import router as dashboard_router
 from app.api.endpoints.chat import router as chat_router
 from app.api.insights import router as insights_router
 from app.api.endpoints.patent_firm import router as patent_firm_router
+from app.api.endpoints.subscription import router as subscription_router
+from app.api.endpoints.tier_suggestion import router as tier_suggestion_router
 
 app = FastAPI(
     title="Ascendly API",
@@ -43,6 +45,8 @@ app.include_router(dashboard_router)
 app.include_router(chat_router)
 app.include_router(insights_router)
 app.include_router(patent_firm_router)
+app.include_router(subscription_router)
+app.include_router(tier_suggestion_router)
 
 
 # ============ SCHEMAS ============
