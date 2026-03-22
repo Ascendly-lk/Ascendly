@@ -170,8 +170,13 @@ const AIAssistant = () => {
                                 : m
                         ));
                     } else if (event.type === 'c1_chunk') {
-                        // Decode base64 chunk and accumulate the full DSL string
-                        const decoded = atob(event.content);
+                        // Decode base64 chunk as UTF-8 (TextDecoder avoids Latin-1 corruption from atob)
+                        const binaryString = atob(event.content);
+                        const bytes = new Uint8Array(binaryString.length);
+                        for (let i = 0; i < binaryString.length; i++) {
+                            bytes[i] = binaryString.charCodeAt(i);
+                        }
+                        const decoded = new TextDecoder('utf-8').decode(bytes);
                         c1AccumulatorRef.current[assistantMsgId] =
                             (c1AccumulatorRef.current[assistantMsgId] || '') + decoded;
                         const fullDsl = c1AccumulatorRef.current[assistantMsgId];
@@ -181,6 +186,7 @@ const AIAssistant = () => {
                                 : m
                         ));
                     } else if (event.type === 'c1_done') {
+                        delete c1AccumulatorRef.current[assistantMsgId];
                         setMessages((prev) => prev.map((m) =>
                             m.id === assistantMsgId
                                 ? { ...m, streaming: false, progress: null }
@@ -202,12 +208,14 @@ const AIAssistant = () => {
                             setShowAnalyticsPopup(true);
                         }
                     } else if (event.type === 'done') {
+                        delete c1AccumulatorRef.current[assistantMsgId];
                         setMessages((prev) => prev.map((m) =>
                             m.id === assistantMsgId
                                 ? { ...m, streaming: false, progress: null }
                                 : m
                         ));
                     } else if (event.type === 'error') {
+                        delete c1AccumulatorRef.current[assistantMsgId];
                         setMessages((prev) => prev.map((m) =>
                             m.id === assistantMsgId
                                 ? { ...m, text: event.content || 'An error occurred.', streaming: false, progress: null }
@@ -238,6 +246,8 @@ const AIAssistant = () => {
                     processLine(buffer.trim());
                 }
             } finally {
+                // Clean up C1 accumulator to prevent memory leak in long sessions
+                delete c1AccumulatorRef.current[assistantMsgId];
                 // Always ensure the assistant message exits streaming state
                 setMessages((prev) => prev.map((m) =>
                     m.id === assistantMsgId && m.streaming
@@ -381,7 +391,7 @@ const AIAssistant = () => {
                                                     if (type === 'continue_conversation' && params?.llmFriendlyMessage) {
                                                         sendMessage(params.llmFriendlyMessage);
                                                     } else if (type === 'start_chat_with_prompt' && params?.prompt) {
-                                                        navigate('/ai-assistant', { state: { initialPrompt: params.prompt } });
+                                                        navigate('/ai-analytics/assistant', { state: { initialPrompt: params.prompt } });
                                                     }
                                                 }}
                                             />

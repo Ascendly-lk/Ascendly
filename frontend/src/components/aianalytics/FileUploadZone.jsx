@@ -10,7 +10,9 @@ import { useOnAction, useC1State } from '@thesysai/genui-sdk';
 import { getToken } from '../../api';
 import './FileUploadZone.css';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE =
+    import.meta.env.VITE_API_URL ||
+    `${window.location.protocol}//${window.location.hostname}:8000`;
 
 export const FileUploadZone = ({ allowedTypes, maxSizeMB }) => {
     const fileInputRef = useRef(null);
@@ -49,8 +51,14 @@ export const FileUploadZone = ({ allowedTypes, maxSizeMB }) => {
 
         xhr.onerror = () => setValue('status', 'error');
 
+        const token = getToken();
+        if (!token) {
+            setValue('status', 'error');
+            return;
+        }
+
         xhr.open('POST', `${API_BASE}/api/upload`);
-        xhr.setRequestHeader('Authorization', `Bearer ${getToken()}`);
+        xhr.setRequestHeader('Authorization', `Bearer ${token}`);
         xhr.send(formData);
     };
 
@@ -68,7 +76,13 @@ export const FileUploadZone = ({ allowedTypes, maxSizeMB }) => {
             onClick={() => status === 'idle' && fileInputRef.current?.click()}
             role="button"
             tabIndex={0}
-            onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
+            onKeyDown={(e) => {
+                if (status !== 'idle') return;
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    fileInputRef.current?.click();
+                }
+            }}
         >
             <input
                 ref={fileInputRef}

@@ -211,13 +211,14 @@ async def _stream_quick_response(
         yield _sse({"type": "error", "content": "I'm having trouble processing your request right now. Please try again."})
 
 
-async def _stream_c1_response(data: dict, message: str, dataset_name: str):
+async def _stream_c1_response(data: dict, message: str, dataset_name: str, message_id: str):
     """
     Call the Thesys C1 API with structured analysis data and stream the result.
 
     Yields c1_chunk / c1_done SSE events.
     Each chunk content is base64-encoded to prevent newlines from breaking SSE framing.
     Falls back to yielding a plain 'result' event if THESYS_API_KEY is not set.
+    message_id is passed in (not generated here) so all events share the same ID.
     """
     import base64
     import os as _os
@@ -225,7 +226,6 @@ async def _stream_c1_response(data: dict, message: str, dataset_name: str):
     if not _os.environ.get("THESYS_API_KEY"):
         # Graceful fallback — no C1 key configured
         text = _format_analysis_text(data)
-        message_id = str(uuid.uuid4())
         yield _sse({"type": "result", "text": text, "message_id": message_id})
         return
 
@@ -233,25 +233,31 @@ async def _stream_c1_response(data: dict, message: str, dataset_name: str):
         from ai_engine.c1_client import get_c1_client, ASCENDLY_C1_SYSTEM_PROMPT, C1_METADATA, C1_MODEL
 
         client = get_c1_client()
-        system_content = ASCENDLY_C1_SYSTEM_PROMPT + json.dumps(data, indent=2, default=str)
+
+        # Filter out raw historical array to keep prompt size manageable
+        # and avoid sending large portions of user data to Thesys
+        filtered_data = {k: v for k, v in data.items() if k != "historical"}
+        if "historical" in data and isinstance(data.get("historical"), list):
+            filtered_data["historical_count"] = len(data["historical"])
+
+        system_content = ASCENDLY_C1_SYSTEM_PROMPT + json.dumps(filtered_data, indent=2, default=str)
 
         stream = await client.chat.completions.create(
             model=C1_MODEL,
             messages=[
                 {"role": "system", "content": system_content},
-                {"role": "user", "content": message},
+                {"role": "user", "content": f"Dataset: {dataset_name}. {message}"},
             ],
             max_tokens=1500,
             metadata=C1_METADATA,
             stream=True,
         )
 
-        message_id = str(uuid.uuid4())
         async for chunk in stream:
             token = chunk.choices[0].delta.content or ""
             if token:
                 encoded = base64.b64encode(token.encode()).decode()
-                yield _sse({"type": "c1_chunk", "content": encoded})
+                yield _sse({"type": "c1_chunk", "content": encoded, "message_id": message_id})
 
         yield _sse({"type": "c1_done", "message_id": message_id})
 
@@ -259,7 +265,6 @@ async def _stream_c1_response(data: dict, message: str, dataset_name: str):
         print(f"[chat] _stream_c1_response error: {e}")
         # Fall back to markdown on C1 failure
         text = _format_analysis_text(data)
-        message_id = str(uuid.uuid4())
         yield _sse({"type": "result", "text": text, "message_id": message_id})
 
 
@@ -318,7 +323,8 @@ async def _stream_analysis_response(message: str, user_id: str, dataset_id: str)
             pass
 
         # Stream via C1 (or fallback to markdown if key missing / C1 fails)
-        async for event in _stream_c1_response(data, message, dataset_name):
+        # Pass the shared message_id so all events (c1_chunk, c1_done, result) use the same ID
+        async for event in _stream_c1_response(data, message, dataset_name, message_id):
             yield event
 
         yield _sse({"type": "done", "message_id": message_id})
