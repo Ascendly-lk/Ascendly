@@ -7,34 +7,33 @@ import {
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-import Login from './pages/Login';
-import Register from './pages/Register';
-import DashboardPlaceholder from './pages/DashboardPlaceholder';
-import Dashboard from './pages/BusinessAdvisory/Dashboard';
-import Clients from './pages/BusinessAdvisory/Clients';
-import Projects from './pages/BusinessAdvisory/Projects';
-import MarketingAgencyProjects from './pages/marketing-agency/Projects';
-import CalendarPage from './pages/BusinessAdvisory/Calendar';
-import Payments from './pages/BusinessAdvisory/Payments';
-import EditProfile from './components/dashboard/editProfile';
-import Settings from './components/dashboard/Settings';
-import NotificationsPage from './pages/BusinessAdvisory/Notifications';
-import AccountPage from './pages/AccountPage';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import DashboardLayout from './pages/BusinessAdvisory/DashboardLayout';
-import StartupDashboard from './pages/dashboard/StartupDashboard';
-import AIAnalyticsDashboard from './pages/aianalytics/AIAnalyticsDashboard';
-import UploadData from './pages/aianalytics/UploadData';
-import AIAssistant from './pages/aianalytics/AIAssistant';
-import Feedbacks from './pages/marketing-agency/Feedbacks';
-import PatentPage from './pages/dashboard/PatentPage';
-import InvestorsPage from './pages/dashboard/InvestorsPage';
-import TiersPage from './pages/dashboard/TiersPage';
-import AdvisorsPage from './pages/dashboard/AdvisorsPage';
-import MarketingAgency from './pages/dashboard/MarketingAgency';
-import DocumentReview from './pages/patent-firm/DocumentReview';
-import PaymentPortal from './pages/PaymentPortal';
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import DashboardPlaceholder from "./pages/DashboardPlaceholder";
+import Dashboard from "./pages/BusinessAdvisory/Dashboard";
+import Clients from "./pages/BusinessAdvisory/Clients";
+import Projects from "./pages/BusinessAdvisory/Projects";
+import MarketingAgencyProjects from "./pages/marketing-agency/Projects";
+import CalendarPage from "./pages/BusinessAdvisory/Calendar";
+
+import EditProfile from "./pages/BusinessAdvisory/editProfile";
+import Settings from "./pages/BusinessAdvisory/Settings";
+import NotificationsPage from "./pages/BusinessAdvisory/Notifications";
+import AccountPage from "./pages/AccountPage";
+import DashboardLayout from "./pages/BusinessAdvisory/DashboardLayout";
+import StartupDashboard from "./pages/dashboard/StartupDashboard";
+import AIAnalyticsDashboard from "./pages/aianalytics/AIAnalyticsDashboard";
+import UploadData from "./pages/aianalytics/UploadData";
+import AIAssistant from "./pages/aianalytics/AIAssistant";
+import Feedbacks from "./pages/marketing-agency/Feedbacks";
+import LogisticsPage from "./pages/dashboard/LogisticsPage";
+import PatentPage from "./pages/dashboard/PatentPage";
+import InvestorsPage from "./pages/dashboard/InvestorsPage";
+import TiersPage from "./pages/dashboard/TiersPage";
+import AdvisorsPage from "./pages/dashboard/AdvisorsPage";
+import MarketingAgency from "./pages/dashboard/MarketingAgency";
+import DocumentReview from "./pages/patent-firm/DocumentReview";
+import PaymentPortal from "./pages/PaymentPortal";
 
 import PatentFirmDashboard from "./pages/patent-firm/Dashboard";
 import PatentFirmClients from "./pages/patent-firm/Clients";
@@ -80,7 +79,7 @@ function App() {
             <Route path="clients" element={<Clients />} />
             <Route path="projects" element={<Projects />} />
             <Route path="calendar" element={<CalendarPage />} />
-            <Route path="payments" element={<Payments />} />
+
             <Route path="profile" element={<DashboardPlaceholder />} />
             <Route path="help" element={<DashboardPlaceholder />} />
 
@@ -137,7 +136,7 @@ function App() {
           <Route path="/business-advisory/clients" element={<Clients />} />
           <Route path="/business-advisory/projects" element={<Projects />} />
           <Route path="/business-advisory/calendar" element={<CalendarPage />} />
-          <Route path="/business-advisory/payments" element={<Payments />} />
+
           <Route path="/business-advisory/settings" element={<Settings />} />
           <Route path="/business-advisory/notifications" element={<NotificationsPage />} />
           <Route path="/business-advisory/edit-profile" element={<EditProfile />} />
