@@ -2,13 +2,19 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
-import { apiFetch } from '../../api';
+import { apiFetch, getToken } from '../../api';
 import AnalyticsPopup from '../../components/aianalytics/AnalyticsPopup';
 import C1Message from '../../components/aianalytics/C1Message';
 import PricingModal from '../../components/aianalytics/PricingModal';
 import { useUsageGuard } from '../../hooks/useUsageGuard';
 import { BarChart2, FileDown } from 'lucide-react';
 import './AIAssistant.css';
+
+const API_BASE =
+    import.meta.env.VITE_API_URL ||
+    `${window.location.protocol}//${window.location.hostname}:8000`;
+
+const ANALYSIS_INTENT = /\b(analyze|analyse|forecast|predict|trend|report|compare|benchmark|revenue|growth|insight|recommendation|strategic|sarimax)\b/i;
 
 /* ── Helpers ── */
 const now = () => {
@@ -130,10 +136,29 @@ const AIAssistant = () => {
             { id: assistantMsgId, role: 'assistant', text: '', time: now(), streaming: true },
         ]);
         setInput('');
-        setIsSending(true);
         setShowSuggestions(false);
 
         if (textareaRef.current) textareaRef.current.style.height = 'auto';
+
+        // No-dataset guard: analysis intent without a dataset → show inline upload zone
+        if (ANALYSIS_INTENT.test(trimmed) && !selectedFileId) {
+            setMessages((prev) => [
+                ...prev,
+                userMsg,
+                {
+                    id: assistantMsgId,
+                    role: 'assistant',
+                    text: '',
+                    uploadPrompt: true,
+                    pendingMessage: trimmed,
+                    time: now(),
+                    streaming: false,
+                },
+            ]);
+            return;
+        }
+
+        setIsSending(true);
 
         try {
             const body = { message: trimmed, history };
@@ -305,6 +330,50 @@ const AIAssistant = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    const handleInlineUpload = useCallback((file, pendingMessage, assistantMsgId) => {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        setMessages((prev) => prev.map((m) =>
+            m.id === assistantMsgId ? { ...m, uploadStatus: 'uploading', uploadProgress: 0 } : m
+        ));
+
+        const xhr = new XMLHttpRequest();
+        xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+                const pct = Math.round((e.loaded / e.total) * 100);
+                setMessages((prev) => prev.map((m) =>
+                    m.id === assistantMsgId ? { ...m, uploadProgress: pct } : m
+                ));
+            }
+        };
+        xhr.onload = () => {
+            if (xhr.status === 200) {
+                const data = JSON.parse(xhr.responseText);
+                const newFileId = data.file_id || data.id;
+                setMessages((prev) => prev.map((m) =>
+                    m.id === assistantMsgId ? { ...m, uploadPrompt: false, uploadStatus: 'done', text: '' } : m
+                ));
+                setSelectedFileId(newFileId);
+                fetchFiles();
+                // Auto-resume with the original message
+                setTimeout(() => sendMessage(pendingMessage), 300);
+            } else {
+                setMessages((prev) => prev.map((m) =>
+                    m.id === assistantMsgId ? { ...m, uploadStatus: 'error' } : m
+                ));
+            }
+        };
+        xhr.onerror = () => {
+            setMessages((prev) => prev.map((m) =>
+                m.id === assistantMsgId ? { ...m, uploadStatus: 'error' } : m
+            ));
+        };
+        xhr.open('POST', `${API_BASE}/api/upload`);
+        xhr.setRequestHeader('Authorization', `Bearer ${getToken()}`);
+        xhr.send(formData);
+    }, [fetchFiles, sendMessage]);
+
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -393,7 +462,33 @@ const AIAssistant = () => {
                                     </div>
                                 )}
                                 <div className="ai-chat-bubble-wrap">
-                                    {msg.progress ? (
+                                    {msg.uploadPrompt ? (
+                                        <div className="ai-chat-bubble ai-chat-bubble--upload">
+                                            <p className="ai-upload-prompt-text">
+                                                To run an analysis, please upload a dataset first.
+                                            </p>
+                                            {msg.uploadStatus === 'uploading' && (
+                                                <p className="ai-upload-progress-text">Uploading… {msg.uploadProgress ?? 0}%</p>
+                                            )}
+                                            {msg.uploadStatus === 'error' && (
+                                                <p className="ai-upload-error-text">Upload failed. Please try again.</p>
+                                            )}
+                                            {msg.uploadStatus !== 'uploading' && (
+                                                <label className="ai-upload-inline-btn">
+                                                    Browse or drop a file
+                                                    <input
+                                                        type="file"
+                                                        hidden
+                                                        accept=".csv,.xlsx,.xls,.json"
+                                                        onChange={(e) => {
+                                                            const f = e.target.files?.[0];
+                                                            if (f) handleInlineUpload(f, msg.pendingMessage, msg.id);
+                                                        }}
+                                                    />
+                                                </label>
+                                            )}
+                                        </div>
+                                    ) : msg.progress ? (
                                         <div className="ai-chat-bubble">
                                             <ProgressStep {...msg.progress} />
                                         </div>

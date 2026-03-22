@@ -533,3 +533,55 @@
     transform: translateX(-50%) translateY(0);
     opacity: 1;
 }
+/* ── Inline Upload Zone (no-dataset guard) ─────────────────────────────────── */
+.ai-chat-bubble--upload {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(0, 255, 229, 0.04);
+    border: 1px dashed rgba(0, 255, 229, 0.3);
+    border-radius: 12px;
+    padding: 16px 20px;
+}
+
+.ai-upload-prompt-text {
+    margin: 0;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.ai-upload-progress-text {
+    margin: 0;
+    font-size: 13px;
+    color: #00FFE5;
+}
+
+.ai-upload-error-text {
+    margin: 0;
+    font-size: 13px;
+    color: #f87171;
+}
+
+.ai-upload-inline-btn {
+    display: inline-block;
+    cursor: pointer;
+    padding: 8px 18px;
+    border-radius: 8px;
+    background: rgba(0, 255, 229, 0.1);
+    border: 1px solid rgba(0, 255, 229, 0.4);
+    color: #00FFE5;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.2s;
+    align-self: flex-start;
+}
+
+.ai-upload-inline-btn:hover {
+    background: rgba(0, 255, 229, 0.18);
+}
+
+/* ── Stat card sparkline ───────────────────────────────────────────────────── */
+.ai-stat-card__sparkline {
+    margin-top: 8px;
+    opacity: 0.85;
+}
