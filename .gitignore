@@ -1,49 +1,39 @@
-<<<<<<< HEAD
 # =====================
 # Node / Frontend
 # =====================
+node_modules
 frontend/node_modules/
 dist/
+dist-ssr
 build/
 .next/
 out/
 .vercel
-=======
+*.local
+
+# =====================
 # Logs
+# =====================
 logs
 *.log
->>>>>>> 14a6b947e18eb3ba16d59f179481dc0fe835a2db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-frontend/node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-Thumbs.db
-.vscode/
-.idea/
-*.swp
-*.swo
-
+# =====================
+# Environment / Secrets
+# =====================
+.env
+.env.*
+backend/.env
+frontend/.env
+!.env.example
+!backend/.env.example
 
 # =====================
-# Python virtual environments
+# Python
 # =====================
 venv/
 .venv/
@@ -54,13 +44,37 @@ __pycache__/
 *.pyo
 
 # =====================
-# Uploads (user data)
+# Editor
 # =====================
-backend/uploads
-uploads
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*.swo
 
 # =====================
-# Internal QA agent (local only — not for GitHub)
+# Uploads (user data)
+# =====================
+backend/uploads/
+uploads/
+
+# =====================
+# Temp / scratch files
+# =====================
+branches.txt
+merge_output.txt
+remote.txt
+git_status.txt
+
+# =====================
+# Internal QA agent (local only)
 # =====================
 .local-qa/
 
@@ -74,7 +88,6 @@ backend/verify_*.py
 backend/init_patent_db.py
 backend/test_out*.txt
 backend/*.bat
-git_status.txt
 
 # =====================
 # Internal planning docs (local only)
