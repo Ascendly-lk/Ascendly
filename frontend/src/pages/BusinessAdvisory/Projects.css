@@ -23,27 +23,30 @@
 
 .projects-stats-grid {
   display: flex;
-  gap: 24px;
-  margin-bottom: 30px;
-  flex-wrap: wrap;
+  gap: 32px;
+  margin-bottom: 36px;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: stretch;
 }
 
 .projects-stat-card {
   border-radius: 14px;
-  padding: 18px 24px;
-  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 60%), #111a24;
+  padding: 24px 28px;
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 60%), #111a24;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 20px rgba(0, 240, 255, 0.04);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   min-height: 100px;
-  min-width: 200px;
-  flex: 1;
-  transition: all 0.3s ease;
+  flex: 1; /* evenly spans width */
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
 }
 
 .projects-stat-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 10px 30px rgba(0, 240, 255, 0.08);
+  transform: translateY(-6px);
+  border-color: rgba(0, 255, 239, 0.3);
+  box-shadow: 0 12px 30px rgba(0, 240, 255, 0.1);
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 60%), #131d2a;
 }
 
 .projects-stat-card p {
