@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
 import { apiFetch } from '../../api';
 import AnalyticsPopup from '../../components/aianalytics/AnalyticsPopup';
-import { generatePDFReport } from '../../utils/pdfGenerator';
+import C1Message from '../../components/aianalytics/C1Message';
 import { BarChart2, FileDown } from 'lucide-react';
 import './AIAssistant.css';
 
@@ -82,9 +82,12 @@ const AIAssistant = () => {
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false);
     const [showComingSoon, setShowComingSoon] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate();
     const hasAutoPrompted = useRef(false);
     const messagesEndRef = useRef(null);
     const textareaRef = useRef(null);
+    // Accumulates C1 DSL chunks keyed by assistantMsgId
+    const c1AccumulatorRef = useRef({});
 
     // Keep a ref to messages for history building without adding to sendMessage deps
     const messagesRef = useRef(messages);
@@ -146,6 +149,9 @@ const AIAssistant = () => {
             const decoder = new TextDecoder();
             let buffer = '';
 
+            // Initialise C1 accumulator for this message
+            c1AccumulatorRef.current[assistantMsgId] = '';
+
             const processLine = (line) => {
                 if (!line.startsWith('data: ')) return;
                 try {
@@ -163,14 +169,34 @@ const AIAssistant = () => {
                                 ? { ...m, progress: { step: event.step, total: event.total, label: event.label } }
                                 : m
                         ));
+                    } else if (event.type === 'c1_chunk') {
+                        // Decode base64 chunk and accumulate the full DSL string
+                        const decoded = atob(event.content);
+                        c1AccumulatorRef.current[assistantMsgId] =
+                            (c1AccumulatorRef.current[assistantMsgId] || '') + decoded;
+                        const fullDsl = c1AccumulatorRef.current[assistantMsgId];
+                        setMessages((prev) => prev.map((m) =>
+                            m.id === assistantMsgId
+                                ? { ...m, c1Dsl: fullDsl, progress: null }
+                                : m
+                        ));
+                    } else if (event.type === 'c1_done') {
+                        setMessages((prev) => prev.map((m) =>
+                            m.id === assistantMsgId
+                                ? { ...m, streaming: false, progress: null }
+                                : m
+                        ));
+                        if (selectedFileId && /predict|analysis|analyse|forecast|insights|business data/i.test(trimmed)) {
+                            setHasAnalyticsData(true);
+                            setShowAnalyticsPopup(true);
+                        }
                     } else if (event.type === 'result') {
+                        // Markdown fallback (no THESYS_API_KEY or C1 error)
                         setMessages((prev) => prev.map((m) =>
                             m.id === assistantMsgId
                                 ? { ...m, text: event.text, progress: null }
                                 : m
                         ));
-                        
-                        // Trigger AI Analytics Popup if file is selected and prompt matches keywords
                         if (selectedFileId && /predict|analysis|analyse|forecast|insights|business data/i.test(trimmed)) {
                             setHasAnalyticsData(true);
                             setShowAnalyticsPopup(true);
@@ -344,6 +370,21 @@ const AIAssistant = () => {
                                     {msg.progress ? (
                                         <div className="ai-chat-bubble">
                                             <ProgressStep {...msg.progress} />
+                                        </div>
+                                    ) : msg.c1Dsl ? (
+                                        // C1 interactive UI (analysis mode with Thesys)
+                                        <div className="ai-chat-bubble ai-chat-bubble--c1">
+                                            <C1Message
+                                                dsl={msg.c1Dsl}
+                                                isStreaming={msg.streaming}
+                                                onAction={({ type, params }) => {
+                                                    if (type === 'continue_conversation' && params?.llmFriendlyMessage) {
+                                                        sendMessage(params.llmFriendlyMessage);
+                                                    } else if (type === 'start_chat_with_prompt' && params?.prompt) {
+                                                        navigate('/ai-assistant', { state: { initialPrompt: params.prompt } });
+                                                    }
+                                                }}
+                                            />
                                         </div>
                                     ) : (
                                         <div className="ai-chat-bubble">
