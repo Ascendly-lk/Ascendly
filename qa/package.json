@@ -1,0 +1,29 @@
+{
+  "name": "ascendly-qa",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:components": "vitest run --config vitest.config.ts",
+    "test:components:watch": "vitest --config vitest.config.ts",
+    "test:all": "bash scripts/run-all-tests.sh",
+    "report": "playwright show-report results/playwright-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0",
+    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "jsdom": "^24.1.0",
+    "msw": "^2.3.1",
+    "typescript": "^5.4.5",
+    "vite": "^5.3.1",
+    "vitest": "^1.6.0"
+  },
+  "msw": {
+    "workerUrl": "/mockServiceWorker.js"
+  }
+}

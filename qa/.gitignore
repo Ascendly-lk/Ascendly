@@ -1,0 +1,6 @@
+node_modules/
+results/
+e2e/helpers/.auth-state.json
+.env
+dashboard/node_modules/
+dashboard/dist/
