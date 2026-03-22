@@ -7,6 +7,7 @@ Usage:
 
 Raises HTTPException(429) with a structured payload when the limit is reached.
 """
+import threading
 from datetime import datetime, timezone
 from fastapi import HTTPException
 from cachetools import TTLCache
@@ -25,8 +26,10 @@ TIER_LIMITS = _FALLBACK_LIMITS
 
 DEFAULT_TIER = "free"
 
-# Cache tier limits from DB for 5 minutes to avoid per-request DB calls
+# Cache tier limits from DB for 5 minutes to avoid per-request DB calls.
+# TTLCache is not thread-safe — protect with RLock (matches cache_manager.py pattern).
 _limits_cache: TTLCache = TTLCache(maxsize=1, ttl=300)
+_limits_lock = threading.RLock()
 
 
 def _load_tier_limits(admin) -> dict:
@@ -35,9 +38,10 @@ def _load_tier_limits(admin) -> dict:
     Falls back to _FALLBACK_LIMITS on error.
     Cached for 5 minutes so pricing and enforcement share one source of truth.
     """
-    cached = _limits_cache.get("limits")
-    if cached is not None:
-        return cached
+    with _limits_lock:
+        cached = _limits_cache.get("limits")
+        if cached is not None:
+            return cached
 
     try:
         res = admin.table("subscription_tiers").select(
@@ -51,7 +55,8 @@ def _load_tier_limits(admin) -> dict:
                 }
                 for row in res.data
             }
-            _limits_cache["limits"] = loaded
+            with _limits_lock:
+                _limits_cache["limits"] = loaded
             return loaded
     except Exception as e:
         print(f"[usage_guard] Failed to load tier limits from DB, using fallback: {e}")

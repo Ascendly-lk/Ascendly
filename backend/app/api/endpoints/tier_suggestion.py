@@ -7,9 +7,9 @@ using a lightweight GPT-4o call.
 """
 import json
 from datetime import datetime, timedelta, timezone
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from database.supabase_client import require_auth, get_supabase_admin
-from app.api.middleware.usage_guard import TIER_LIMITS, _count_usage
+from app.api.middleware.usage_guard import _load_tier_limits, _count_usage
 from ai_engine.provider import get_litellm_params
 import litellm
 
@@ -55,7 +55,7 @@ async def suggest_tier(current_user=Depends(require_auth)):
     now = datetime.now(timezone.utc)
     thirty_days_ago = (now - timedelta(days=30)).isoformat()
 
-    limits = TIER_LIMITS.get(tier, TIER_LIMITS["free"])
+    limits = _load_tier_limits(admin).get(tier, _load_tier_limits(admin).get("free", {"analysis": 3, "chat": 10}))
     analysis_used = _count_usage(admin, user_id, "analysis", thirty_days_ago)
     chat_used = _count_usage(admin, user_id, "chat", thirty_days_ago)
 

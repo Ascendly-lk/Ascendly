@@ -57,8 +57,7 @@ ascendly-main/
 │   │   └── cache_manager.py            # TTL cache for analysis + chat
 │   ├── database/
 │   │   ├── supabase_client.py          # Supabase client + require_auth
-│   │   ├── migrations/                 # SQL migration files
-│   │   └── seed_startup_benchmarks.py  # One-time DB seeder
+│   │   └── seed_startup_benchmarks.py  # One-time DB seeder (run once after DB setup)
 │   └── models/
 │       └── user.py
 │
@@ -155,7 +154,9 @@ GOOGLE_ADK_MODEL=gemini-2.0-flash
 
 ### Database Setup
 
-Run `backend/database/migrations/create_startup_benchmarks.sql` in your Supabase SQL editor, then seed the data:
+Run the following SQL in your Supabase SQL editor to create the required tables (`startup_benchmarks`, `subscription_tiers`, and profile columns). SQL scripts are available from the project team or maintainer.
+
+Then seed the startup benchmarks data:
 
 ```bash
 cd backend

@@ -38,6 +38,7 @@ export default function PricingModal({ isOpen, onClose, limitError }) {
   useEffect(() => {
     if (!isOpen) return;
 
+    setUpgradeStatus(null);
     setLoadingPricing(true);
     apiFetch('/api/subscription/pricing')
       .then(r => r.json())
@@ -67,10 +68,13 @@ export default function PricingModal({ isOpen, onClose, limitError }) {
     : null;
 
   const handleUpgrade = async (tierId) => {
-    if (tierId === 'free') return;
+    if (suggestion?.current_tier === tierId) return;
     setUpgradeStatus('loading');
     try {
-      const res = await apiFetch('/api/subscription/upgrade', { method: 'POST' });
+      const res = await apiFetch('/api/subscription/upgrade', {
+        method: 'POST',
+        body: JSON.stringify({ tier_id: tierId }),
+      });
       const data = await res.json();
       setUpgradeStatus(data.status === 'demo' ? 'demo' : 'done');
     } catch {

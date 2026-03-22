@@ -58,7 +58,7 @@ const AIInsightNudges = ({ metrics }) => {
     if (!nudges.length) return null;
 
     const handleChip = (prompt) => {
-        navigate('/ai-analytics/assistant', { state: { initialPrompt: prompt } });
+        navigate('/dashboard/ai-analytics/assistant', { state: { initialPrompt: prompt } });
     };
 
     return (

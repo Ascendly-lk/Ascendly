@@ -6,8 +6,9 @@ Subscription endpoints:
 """
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from database.supabase_client import require_auth, get_supabase_admin
-from app.api.middleware.usage_guard import TIER_LIMITS, _count_usage
+from app.api.middleware.usage_guard import _load_tier_limits, _count_usage
 
 router = APIRouter(prefix="/api/subscription", tags=["Subscription"])
 
@@ -29,7 +30,8 @@ async def get_subscription_status(current_user=Depends(require_auth)):
         now.year, now.month, 1, tzinfo=timezone.utc
     ).isoformat()
 
-    limits = TIER_LIMITS.get(tier, TIER_LIMITS["free"])
+    tier_limits = _load_tier_limits(admin)
+    limits = tier_limits.get(tier, tier_limits.get("free", {"analysis": 3, "chat": 10}))
     analysis_used = _count_usage(admin, user_id, "analysis", billing_start)
     chat_used = _count_usage(admin, user_id, "chat", billing_start)
 
@@ -59,13 +61,18 @@ async def get_pricing():
     return {"tiers": res.data}
 
 
+class UpgradeRequest(BaseModel):
+    tier_id: str
+
+
 @router.post("/upgrade")
-async def upgrade_subscription(current_user=Depends(require_auth)):
+async def upgrade_subscription(payload: UpgradeRequest, current_user=Depends(require_auth)):
     """
     Demo-mode upgrade endpoint.
     In a real app this would integrate with Stripe.
     """
     return {
         "status": "demo",
-        "message": "Payment integration coming soon. Contact us to upgrade your plan.",
+        "tier_id": payload.tier_id,
+        "message": f"Payment integration coming soon. Contact us to upgrade to {payload.tier_id}.",
     }
