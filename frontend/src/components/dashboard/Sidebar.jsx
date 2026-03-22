@@ -5,7 +5,6 @@ import './Sidebar.css';
 /* ── Route map ───────────────────────────────────────────────────────────── */
 const STARTUP_MENU_ITEMS = [
     { name: 'Dashboard', icon: 'grid', route: '/dashboard/startup' },
-    { name: 'Logistics', icon: 'trending', route: '/dashboard/logistics' },
     { name: 'AI Analytics', icon: 'brain', route: '/dashboard/ai-analytics' },
     { name: 'Patent', icon: 'shield', route: '/dashboard/patent' },
     { name: 'Marketing Agency', icon: 'briefcase', route: '/dashboard/marketing-agency' },

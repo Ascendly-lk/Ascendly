@@ -1,15 +1,16 @@
 import React from "react";
 import Sidebar from "./Sidebar";
-import TopHeader from "../../components/dashboard/TopBar";
+import TopBar from "./TopBar";
+import "../../pages/BusinessAdvisory/DashboardLayout.css";
 import "./Settings.css";
 
 const Settings = () => {
   return (
-    <div className="settings-container">
+    <div className="dl-shell settings-container">
       <Sidebar />
 
-      <main className="settings-main">
-        <TopBar showWelcome={false} />
+      <main className="dl-main settings-main">
+        <TopBar />
 
         <div className="settings-header">
           <h2 className="settings-title">Settings</h2>

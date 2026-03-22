@@ -1,54 +1,28 @@
-# =====================
-# Node / Frontend
-# =====================
-node_modules/
-dist/
-build/
-.next/
-out/
-.vercel
+# Logs
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# =====================
-# Python / Backend
-# =====================
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-develop-eggs/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-.venv/
-venv/
-ENV/
+node_modules
+frontend/node_modules
+dist
+dist-ssr
+*.local
 
-# =====================
-# Environment files
-# =====================
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# =====================
-# OS / Editor junk
-# =====================
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 Thumbs.db
 .vscode/
 .idea/
@@ -66,3 +40,15 @@ uploads
 # Internal QA agent (local only — not for GitHub)
 # =====================
 .local-qa/
+
+# =====================
+# Dev / debug scripts (local only)
+# =====================
+backend/test_*.py
+backend/check_*.py
+backend/inspect_*.py
+backend/verify_*.py
+backend/init_patent_db.py
+backend/test_out*.txt
+backend/*.bat
+git_status.txt

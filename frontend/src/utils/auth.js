@@ -196,6 +196,37 @@ export async function fetchMe() {
 }
 
 /**
+ * Send a password reset email via Supabase.
+ * Neutral — never reveals whether the email exists.
+ * @param {string} email
+ */
+export async function resetPasswordForEmail(email) {
+    if (!supabase) {
+        throw new Error('Supabase is not configured.');
+    }
+    const redirectTo = `${window.location.origin}/reset-password`;
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+    if (error) {
+        throw new Error(error.message || 'Could not send reset email.');
+    }
+}
+
+/**
+ * Update the authenticated user's password (called from the Reset Password page
+ * after Supabase redirects back with a valid session).
+ * @param {string} newPassword
+ */
+export async function updatePassword(newPassword) {
+    if (!supabase) {
+        throw new Error('Supabase is not configured.');
+    }
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) {
+        throw new Error(error.message || 'Could not update password.');
+    }
+}
+
+/**
  * Map role string to the correct dashboard route.
  */
 export function getRoleDashboardRoute(role) {
@@ -206,6 +237,7 @@ export function getRoleDashboardRoute(role) {
     if (r.includes('startup') || r.includes('founder')) return '/dashboard/startup';
     if (r.includes('investor')) return '/dashboard/investor';
     if (r.includes('marketing') || r.includes('agency')) return '/dashboard/marketing-agency/projects';
+    if (r.includes('patent')) return '/dashboard/patent-firm/dashboard';
     if (r.includes('business') || r.includes('advisor')) return '/dashboard/advisor';
     if (r.includes('admin')) return '/dashboard/admin';
     

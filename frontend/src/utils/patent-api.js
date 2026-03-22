@@ -10,7 +10,7 @@ export async function fetchDashboardStats() {
 }
 
 export async function fetchRecentActivity() {
-    const response = await apiFetch('/api/patent-firm/dashboard/activity');
+    const response = await apiFetch('/api/patent-firm/activities');
     if (!response.ok) throw new Error('Failed to fetch recent activity');
     return response.json();
 }

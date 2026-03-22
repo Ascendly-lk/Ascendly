@@ -16,21 +16,23 @@ import Projects from './pages/BusinessAdvisory/Projects';
 import MarketingAgencyProjects from './pages/marketing-agency/Projects';
 import CalendarPage from './pages/BusinessAdvisory/Calendar';
 import Payments from './pages/BusinessAdvisory/Payments';
-import EditProfile from './pages/BusinessAdvisory/editProfile';
-import Settings from './pages/BusinessAdvisory/Settings';
+import EditProfile from './components/dashboard/editProfile';
+import Settings from './components/dashboard/Settings';
 import NotificationsPage from './pages/BusinessAdvisory/Notifications';
 import AccountPage from './pages/AccountPage';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import DashboardLayout from './pages/BusinessAdvisory/DashboardLayout';
 import StartupDashboard from './pages/dashboard/StartupDashboard';
 import AIAnalyticsDashboard from './pages/aianalytics/AIAnalyticsDashboard';
 import UploadData from './pages/aianalytics/UploadData';
 import AIAssistant from './pages/aianalytics/AIAssistant';
 import Feedbacks from './pages/marketing-agency/Feedbacks';
-import LogisticsPage from './pages/dashboard/LogisticsPage';
 import PatentPage from './pages/dashboard/PatentPage';
 import InvestorsPage from './pages/dashboard/InvestorsPage';
 import TiersPage from './pages/dashboard/TiersPage';
 import AdvisorsPage from './pages/dashboard/AdvisorsPage';
+import MarketingAgency from './pages/dashboard/MarketingAgency';
 import DocumentReview from './pages/patent-firm/DocumentReview';
 import PaymentPortal from './pages/PaymentPortal';
 
@@ -50,6 +52,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/payment" element={<PaymentPortal />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           <Route
             path="/account"
@@ -70,11 +74,11 @@ function App() {
           >
             <Route index element={<Navigate to="startup" replace />} />
             <Route path="startup" element={<StartupDashboard />} />
-            <Route path="logistics" element={<LogisticsPage />} />
             <Route path="patent" element={<PatentPage />} />
             <Route path="investors" element={<InvestorsPage />} />
             <Route path="tiers" element={<TiersPage />} />
             <Route path="advisors" element={<AdvisorsPage />} />
+            <Route path="marketing-agency" element={<MarketingAgency />} />
             <Route path="clients" element={<Clients />} />
             <Route path="projects" element={<Projects />} />
             <Route path="calendar" element={<CalendarPage />} />

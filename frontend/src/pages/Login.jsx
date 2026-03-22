@@ -282,7 +282,7 @@ return (
                             />
                             <span>Remember me</span>
                         </label>
-                        <a href="#" className="forgot-password-link">Forgot Password?</a>
+                        <Link to="/forgot-password" className="forgot-password-link">Forgot Password?</Link>
                     </div>
 
                     {/* Server-side error message */}
