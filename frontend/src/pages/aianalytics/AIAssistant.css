@@ -580,8 +580,4 @@
     background: rgba(0, 255, 229, 0.18);
 }
 
-/* ── Stat card sparkline ───────────────────────────────────────────────────── */
-.ai-stat-card__sparkline {
-    margin-top: 8px;
-    opacity: 0.85;
-}
+

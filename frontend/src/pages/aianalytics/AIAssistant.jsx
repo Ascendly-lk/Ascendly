@@ -117,9 +117,11 @@ const AIAssistant = () => {
             .catch(() => {});
     }, []);
 
-    const sendMessage = useCallback(async (overrideText) => {
+    const sendMessage = useCallback(async (overrideText, overrideDatasetId) => {
         const trimmed = (overrideText || input).trim();
         if (!trimmed || isSending) return;
+
+        const datasetId = overrideDatasetId ?? selectedFileId;
 
         // Build history from all messages except the initial greeting
         const history = messagesRef.current.slice(1).map((m) => ({
@@ -130,18 +132,13 @@ const AIAssistant = () => {
         const userMsg = { id: crypto.randomUUID(), role: 'user', text: trimmed, time: now() };
         const assistantMsgId = crypto.randomUUID();
 
-        setMessages((prev) => [
-            ...prev,
-            userMsg,
-            { id: assistantMsgId, role: 'assistant', text: '', time: now(), streaming: true },
-        ]);
         setInput('');
         setShowSuggestions(false);
-
         if (textareaRef.current) textareaRef.current.style.height = 'auto';
 
         // No-dataset guard: analysis intent without a dataset → show inline upload zone
-        if (ANALYSIS_INTENT.test(trimmed) && !selectedFileId) {
+        // Check BEFORE appending messages to avoid duplicates
+        if (ANALYSIS_INTENT.test(trimmed) && !datasetId) {
             setMessages((prev) => [
                 ...prev,
                 userMsg,
@@ -158,11 +155,16 @@ const AIAssistant = () => {
             return;
         }
 
+        setMessages((prev) => [
+            ...prev,
+            userMsg,
+            { id: assistantMsgId, role: 'assistant', text: '', time: now(), streaming: true },
+        ]);
         setIsSending(true);
 
         try {
             const body = { message: trimmed, history };
-            if (selectedFileId) body.dataset_id = selectedFileId;
+            if (datasetId) body.dataset_id = datasetId;
 
             const res = await guardedFetch('/api/chat', {
                 method: 'POST',
@@ -356,8 +358,8 @@ const AIAssistant = () => {
                 ));
                 setSelectedFileId(newFileId);
                 fetchFiles();
-                // Auto-resume with the original message
-                setTimeout(() => sendMessage(pendingMessage), 300);
+                // Pass newFileId explicitly to avoid stale selectedFileId closure
+                sendMessage(pendingMessage, newFileId);
             } else {
                 setMessages((prev) => prev.map((m) =>
                     m.id === assistantMsgId ? { ...m, uploadStatus: 'error' } : m
@@ -370,7 +372,11 @@ const AIAssistant = () => {
             ));
         };
         xhr.open('POST', `${API_BASE}/api/upload`);
-        xhr.setRequestHeader('Authorization', `Bearer ${getToken()}`);
+        const token = getToken();
+        const bypassAuth = import.meta.env.DEV && import.meta.env.VITE_BYPASS_AUTH === 'true';
+        if (token && !bypassAuth) {
+            xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+        }
         xhr.send(formData);
     }, [fetchFiles, sendMessage]);
 
@@ -483,6 +489,7 @@ const AIAssistant = () => {
                                                         onChange={(e) => {
                                                             const f = e.target.files?.[0];
                                                             if (f) handleInlineUpload(f, msg.pendingMessage, msg.id);
+                                                            e.target.value = '';
                                                         }}
                                                     />
                                                 </label>
