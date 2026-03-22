@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import TopHeader from "../../components/TopHeader";
 import {
@@ -28,6 +29,84 @@ const projectStats = [
   { id: 3, label: 'Total Funding raised', value: `$${totalFunding.toLocaleString()}` }
 ];
 
+const formatCurrency = (amount) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0
+  }).format(amount);
+};
+
+const ProjectCard = ({ project }) => {
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoaded(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const progressPercent = Math.round(project.progress * 100);
+  let progressColorClass = '';
+  if (project.progress < 0.3) progressColorClass = 'danger';
+  else if (project.progress > 0.8) progressColorClass = 'excellent';
+
+  return (
+    <article className="project-card">
+      <div className="project-card-top">
+        <span className="project-avatar">{project.initials}</span>
+        <div>
+          <h3>{project.name}</h3>
+          <p>{project.category}</p>
+        </div>
+      </div>
+
+      <div className="project-progress-wrap">
+        <span>progress</span>
+        <div 
+          className="project-progress-track" 
+          role="presentation"
+          title={`${progressPercent}% Complete`}
+        >
+          <span
+            className={`project-progress-fill ${progressColorClass}`}
+            style={{ 
+              width: loaded ? `${progressPercent}%` : '0%',
+              transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)' 
+            }}
+          ></span>
+        </div>
+      </div>
+
+      <div className="project-meta-row">
+        <div className="project-meta-item">
+          <DollarSign />
+          <small>{formatCurrency(project.fundingAmount)}</small>
+        </div>
+        <div className="project-meta-item">
+          <Users />
+          <small>{project.score}/10</small>
+        </div>
+        <div className={`project-meta-item ${project.potencyReceived ? 'active-icon' : 'inactive-icon'}`}>
+          <FileText />
+          <small>Potency Received</small>
+        </div>
+        <div className={`project-meta-item ${project.marketingExposure ? 'active-icon' : 'inactive-icon'}`}>
+          <Megaphone />
+          <small>Marketing exposure</small>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        className="project-detail-btn"
+        aria-label="View project details"
+      >
+        View Details <CircleArrowOutUpRight />
+      </button>
+    </article>
+  );
+};
+
 export default function Projects() {
   return (
     <div className="dashboard-container">
@@ -48,52 +127,7 @@ export default function Projects() {
 
         <section className="project-cards-grid">
           {projectCards.map((project) => (
-            <article key={project.id} className="project-card">
-              <div className="project-card-top">
-                <span className="project-avatar">{project.initials}</span>
-                <div>
-                  <h3>{project.name}</h3>
-                  <p>{project.category}</p>
-                </div>
-              </div>
-
-              <div className="project-progress-wrap">
-                <span>progress</span>
-                <div className="project-progress-track" role="presentation">
-                  <span
-                    className="project-progress-fill"
-                    style={{ width: `${project.progress * 100}%` }}
-                  ></span>
-                </div>
-              </div>
-
-              <div className="project-meta-row">
-                <div className="project-meta-item">
-                  <DollarSign />
-                  <small>{project.funding}</small>
-                </div>
-                <div className="project-meta-item">
-                  <Users />
-                  <small>{project.score}/10</small>
-                </div>
-                <div className={`project-meta-item ${!project.potencyReceived ? 'inactive' : ''}`} style={{ opacity: project.potencyReceived ? 1 : 0.4 }}>
-                  <FileText />
-                  <small>Potency Received</small>
-                </div>
-                <div className={`project-meta-item ${!project.marketingExposure ? 'inactive' : ''}`} style={{ opacity: project.marketingExposure ? 1 : 0.4 }}>
-                  <Megaphone />
-                  <small>Marketing exposure</small>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                className="project-detail-btn"
-                aria-label="View project details"
-              >
-                View Details <CircleArrowOutUpRight />
-              </button>
-            </article>
+            <ProjectCard key={project.id} project={project} />
           ))}
         </section>
         </div>
