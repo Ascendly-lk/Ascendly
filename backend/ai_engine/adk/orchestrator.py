@@ -33,6 +33,7 @@ from ai_engine.adk.agents import (
     make_competitor_benchmark_agent,
     make_market_data_agent,
 )
+from observability.adk_span import benchmark_span
 
 APP_NAME = "ascendly_benchmarks"
 
@@ -121,12 +122,13 @@ class BenchmarkOrchestrator:
         )
 
         # Drain the event stream — sub-agents write to session state via output_key
-        async for event in runner.run_async(
-            user_id=user_id,
-            session_id=session_id,
-            new_message=message,
-        ):
-            pass  # we read from session state after completion, not from events
+        with benchmark_span("parallel", category=category):
+            async for event in runner.run_async(
+                user_id=user_id,
+                session_id=session_id,
+                new_message=message,
+            ):
+                pass  # we read from session state after completion, not from events
 
         # Read each agent's output from session state
         session = await session_service.get_session(
