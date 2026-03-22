@@ -68,10 +68,10 @@ const projectCards = [
 
 export default function Projects() {
   return (
-    <div className="projects-page">
+    <div className="dashboard-container">
       <Sidebar />
 
-      <main className="projects-main">
+      <main className="projects-main" style={{ marginLeft: '260px', flexGrow: 1, minWidth: 0, padding: '28px 40px' }}>
         <TopHeader showWelcome={false} />
 
         <header className="projects-header">
