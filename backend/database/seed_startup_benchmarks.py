@@ -1,126 +1,112 @@
 """
-Seed script — loads Startup Dataset.csv into the startup_benchmarks Supabase table.
-
+Seed script — loads Startup Dataset.csv into Supabase startup_benchmarks table.
 Run once from the backend/ directory:
     python database/seed_startup_benchmarks.py
-
-Requires:
-  - startup_benchmarks table already created (run migrations/create_startup_benchmarks.sql)
-  - 'Startup Dataset.csv' in the repo root (one level above backend/)
-  - SUPABASE_URL and SUPABASE_SERVICE_KEY set in backend/.env
 """
-import os
-import re
+
 import csv
 import logging
+import os
+import re
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logger = logging.getLogger(__name__)
 
-from dotenv import load_dotenv
-load_dotenv()
+# Allow running from backend/ dir
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
-log = logging.getLogger(__name__)
+from database.supabase_client import get_supabase_admin
 
-# CSV is in repo root, one level above backend/
-CSV_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-    "Startup Dataset.csv",
-)
+CSV_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "Startup Dataset.csv")
+BATCH_SIZE = 100
 
-ISO_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-MONEY_RE = re.compile(r"^\$?([\d,.]+)\s*([kmb]?)$", re.IGNORECASE)
-
-VALID_STATUSES = {"Successful", "Failed", "Acquired"}
+_ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
-def parse_money(value: str):
-    """Convert '$10M', '$500K', '1,200,000' etc. to a float (USD)."""
-    if not value or value.strip() in ("", "N/A", "-"):
+def parse_revenue(val: str) -> float | None:
+    """Convert $10M / $500K / $1.2B / $0 → float USD. Returns None if unparseable."""
+    if not val:
         return None
-    m = MONEY_RE.match(value.strip().replace(",", ""))
-    if not m:
+    val = val.strip().replace("$", "").replace(",", "")
+    if val in ("", "0"):
+        return 0.0
+    try:
+        suffix = val[-1].upper()
+        if suffix == "M":
+            return float(val[:-1]) * 1_000_000
+        elif suffix == "K":
+            return float(val[:-1]) * 1_000
+        elif suffix == "B":
+            return float(val[:-1]) * 1_000_000_000
+        return float(val)
+    except ValueError:
         return None
-    amount = float(m.group(1))
-    suffix = m.group(2).lower()
-    if suffix == "k":
-        amount *= 1_000
-    elif suffix == "m":
-        amount *= 1_000_000
-    elif suffix == "b":
-        amount *= 1_000_000_000
-    return amount
 
 
-def parse_date(value: str):
-    """Return ISO date string or None if invalid."""
-    if not value or value.strip() in ("", "N/A", "-"):
+def parse_date(val: str) -> str | None:
+    """Return date string only if it matches YYYY-MM-DD, else None."""
+    if not val or not val.strip():
         return None
-    v = value.strip()
-    if ISO_DATE_RE.match(v):
-        return v
-    return None
+    val = val.strip()
+    return val if _ISO_DATE.match(val) else None
 
 
-def main():
-    if not os.path.exists(CSV_PATH):
-        log.error("CSV not found at: %s", CSV_PATH)
-        sys.exit(1)
-
-    from supabase import create_client
-    url = os.environ.get("SUPABASE_URL")
-    key = os.environ.get("SUPABASE_SERVICE_KEY")
-    if not url or not key:
-        log.error("SUPABASE_URL and SUPABASE_SERVICE_KEY must be set in .env")
-        sys.exit(1)
-
-    client = create_client(url, key)
-
+def load_csv(path: str) -> list[dict]:
     rows = []
     skipped = 0
-
-    with open(CSV_PATH, newline="", encoding="utf-8-sig") as f:
+    with open(path, newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
-        for i, row in enumerate(reader, start=2):  # row 1 = header
-            name = (row.get("Name") or row.get("name") or "").strip()
+        for row in reader:
+            name = row.get("Name", "").strip()
             if not name:
-                log.warning("Row %d: empty name — skipping", i)
                 skipped += 1
-                continue
-
-            status_raw = (row.get("Current Status") or row.get("current_status") or "").strip()
-            status = status_raw if status_raw in VALID_STATUSES else None
-
+                continue  # skip rows with no name — violates NOT NULL constraint
+            status = row.get("Current Status", "").strip()
+            if status not in ("Successful", "Failed", "Acquired"):
+                status = None
             rows.append({
-                "name":          name,
-                "country":       (row.get("Country") or row.get("country") or "").strip() or None,
-                "description":   (row.get("Description") or row.get("description") or "").strip() or None,
-                "launch_date":   parse_date(row.get("Launch Date") or row.get("launch_date") or ""),
-                "founders":      (row.get("Founders") or row.get("founders") or "").strip() or None,
-                "revenue_year1": parse_money(row.get("Revenue Year 1") or row.get("revenue_year1") or ""),
-                "revenue_year2": parse_money(row.get("Revenue Year 2") or row.get("revenue_year2") or ""),
-                "revenue_year3": parse_money(row.get("Revenue Year 3") or row.get("revenue_year3") or ""),
+                "name":           name,
+                "country":        row.get("Country", "").strip() or None,
+                "description":    row.get("Description", "").strip() or None,
+                "launch_date":    parse_date(row.get("Launch Date", "")),
+                "founders":       row.get("Founders", "").strip() or None,
+                "revenue_year1":  parse_revenue(row.get("Revenue Year 1", "")),
+                "revenue_year2":  parse_revenue(row.get("Revenue Year 2", "")),
+                "revenue_year3":  parse_revenue(row.get("Revenue Year 3", "")),
                 "current_status": status,
             })
+    if skipped:
+        logger.warning("Skipped %d rows with missing name", skipped)
+    return rows
 
-    if not rows:
-        log.error("No valid rows found in CSV.")
+
+def seed():
+    if not os.path.exists(CSV_PATH):
+        logger.error("CSV file not found at %s. Ensure 'Startup Dataset.csv' exists in the repo root.", CSV_PATH)
         sys.exit(1)
+    if not os.access(CSV_PATH, os.R_OK):
+        logger.error("CSV file is not readable: %s", CSV_PATH)
+        sys.exit(1)
+    logger.info("Reading CSV: %s", CSV_PATH)
+    rows = load_csv(CSV_PATH)
+    logger.info("Loaded %d rows", len(rows))
 
-    log.info("Inserting %d rows (%d skipped)...", len(rows), skipped)
+    client = get_supabase_admin()
 
-    # Insert in batches of 100
-    batch_size = 100
+    # Clear existing data
+    client.table("startup_benchmarks").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
+    logger.info("Cleared existing rows")
+
     inserted = 0
-    for start in range(0, len(rows), batch_size):
-        batch = rows[start:start + batch_size]
-        result = client.table("startup_benchmarks").insert(batch).execute()
-        inserted += len(result.data) if result.data else len(batch)
-        log.info("  inserted rows %d–%d", start + 1, start + len(batch))
+    for i in range(0, len(rows), BATCH_SIZE):
+        batch = rows[i:i + BATCH_SIZE]
+        client.table("startup_benchmarks").insert(batch).execute()
+        inserted += len(batch)
+        logger.info("Inserted %d/%d...", inserted, len(rows))
 
-    log.info("Done. %d rows inserted into startup_benchmarks.", inserted)
+    logger.info("Done. %d rows seeded into startup_benchmarks.", inserted)
 
 
 if __name__ == "__main__":
-    main()
+    seed()
