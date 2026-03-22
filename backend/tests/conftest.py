@@ -1,8 +1,10 @@
 """
 Shared pytest fixtures for Ascendly backend tests.
 
-LLM calls are mocked by default so tests are deterministic and fast.
-Set ASCENDLY_LIVE_TESTS=true to run against real Azure GPT-4o.
+The `mock_llm` fixture patches the LLM at the crew import site — request it
+explicitly in tests that instantiate Agents/Crews.  Deterministic tests
+(parse_outputs, SARIMAX) do not need it because they never call _make_llm.
+Set ASCENDLY_LIVE_TESTS=true to skip mocking and run against real Azure GPT-4o.
 """
 import json
 import os
@@ -34,10 +36,15 @@ def analyst_output_str(analyst_fixture) -> str:
 
 @pytest.fixture()
 def mock_llm():
-    """Patch _make_llm so no Azure/Groq credentials are required."""
+    """Patch _make_llm at the crew import site so no Azure credentials are required.
+
+    crew.py does `from ai_engine.provider import get_crewai_llm as _make_llm`,
+    so we must patch `ai_engine.crew._make_llm` (the already-imported name),
+    not the original `ai_engine.provider.get_crewai_llm`.
+    """
     mock = MagicMock()
     mock.call.return_value = "mocked LLM response"
-    with patch("ai_engine.provider.get_crewai_llm", return_value=mock):
+    with patch("ai_engine.crew._make_llm", return_value=mock):
         yield mock
 
 

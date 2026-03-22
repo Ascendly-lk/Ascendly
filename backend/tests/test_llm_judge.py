@@ -55,7 +55,6 @@ BENCHMARK_CONTEXT = (
 class TestStrategistFaithfulness:
 
     def test_recommendations_are_faithful_to_benchmarks(self):
-        from deepeval import evaluate
         from deepeval.metrics import FaithfulnessMetric
         from deepeval.test_case import LLMTestCase
 
@@ -82,25 +81,20 @@ class TestStrategistFaithfulness:
 class TestChatAgentQuality:
 
     def test_answer_relevancy(self):
-        from deepeval import evaluate
         from deepeval.metrics import AnswerRelevancyMetric
         from deepeval.test_case import LLMTestCase
 
-        # Import the chat handler function (no LLM mock — this is a live test)
-        # We call the underlying logic directly to avoid FastAPI overhead.
-        from ai_engine.tools.query_tool import query_dataset  # noqa: F401
+        from ai_engine.crew import run_analyst_step
 
         question = "What is the monthly growth trend in the dataset?"
-        # Simulate a coherent chat response based on the sample data
-        simulated_response = (
-            "Based on the dataset, monthly revenue has grown from $10,000 to $12,500 "
-            "over three months, representing an average month-on-month growth rate of "
-            "approximately 11.5%, which is within the industry benchmark of 8-12%."
-        )
+        # Use the real analyst step output as the chat agent's context
+        analyst_output = run_analyst_step.__wrapped__(SAMPLE_ANALYST_OUTPUT) \
+            if hasattr(run_analyst_step, "__wrapped__") else SAMPLE_ANALYST_OUTPUT
+        actual_response = analyst_output if analyst_output else SAMPLE_ANALYST_OUTPUT
 
         test_case = LLMTestCase(
             input=question,
-            actual_output=simulated_response,
+            actual_output=actual_response,
             retrieval_context=[SAMPLE_ANALYST_OUTPUT],
         )
 

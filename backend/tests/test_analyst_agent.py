@@ -101,5 +101,6 @@ class TestParseOutputsEdgeCases:
 
     def test_empty_advice_falls_back_gracefully(self, analyst_output_str):
         result = parse_outputs(analyst_output_str, _make_forecast_output(), "", 0)
-        # Falls back to a single-item list with the raw output
+        # parse_outputs returns [] for empty advice (no exception path triggered)
         assert isinstance(result["data"]["strategic_advice"], list)
+        assert result["data"]["strategic_advice"] == []
