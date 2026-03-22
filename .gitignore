@@ -1,6 +1,18 @@
+<<<<<<< HEAD
+# =====================
+# Node / Frontend
+# =====================
+frontend/node_modules/
+dist/
+build/
+.next/
+out/
+.vercel
+=======
 # Logs
 logs
 *.log
+>>>>>>> 14a6b947e18eb3ba16d59f179481dc0fe835a2db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

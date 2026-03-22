@@ -128,8 +128,20 @@ def require_auth(authorization: str = Header(...)):
 
     try:
         client = get_supabase_client()
+        print(f"[require_auth] Verifying token (first 10 chars): {token[:10]}...")
         response = client.auth.get_user(token)
         if not response or not response.user:
+<<<<<<< HEAD
+            print("[require_auth] Response from get_user is empty or missing user object.")
+            raise HTTPException(status_code=401, detail="Invalid or expired token")
+        print(f"[require_auth] Success. User ID: {response.user.id}")
+        return response.user
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"[require_auth] Unexpected error during get_user: {str(e)}")
+        raise HTTPException(status_code=401, detail=f"Authentication failed: {str(e)}")
+=======
             logger.warning("[require_auth] Token validation failed: empty or missing user object")
             raise HTTPException(status_code=401, detail="Invalid or expired token")
         logger.debug("[require_auth] Token verified")
@@ -139,6 +151,7 @@ def require_auth(authorization: str = Header(...)):
     except Exception:
         logger.exception("[require_auth] Unexpected error during token verification")
         raise HTTPException(status_code=401, detail="Authentication failed")
+>>>>>>> 14a6b947e18eb3ba16d59f179481dc0fe835a2db
 
 
 # ============ GENERIC CRUD HELPERS ============
