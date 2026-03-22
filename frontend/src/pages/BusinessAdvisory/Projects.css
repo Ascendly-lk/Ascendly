@@ -49,6 +49,21 @@
   background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 60%), #131d2a;
 }
 
+.projects-stat-card.active-cyan {
+  background: linear-gradient(135deg, #00ffef 0%, #0f1720 100%);
+  border-color: rgba(0, 255, 239, 0.4);
+}
+
+.projects-stat-card.active-cyan:hover {
+  border-color: rgba(0, 255, 239, 0.6);
+  box-shadow: 0 12px 30px rgba(0, 255, 239, 0.2);
+}
+
+.projects-stat-card.active-cyan p,
+.projects-stat-card.active-cyan h2 {
+  color: #fff;
+}
+
 .projects-stat-card p {
   margin: 0;
   color: #8998b0;

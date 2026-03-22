@@ -81,7 +81,7 @@ export default function Projects() {
 
         <section className="projects-stats-grid">
           {projectStats.map((stat) => (
-            <article key={stat.id} className="projects-stat-card">
+            <article key={stat.id} className={`projects-stat-card ${stat.label === "Active Projects" ? "active-cyan" : ""}`}>
               <p>{stat.label}</p>
               <h2>{stat.value}</h2>
             </article>
