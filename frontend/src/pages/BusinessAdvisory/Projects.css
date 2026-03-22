@@ -44,7 +44,6 @@
 
 .projects-stat-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(0, 255, 239, 0.3);
   box-shadow: 0 12px 30px rgba(0, 240, 255, 0.1);
   background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 60%), #131d2a;
 }
@@ -55,7 +54,6 @@
 }
 
 .projects-stat-card.active-cyan:hover {
-  border-color: rgba(0, 255, 239, 0.6);
   box-shadow: 0 12px 30px rgba(0, 255, 239, 0.2);
 }
 
@@ -100,7 +98,6 @@
 
 .project-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(255, 255, 255, 0.4);
   box-shadow: 0 15px 35px rgba(0, 240, 255, 0.15);
 }
 
