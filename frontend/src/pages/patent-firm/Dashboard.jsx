@@ -310,7 +310,7 @@ const PatentFirmDashboard = () => {
                         </div>
                     </div>
                 </div>
-                </div>
+            </div>
             </div>
         </div>
     );

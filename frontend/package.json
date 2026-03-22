@@ -20,6 +20,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@supabase/supabase-js": "^2.98.0",
     "@thesysai/genui-sdk": "^0.8.6",
+    "eventsource-parser": "^3.0.6",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.577.0",
@@ -29,6 +30,7 @@
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.13.0",
     "recharts": "^3.8.0",
+    "zod-to-json-schema": "^3.25.1",
     "zustand": "^5.0.12"
   },
   "devDependencies": {
