@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './TopBar.css';
 import { useAuth } from '../../context/AuthContext';
 
-const TopBar = () => {
+const TopBar = ({ title }) => {
     const [profileOpen, setProfileOpen] = useState(false);
     const dropdownRef = useRef(null);
     const profileBtnRef = useRef(null);
@@ -49,9 +49,13 @@ const TopBar = () => {
 
     return (
         <div className="top-bar">
-            <h2 className="top-bar-welcome">
-                Welcome, <span>Sanavi</span> !
-            </h2>
+            {title ? (
+                <h2 className="top-bar-welcome">{title}</h2>
+            ) : (
+                <h2 className="top-bar-welcome">
+                    Welcome, <span>Sanavi</span> !
+                </h2>
+            )}
 
             <div className="top-bar-right">
                 <div className="top-bar-search">
