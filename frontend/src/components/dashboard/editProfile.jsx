@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
-import TopBar from "./TopBar";
-import "../../pages/BusinessAdvisory/DashboardLayout.css";
+import TopHeader from "../../components/TopHeader";
 import "./EditProfile.css";
+import "./editProfile.css";
+
 
 const EditProfile = () => {
   const [showSuccess, setShowSuccess] = useState(false);

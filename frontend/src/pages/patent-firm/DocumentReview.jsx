@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Lock,
   FileText,
@@ -14,64 +14,9 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import TopBar from '../../components/dashboard/TopBar';
+import { fetchDocuments } from '../../utils/patent-api';
 import './DocumentReview.css';
 import '../dashboard/StartupDashboard.css';
-
-const mockDocuments = [
-  {
-    id: '1',
-    name: 'Technical Specifications - AI Engine.pdf',
-    type: 'pdf',
-    size: '2.4 MB',
-    uploadedDate: 'March 1, 2026',
-    client: 'TechCo AI',
-    applicationId: 'PAT-2026-001',
-    status: 'reviewed',
-    reviewer: 'Dr. Sarah Chen',
-  },
-  {
-    id: '2',
-    name: 'System Architecture Diagram.png',
-    type: 'image',
-    size: '1.1 MB',
-    uploadedDate: 'March 1, 2026',
-    client: 'TechCo AI',
-    applicationId: 'PAT-2026-001',
-    status: 'approved',
-    reviewer: 'Dr. Sarah Chen',
-  },
-  {
-    id: '3',
-    name: 'IoT Sensor Schematics.pdf',
-    type: 'pdf',
-    size: '3.2 MB',
-    uploadedDate: 'March 3, 2026',
-    client: 'IoT Innovations',
-    applicationId: 'PAT-2026-002',
-    status: 'reviewed',
-    reviewer: 'Michael Rodriguez',
-  },
-  {
-    id: '4',
-    name: 'Gene Editing Documentation.pdf',
-    type: 'pdf',
-    size: '5.8 MB',
-    uploadedDate: 'March 6, 2026',
-    client: 'BioTech Labs',
-    applicationId: 'PAT-2026-004',
-    status: 'pending',
-  },
-  {
-    id: '5',
-    name: 'Solar Panel Design.pdf',
-    type: 'pdf',
-    size: '2.1 MB',
-    uploadedDate: 'March 6, 2026',
-    client: 'GreenEnergy Co',
-    applicationId: 'PAT-2026-005',
-    status: 'pending',
-  },
-];
 
 const getFileIcon = (type) => {
   switch (type) {
@@ -98,8 +43,22 @@ const statusClass = (status) => {
 };
 
 const DocumentReview = () => {
+  const [mockDocuments, setMockDocuments] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [tab, setTab] = useState('all');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchDocuments()
+        .then(data => {
+            setMockDocuments(data);
+            setLoading(false);
+        })
+        .catch(err => {
+            console.error("Failed to fetch documents", err);
+            setLoading(false);
+        });
+  }, []);
 
   const filteredDocuments = mockDocuments.filter((doc) =>
     doc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

@@ -1,12 +1,20 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
-import { apiFetch } from '../../api';
+import { apiFetch, getToken } from '../../api';
 import AnalyticsPopup from '../../components/aianalytics/AnalyticsPopup';
-import { generatePDFReport } from '../../utils/pdfGenerator';
+import C1Message from '../../components/aianalytics/C1Message';
+import PricingModal from '../../components/aianalytics/PricingModal';
+import { useUsageGuard } from '../../hooks/useUsageGuard';
 import { BarChart2, FileDown } from 'lucide-react';
 import './AIAssistant.css';
+
+const API_BASE =
+    import.meta.env.VITE_API_URL ||
+    `${window.location.protocol}//${window.location.hostname}:8000`;
+
+const ANALYSIS_INTENT = /\b(analyze|analyse|forecast|predict|trend|report|compare|benchmark|revenue|growth|insight|recommendation|strategic|sarimax)\b/i;
 
 /* ── Helpers ── */
 const now = () => {
@@ -82,9 +90,14 @@ const AIAssistant = () => {
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false);
     const [showComingSoon, setShowComingSoon] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate();
     const hasAutoPrompted = useRef(false);
     const messagesEndRef = useRef(null);
     const textareaRef = useRef(null);
+    // Accumulates C1 DSL chunks keyed by assistantMsgId
+    const c1AccumulatorRef = useRef({});
+
+    const { guardedFetch, showPricingModal, limitError, closePricingModal } = useUsageGuard();
 
     // Keep a ref to messages for history building without adding to sendMessage deps
     const messagesRef = useRef(messages);
@@ -104,9 +117,11 @@ const AIAssistant = () => {
             .catch(() => {});
     }, []);
 
-    const sendMessage = useCallback(async (overrideText) => {
+    const sendMessage = useCallback(async (overrideText, overrideDatasetId) => {
         const trimmed = (overrideText || input).trim();
         if (!trimmed || isSending) return;
+
+        const datasetId = overrideDatasetId ?? selectedFileId;
 
         // Build history from all messages except the initial greeting
         const history = messagesRef.current.slice(1).map((m) => ({
@@ -117,25 +132,56 @@ const AIAssistant = () => {
         const userMsg = { id: crypto.randomUUID(), role: 'user', text: trimmed, time: now() };
         const assistantMsgId = crypto.randomUUID();
 
+        setInput('');
+        setShowSuggestions(false);
+        if (textareaRef.current) textareaRef.current.style.height = 'auto';
+
+        // No-dataset guard: analysis intent without a dataset → show inline upload zone
+        // Check BEFORE appending messages to avoid duplicates
+        if (ANALYSIS_INTENT.test(trimmed) && !datasetId) {
+            setMessages((prev) => [
+                ...prev,
+                userMsg,
+                {
+                    id: assistantMsgId,
+                    role: 'assistant',
+                    text: '',
+                    uploadPrompt: true,
+                    pendingMessage: trimmed,
+                    time: now(),
+                    streaming: false,
+                },
+            ]);
+            return;
+        }
+
         setMessages((prev) => [
             ...prev,
             userMsg,
             { id: assistantMsgId, role: 'assistant', text: '', time: now(), streaming: true },
         ]);
-        setInput('');
         setIsSending(true);
-        setShowSuggestions(false);
-
-        if (textareaRef.current) textareaRef.current.style.height = 'auto';
 
         try {
             const body = { message: trimmed, history };
-            if (selectedFileId) body.dataset_id = selectedFileId;
+            if (datasetId) body.dataset_id = datasetId;
 
-            const res = await apiFetch('/api/chat', {
+            const res = await guardedFetch('/api/chat', {
                 method: 'POST',
                 body: JSON.stringify(body),
             });
+
+            if (res.status === 429) {
+                // Usage limit hit — modal already opened by guardedFetch
+                setMessages((prev) =>
+                    prev.map((m) =>
+                        m.id === assistantMsgId
+                            ? { ...m, text: "You've reached your plan limit. Please upgrade to continue.", streaming: false }
+                            : m
+                    )
+                );
+                return;
+            }
 
             if (!res.ok) {
                 const data = await res.json().catch(() => ({}));
@@ -145,6 +191,9 @@ const AIAssistant = () => {
             const reader = res.body.getReader();
             const decoder = new TextDecoder();
             let buffer = '';
+
+            // Initialise C1 accumulator for this message
+            c1AccumulatorRef.current[assistantMsgId] = '';
 
             const processLine = (line) => {
                 if (!line.startsWith('data: ')) return;
@@ -163,25 +212,53 @@ const AIAssistant = () => {
                                 ? { ...m, progress: { step: event.step, total: event.total, label: event.label } }
                                 : m
                         ));
+                    } else if (event.type === 'c1_chunk') {
+                        // Decode base64 chunk as UTF-8 (TextDecoder avoids Latin-1 corruption from atob)
+                        const binaryString = atob(event.content);
+                        const bytes = new Uint8Array(binaryString.length);
+                        for (let i = 0; i < binaryString.length; i++) {
+                            bytes[i] = binaryString.charCodeAt(i);
+                        }
+                        const decoded = new TextDecoder('utf-8').decode(bytes);
+                        c1AccumulatorRef.current[assistantMsgId] =
+                            (c1AccumulatorRef.current[assistantMsgId] || '') + decoded;
+                        const fullDsl = c1AccumulatorRef.current[assistantMsgId];
+                        setMessages((prev) => prev.map((m) =>
+                            m.id === assistantMsgId
+                                ? { ...m, c1Dsl: fullDsl, progress: null }
+                                : m
+                        ));
+                    } else if (event.type === 'c1_done') {
+                        delete c1AccumulatorRef.current[assistantMsgId];
+                        setMessages((prev) => prev.map((m) =>
+                            m.id === assistantMsgId
+                                ? { ...m, streaming: false, progress: null }
+                                : m
+                        ));
+                        if (selectedFileId && /predict|analysis|analyse|forecast|insights|business data/i.test(trimmed)) {
+                            setHasAnalyticsData(true);
+                            setShowAnalyticsPopup(true);
+                        }
                     } else if (event.type === 'result') {
+                        // Markdown fallback (no THESYS_API_KEY or C1 error)
                         setMessages((prev) => prev.map((m) =>
                             m.id === assistantMsgId
                                 ? { ...m, text: event.text, progress: null }
                                 : m
                         ));
-                        
-                        // Trigger AI Analytics Popup if file is selected and prompt matches keywords
                         if (selectedFileId && /predict|analysis|analyse|forecast|insights|business data/i.test(trimmed)) {
                             setHasAnalyticsData(true);
                             setShowAnalyticsPopup(true);
                         }
                     } else if (event.type === 'done') {
+                        delete c1AccumulatorRef.current[assistantMsgId];
                         setMessages((prev) => prev.map((m) =>
                             m.id === assistantMsgId
                                 ? { ...m, streaming: false, progress: null }
                                 : m
                         ));
                     } else if (event.type === 'error') {
+                        delete c1AccumulatorRef.current[assistantMsgId];
                         setMessages((prev) => prev.map((m) =>
                             m.id === assistantMsgId
                                 ? { ...m, text: event.content || 'An error occurred.', streaming: false, progress: null }
@@ -212,6 +289,8 @@ const AIAssistant = () => {
                     processLine(buffer.trim());
                 }
             } finally {
+                // Clean up C1 accumulator to prevent memory leak in long sessions
+                delete c1AccumulatorRef.current[assistantMsgId];
                 // Always ensure the assistant message exits streaming state
                 setMessages((prev) => prev.map((m) =>
                     m.id === assistantMsgId && m.streaming
@@ -252,6 +331,54 @@ const AIAssistant = () => {
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
+
+    const handleInlineUpload = useCallback((file, pendingMessage, assistantMsgId) => {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        setMessages((prev) => prev.map((m) =>
+            m.id === assistantMsgId ? { ...m, uploadStatus: 'uploading', uploadProgress: 0 } : m
+        ));
+
+        const xhr = new XMLHttpRequest();
+        xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+                const pct = Math.round((e.loaded / e.total) * 100);
+                setMessages((prev) => prev.map((m) =>
+                    m.id === assistantMsgId ? { ...m, uploadProgress: pct } : m
+                ));
+            }
+        };
+        xhr.onload = () => {
+            if (xhr.status === 200) {
+                const data = JSON.parse(xhr.responseText);
+                const newFileId = data.file_id || data.id;
+                setMessages((prev) => prev.map((m) =>
+                    m.id === assistantMsgId ? { ...m, uploadPrompt: false, uploadStatus: 'done', text: '' } : m
+                ));
+                setSelectedFileId(newFileId);
+                fetchFiles();
+                // Pass newFileId explicitly to avoid stale selectedFileId closure
+                sendMessage(pendingMessage, newFileId);
+            } else {
+                setMessages((prev) => prev.map((m) =>
+                    m.id === assistantMsgId ? { ...m, uploadStatus: 'error' } : m
+                ));
+            }
+        };
+        xhr.onerror = () => {
+            setMessages((prev) => prev.map((m) =>
+                m.id === assistantMsgId ? { ...m, uploadStatus: 'error' } : m
+            ));
+        };
+        xhr.open('POST', `${API_BASE}/api/upload`);
+        const token = getToken();
+        const bypassAuth = import.meta.env.DEV && import.meta.env.VITE_BYPASS_AUTH === 'true';
+        if (token && !bypassAuth) {
+            xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+        }
+        xhr.send(formData);
+    }, [fetchFiles, sendMessage]);
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -341,9 +468,51 @@ const AIAssistant = () => {
                                     </div>
                                 )}
                                 <div className="ai-chat-bubble-wrap">
-                                    {msg.progress ? (
+                                    {msg.uploadPrompt ? (
+                                        <div className="ai-chat-bubble ai-chat-bubble--upload">
+                                            <p className="ai-upload-prompt-text">
+                                                To run an analysis, please upload a dataset first.
+                                            </p>
+                                            {msg.uploadStatus === 'uploading' && (
+                                                <p className="ai-upload-progress-text">Uploading… {msg.uploadProgress ?? 0}%</p>
+                                            )}
+                                            {msg.uploadStatus === 'error' && (
+                                                <p className="ai-upload-error-text">Upload failed. Please try again.</p>
+                                            )}
+                                            {msg.uploadStatus !== 'uploading' && (
+                                                <label className="ai-upload-inline-btn">
+                                                    Browse or drop a file
+                                                    <input
+                                                        type="file"
+                                                        hidden
+                                                        accept=".csv,.xlsx,.xls,.json"
+                                                        onChange={(e) => {
+                                                            const f = e.target.files?.[0];
+                                                            if (f) handleInlineUpload(f, msg.pendingMessage, msg.id);
+                                                            e.target.value = '';
+                                                        }}
+                                                    />
+                                                </label>
+                                            )}
+                                        </div>
+                                    ) : msg.progress ? (
                                         <div className="ai-chat-bubble">
                                             <ProgressStep {...msg.progress} />
+                                        </div>
+                                    ) : msg.c1Dsl ? (
+                                        // C1 interactive UI (analysis mode with Thesys)
+                                        <div className="ai-chat-bubble ai-chat-bubble--c1">
+                                            <C1Message
+                                                dsl={msg.c1Dsl}
+                                                isStreaming={msg.streaming}
+                                                onAction={({ type, params }) => {
+                                                    if (type === 'continue_conversation' && params?.llmFriendlyMessage) {
+                                                        sendMessage(params.llmFriendlyMessage);
+                                                    } else if (type === 'start_chat_with_prompt' && params?.prompt) {
+                                                        navigate('/ai-analytics/assistant', { state: { initialPrompt: params.prompt } });
+                                                    }
+                                                }}
+                                            />
                                         </div>
                                     ) : (
                                         <div className="ai-chat-bubble">
@@ -413,10 +582,16 @@ const AIAssistant = () => {
                 </div>
             </div>
             
-            <AnalyticsPopup 
-                isOpen={showAnalyticsPopup} 
-                onClose={() => setShowAnalyticsPopup(false)} 
-                onSuggestionClick={sendMessage} 
+            <AnalyticsPopup
+                isOpen={showAnalyticsPopup}
+                onClose={() => setShowAnalyticsPopup(false)}
+                onSuggestionClick={sendMessage}
+            />
+
+            <PricingModal
+                isOpen={showPricingModal}
+                onClose={closePricingModal}
+                limitError={limitError}
             />
         </div>
     );

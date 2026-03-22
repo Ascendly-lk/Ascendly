@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:8000`;
 
 export function getToken() {
   return localStorage.getItem("ascendly_token");
@@ -35,6 +35,8 @@ export async function apiFetch(path, options = {}) {
 
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
+  } else if (import.meta.env.DEV && import.meta.env.VITE_BYPASS_AUTH === 'true') {
+    headers["Authorization"] = "Bearer BYPASS";
   }
 
   // Only set Content-Type for non-FormData bodies

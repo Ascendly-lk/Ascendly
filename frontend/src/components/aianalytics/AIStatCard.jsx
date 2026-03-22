@@ -1,6 +1,7 @@
+import SparklineChart from './SparklineChart';
 import './AIStatCard.css';
 
-const AIStatCard = ({ icon, title, value, change, variant = 'dark' }) => {
+const AIStatCard = ({ icon, title, value, change, variant = 'dark', sparkData }) => {
     const isPositive = change && change.startsWith('+');
 
     return (
@@ -19,6 +20,14 @@ const AIStatCard = ({ icon, title, value, change, variant = 'dark' }) => {
                 <p className="ai-stat-card__title">{title}</p>
                 <p className="ai-stat-card__value">{value}</p>
             </div>
+            {sparkData && sparkData.length >= 2 && (
+                <div className="ai-stat-card__sparkline">
+                    <SparklineChart
+                        data={sparkData}
+                        color={isPositive ? '#4ade80' : '#f87171'}
+                    />
+                </div>
+            )}
         </div>
     );
 };
