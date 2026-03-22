@@ -31,6 +31,17 @@ Thumbs.db
 
 
 # =====================
+# Python virtual environments
+# =====================
+venv/
+.venv/
+backend/venv/
+backend/.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# =====================
 # Uploads (user data)
 # =====================
 backend/uploads
