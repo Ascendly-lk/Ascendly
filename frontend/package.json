@@ -10,15 +10,26 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@crayonai/react-core": "^0.7.7",
+    "@crayonai/react-ui": "^0.9.16",
+    "@crayonai/stream": "^0.6.4",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-popover": "^1.1.15",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-tooltip": "^1.2.8",
     "@supabase/supabase-js": "^2.98.0",
+    "@thesysai/genui-sdk": "^0.8.6",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.577.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-is": "^19.2.4",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.13.0",
-    "recharts": "^3.8.0"
+    "recharts": "^3.8.0",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

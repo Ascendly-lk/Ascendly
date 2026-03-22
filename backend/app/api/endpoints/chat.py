@@ -211,8 +211,65 @@ async def _stream_quick_response(
         yield _sse({"type": "error", "content": "I'm having trouble processing your request right now. Please try again."})
 
 
+async def _stream_c1_response(data: dict, message: str, dataset_name: str, message_id: str):
+    """
+    Call the Thesys C1 API with structured analysis data and stream the result.
+
+    Yields c1_chunk / c1_done SSE events.
+    Each chunk content is base64-encoded to prevent newlines from breaking SSE framing.
+    Falls back to yielding a plain 'result' event if THESYS_API_KEY is not set.
+    message_id is passed in (not generated here) so all events share the same ID.
+    """
+    import base64
+    import os as _os
+
+    if not _os.environ.get("THESYS_API_KEY"):
+        # Graceful fallback — no C1 key configured
+        text = _format_analysis_text(data)
+        yield _sse({"type": "result", "text": text, "message_id": message_id})
+        return
+
+    try:
+        from ai_engine.c1_client import get_c1_client, ASCENDLY_C1_SYSTEM_PROMPT, C1_METADATA, C1_MODEL
+
+        client = get_c1_client()
+
+        # Filter out raw historical array to keep prompt size manageable
+        # and avoid sending large portions of user data to Thesys
+        filtered_data = {k: v for k, v in data.items() if k != "historical"}
+        if "historical" in data and isinstance(data.get("historical"), list):
+            filtered_data["historical_count"] = len(data["historical"])
+
+        system_content = ASCENDLY_C1_SYSTEM_PROMPT + json.dumps(filtered_data, indent=2, default=str)
+
+        stream = await client.chat.completions.create(
+            model=C1_MODEL,
+            messages=[
+                {"role": "system", "content": system_content},
+                {"role": "user", "content": f"Dataset: {dataset_name}. {message}"},
+            ],
+            max_tokens=1500,
+            metadata=C1_METADATA,
+            stream=True,
+        )
+
+        async for chunk in stream:
+            token = chunk.choices[0].delta.content or ""
+            if token:
+                encoded = base64.b64encode(token.encode()).decode()
+                yield _sse({"type": "c1_chunk", "content": encoded, "message_id": message_id})
+
+        yield _sse({"type": "c1_done", "message_id": message_id})
+
+    except Exception as e:
+        print(f"[chat] _stream_c1_response error: {e}")
+        # Fall back to markdown on C1 failure
+        text = _format_analysis_text(data)
+        yield _sse({"type": "result", "text": text, "message_id": message_id})
+
+
 async def _stream_analysis_response(message: str, user_id: str, dataset_id: str):
-    """Stream analysis progress steps then final result."""
+    """Stream analysis progress steps then final result via C1 or markdown fallback."""
     try:
         from ai_engine.crew import run_analyst_step, run_forecaster_step, run_strategist_step, parse_outputs
 
@@ -227,8 +284,17 @@ async def _stream_analysis_response(message: str, user_id: str, dataset_id: str)
 
         result = parse_outputs(analyst_output, forecast_output, strategist_output, 0)
         data = result.get("data", {})
-        text = _format_analysis_text(data)
         message_id = str(uuid.uuid4())
+
+        # Resolve dataset name for C1 context
+        dataset_name = "your dataset"
+        try:
+            client = get_supabase_client()
+            row = client.table("uploaded_files").select("filename").eq("id", dataset_id).execute()
+            if row.data:
+                dataset_name = row.data[0].get("filename", dataset_name)
+        except Exception:
+            pass
 
         # Persist insights
         try:
@@ -251,12 +317,16 @@ async def _stream_analysis_response(message: str, user_id: str, dataset_id: str)
                 "request_id": message_id,
                 "agent_name": "chat-analysis",
                 "tool_output": message,
-                "final_answer": text[:1000],
+                "final_answer": json.dumps(data)[:1000],
             })
         except Exception:
             pass
 
-        yield _sse({"type": "result", "text": text, "message_id": message_id})
+        # Stream via C1 (or fallback to markdown if key missing / C1 fails)
+        # Pass the shared message_id so all events (c1_chunk, c1_done, result) use the same ID
+        async for event in _stream_c1_response(data, message, dataset_name, message_id):
+            yield event
+
         yield _sse({"type": "done", "message_id": message_id})
 
     except Exception as e:
