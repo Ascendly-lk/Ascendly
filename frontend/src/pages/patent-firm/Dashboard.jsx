@@ -250,7 +250,8 @@ const PatentFirmDashboard = () => {
                 </div>
 
                 {/* Additional Cards */}
-                <div className="pf-card pf-activity-card">
+                <div className="dashboard-row pf-row-2">
+                    <div className="pf-card pf-activity-card" style={{ marginBottom: 0 }}>
                     <div className="pf-card-header no-icon">
                         <h3>Recent Activity</h3>
                     </div>
@@ -276,7 +277,7 @@ const PatentFirmDashboard = () => {
                     </div>
                 </div>
 
-                <div className="pf-card pf-performance-card">
+                <div className="pf-card pf-performance-card" style={{ marginBottom: 0 }}>
                     <div className="pf-card-header">
                         {trendUpIcon}
                         <h3>Firm Performance</h3>
@@ -308,6 +309,7 @@ const PatentFirmDashboard = () => {
                             <div className="pf-progress-bar"><div className="pf-progress-fill" style={{ width: '85%' }}></div></div>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
         </div>
