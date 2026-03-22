@@ -15,7 +15,6 @@ import Clients from './pages/BusinessAdvisory/Clients';
 import Projects from './pages/BusinessAdvisory/Projects';
 import MarketingAgencyProjects from './pages/marketing-agency/Projects';
 import CalendarPage from './pages/BusinessAdvisory/Calendar';
-import Payments from './pages/BusinessAdvisory/Payments';
 import EditProfile from './components/dashboard/EditProfile';
 import Settings from './components/dashboard/Settings';
 import NotificationsPage from './pages/BusinessAdvisory/Notifications';
