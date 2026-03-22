@@ -179,12 +179,9 @@ export default function CalendarPage() {
     <div className="dashboard-container">
       <Sidebar />
 
-      <main className="calendar-main" style={{ marginLeft: '260px', flexGrow: 1, minWidth: 0, padding: '28px 40px' }}>
-        <TopHeader showWelcome={false} />
-
-        <header className="calendar-header">
-          <h1>Calendar</h1>
-        </header>
+      <main className="calendar-main" style={{ marginLeft: '260px', flexGrow: 1, minWidth: 0, padding: '28px 40px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ width: '100%', maxWidth: '1400px', margin: '0 auto' }}>
+          <TopHeader showWelcome={false} title="Calendar" />
 
         <section className="calendar-cards-row">
           <article className="meeting-card">
@@ -309,6 +306,7 @@ export default function CalendarPage() {
             )}
           </article>
         </section>
+        </div>
       </main>
     </div>
   );

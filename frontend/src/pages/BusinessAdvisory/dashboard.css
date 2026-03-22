@@ -235,12 +235,12 @@ body {
   min-height: 150px;
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all 0.3s ease;
 }
 
-.stat-card.primary {
-  background: var(--gradient-cyan);
-  color: #000;
-  border: none;
+.stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
 }
 
 .stat-header {
@@ -331,6 +331,12 @@ body {
   padding: 20px;
   border: 1px solid rgba(255, 255, 255, 0.04);
   height: 100%;
+  transition: all 0.3s ease;
+}
+
+.action-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
 }
 
 /* Profile Action Card */
@@ -473,11 +479,33 @@ body {
   gap: 20px;
 }
 
+.stat-card.primary {
+  background: linear-gradient(135deg, #00ffef 0%, #0f1720 100%) !important;
+  border: 1px solid rgba(0, 255, 239, 0.4) !important;
+  color: #fff !important;
+}
+
+.stat-card.primary:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0, 255, 239, 0.2);
+}
+
+.stat-card.primary .stat-label, 
+.stat-card.primary .stat-change,
+.stat-card.primary .icon-box {
+  color: #fff !important;
+}
 .status-card-small {
   background-color: var(--card-bg-lighter);
   border-radius: 12px;
   padding: 16px 18px;
   border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all 0.3s ease;
+}
+
+.status-card-small:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 .status-header {
