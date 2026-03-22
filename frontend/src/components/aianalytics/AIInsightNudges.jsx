@@ -23,7 +23,7 @@ function generateNudges(metrics) {
 
     if (filesUploaded > 0) {
         nudges.push({
-            label: `Analyse your ${filesUploaded} dataset${filesUploaded > 1 ? 's' : ''}`,
+            label: `Analyze your ${filesUploaded} dataset${filesUploaded > 1 ? 's' : ''}`,
             prompt: 'Analyze my uploaded data and give me a full business summary',
         });
     }

@@ -55,7 +55,14 @@ export default function PricingModal({ isOpen, onClose, limitError }) {
 
   if (!isOpen) return null;
 
-  const limitMsg = limitError
+  const hasLimitDetails =
+    limitError &&
+    typeof limitError.used === 'number' &&
+    typeof limitError.limit === 'number' &&
+    typeof limitError.action === 'string' &&
+    limitError.limit > 0;
+
+  const limitMsg = hasLimitDetails
     ? `You've used ${limitError.used}/${limitError.limit} ${limitError.action === 'analysis' ? 'analyses' : 'chat queries'} this month.`
     : null;
 
@@ -136,11 +143,11 @@ export default function PricingModal({ isOpen, onClose, limitError }) {
                   </ul>
 
                   <button
-                    className={`pricing-upgrade-btn ${tier.id === 'free' ? 'pricing-upgrade-btn-secondary' : 'pricing-upgrade-btn-primary'}`}
+                    className={`pricing-upgrade-btn ${suggestion?.current_tier === tier.id ? 'pricing-upgrade-btn-secondary' : 'pricing-upgrade-btn-primary'}`}
                     onClick={() => handleUpgrade(tier.id)}
-                    disabled={upgradeStatus === 'loading'}
+                    disabled={upgradeStatus === 'loading' || suggestion?.current_tier === tier.id}
                   >
-                    {tier.id === 'free' ? 'Current Plan' : 'Upgrade'}
+                    {suggestion?.current_tier === tier.id ? 'Current Plan' : 'Upgrade'}
                   </button>
                 </div>
               );

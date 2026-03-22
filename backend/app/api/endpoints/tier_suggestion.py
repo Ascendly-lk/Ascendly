@@ -72,7 +72,7 @@ async def suggest_tier(current_user=Depends(require_auth)):
 
     try:
         params = get_litellm_params()
-        response = litellm.completion(
+        response = await litellm.acompletion(
             model=params["model"],
             messages=[{"role": "user", "content": prompt}],
             max_tokens=150,

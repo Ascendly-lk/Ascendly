@@ -27,8 +27,8 @@ export function useUsageGuard() {
           return res; // caller can check res.status === 429
         }
       } catch {
-        // non-JSON 429 — still surface modal
-        setLimitError({ code: 'LIMIT_REACHED', tier: 'free' });
+        // non-JSON 429 — surface modal with sensible defaults so UI renders cleanly
+        setLimitError({ code: 'LIMIT_REACHED', tier: 'free', action: 'requests', used: 0, limit: 0 });
         setShowPricingModal(true);
       }
     }

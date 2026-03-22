@@ -9,16 +9,54 @@ Raises HTTPException(429) with a structured payload when the limit is reached.
 """
 from datetime import datetime, timezone
 from fastapi import HTTPException
+from cachetools import TTLCache
 from database.supabase_client import get_supabase_admin
 
-# Tier limits: -1 = unlimited
-TIER_LIMITS = {
+# Hardcoded fallback — used only when DB is unavailable.
+# subscription_tiers table is the authoritative source of truth.
+_FALLBACK_LIMITS = {
     "free":    {"analysis": 3,   "chat": 10},
     "starter": {"analysis": 10,  "chat": 50},
     "pro":     {"analysis": -1,  "chat": -1},
 }
 
+# Keep TIER_LIMITS exported for backward-compat imports in other modules
+TIER_LIMITS = _FALLBACK_LIMITS
+
 DEFAULT_TIER = "free"
+
+# Cache tier limits from DB for 5 minutes to avoid per-request DB calls
+_limits_cache: TTLCache = TTLCache(maxsize=1, ttl=300)
+
+
+def _load_tier_limits(admin) -> dict:
+    """
+    Fetch tier limits from subscription_tiers table.
+    Falls back to _FALLBACK_LIMITS on error.
+    Cached for 5 minutes so pricing and enforcement share one source of truth.
+    """
+    cached = _limits_cache.get("limits")
+    if cached is not None:
+        return cached
+
+    try:
+        res = admin.table("subscription_tiers").select(
+            "id,analyses_per_month,chat_queries_per_month"
+        ).execute()
+        if res.data:
+            loaded = {
+                row["id"]: {
+                    "analysis": row["analyses_per_month"],
+                    "chat": row["chat_queries_per_month"],
+                }
+                for row in res.data
+            }
+            _limits_cache["limits"] = loaded
+            return loaded
+    except Exception as e:
+        print(f"[usage_guard] Failed to load tier limits from DB, using fallback: {e}")
+
+    return _FALLBACK_LIMITS
 
 
 def _get_profile(admin, user_id: str) -> dict:
@@ -29,9 +67,12 @@ def _get_profile(admin, user_id: str) -> dict:
 
 
 def _count_usage(admin, user_id: str, action: str, since: str) -> int:
-    """Count ai_logs rows for this user since billing period start."""
-    # action maps: "analysis" → agent_name contains "analyst"/"forecaster"/"strategist"
-    #              "chat"     → agent_name = "quick_chat"
+    """Count ai_logs rows for this user since billing period start.
+
+    agent_name values (set by chat.py):
+      "chat-quick"    → quick chat queries
+      "chat-analysis" → full CrewAI analysis pipeline
+    """
     query = (
         admin.table("ai_logs")
         .select("id", count="exact")
@@ -39,11 +80,9 @@ def _count_usage(admin, user_id: str, action: str, since: str) -> int:
         .gte("created_at", since)
     )
     if action == "analysis":
-        # Any of the pipeline agents indicates one analysis step — count distinct sessions
-        # Simpler: count rows where agent_name != 'quick_chat'
-        query = query.neq("agent_name", "quick_chat")
+        query = query.eq("agent_name", "chat-analysis")
     else:
-        query = query.eq("agent_name", "quick_chat")
+        query = query.eq("agent_name", "chat-quick")
 
     res = query.execute()
     return res.count or 0
@@ -61,7 +100,8 @@ async def check_usage_limit(user_id: str, action: str) -> None:
     tier = profile.get("subscription_tier") or DEFAULT_TIER
     billing_start = profile.get("billing_period_start")
 
-    limits = TIER_LIMITS.get(tier, TIER_LIMITS[DEFAULT_TIER])
+    tier_limits = _load_tier_limits(admin)
+    limits = tier_limits.get(tier, tier_limits.get(DEFAULT_TIER, _FALLBACK_LIMITS[DEFAULT_TIER]))
     limit = limits.get(action, 0)
 
     # Unlimited tier — skip check
