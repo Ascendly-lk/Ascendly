@@ -1,0 +1,63 @@
+.c1-upload-zone {
+    border: 2px dashed rgba(99, 102, 241, 0.5);
+    border-radius: 12px;
+    padding: 32px 24px;
+    text-align: center;
+    cursor: pointer;
+    background: rgba(99, 102, 241, 0.05);
+    transition: border-color 0.2s, background 0.2s;
+    min-width: 280px;
+}
+
+.c1-upload-zone:hover,
+.c1-upload-zone:focus {
+    border-color: #6366f1;
+    background: rgba(99, 102, 241, 0.1);
+    outline: none;
+}
+
+.c1-upload-zone--uploading,
+.c1-upload-zone--done {
+    cursor: default;
+}
+
+.c1-upload-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.c1-upload-primary {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #e2e8f0;
+    margin: 0 0 4px;
+}
+
+.c1-upload-secondary {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    margin: 0 0 8px;
+}
+
+.c1-upload-progress {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    margin-top: 8px;
+    accent-color: #6366f1;
+}
+
+.c1-upload-done {
+    color: #10b981;
+}
+
+.c1-upload-error {
+    color: #f43f5e;
+}
+
+.c1-upload-hint {
+    display: block;
+    margin-top: 12px;
+    font-size: 0.75rem;
+    color: #64748b;
+}
