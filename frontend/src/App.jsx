@@ -31,7 +31,9 @@ import PatentPage from "./pages/dashboard/PatentPage";
 import InvestorsPage from "./pages/dashboard/InvestorsPage";
 import TiersPage from "./pages/dashboard/TiersPage";
 import AdvisorsPage from "./pages/dashboard/AdvisorsPage";
+import MarketingAgency from "./pages/dashboard/MarketingAgency";
 import DocumentReview from "./pages/patent-firm/DocumentReview";
+import PaymentPortal from "./pages/PaymentPortal";
 
 // Patent Firm
 import PatentFirmDashboard from "./pages/patent-firm/Dashboard";
