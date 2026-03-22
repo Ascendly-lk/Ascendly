@@ -52,3 +52,10 @@ backend/init_patent_db.py
 backend/test_out*.txt
 backend/*.bat
 git_status.txt
+
+# =====================
+# Internal planning docs (local only)
+# =====================
+PHASE2_PLAN.md
+*.Dataset.csv
+*.csv
