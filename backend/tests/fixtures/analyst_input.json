@@ -1,0 +1,16 @@
+{
+  "cleaned_data": [
+    {"month": "2024-01", "revenue": 10000, "users": 120, "churn_rate": 0.05},
+    {"month": "2024-02", "revenue": 11000, "users": 135, "churn_rate": 0.04},
+    {"month": "2024-03", "revenue": 12500, "users": 148, "churn_rate": 0.04},
+    {"month": "2024-04", "revenue": 13200, "users": 160, "churn_rate": 0.03},
+    {"month": "2024-05", "revenue": 14800, "users": 175, "churn_rate": 0.03},
+    {"month": "2024-06", "revenue": 16000, "users": 190, "churn_rate": 0.03}
+  ],
+  "metrics": {
+    "avg_monthly_growth_rate": 0.098,
+    "total_revenue": 77500,
+    "avg_churn_rate": 0.037,
+    "revenue_trend": "increasing"
+  }
+}

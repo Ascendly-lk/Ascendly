@@ -1,0 +1,54 @@
+name: CI — LLM Judge Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Why are you running LLM judge tests?"
+        required: false
+        default: "Manual quality check"
+
+jobs:
+  llm-judge:
+    name: DeepEval LLM-judge (Azure GPT-4o)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements-test.txt') }}
+          restore-keys: ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements-test.txt
+
+      - name: Run LLM judge tests
+        working-directory: backend
+        env:
+          ASCENDLY_LLM_JUDGE: "true"
+          PHOENIX_ENABLED: "false"
+          AI_PROVIDER: "azure"
+          AZURE_API_KEY: ${{ secrets.AZURE_API_KEY }}
+          AZURE_ENDPOINT: ${{ secrets.AZURE_ENDPOINT }}
+          AZURE_API_VERSION: ${{ secrets.AZURE_API_VERSION }}
+          AZURE_DEPLOYMENT_NAME: "gpt-4o"
+          CREWAI_LLM_MODEL: "azure/gpt-4o"
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          pytest tests/test_llm_judge.py \
+            -v --tb=short --no-header \
+            -p no:warnings
