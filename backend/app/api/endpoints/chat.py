@@ -19,6 +19,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from typing import Literal, Optional
 from database.supabase_client import require_auth, get_supabase_client, insert_record
+from app.api.middleware.usage_guard import check_usage_limit
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -371,6 +372,9 @@ async def chat(
 
     history = [{"role": h.role, "content": h.content} for h in (request.history or [])]
     is_analysis = _is_analysis_request(message, request.dataset_id)
+
+    # Enforce usage limits before starting any generation
+    await check_usage_limit(user_id, "analysis" if is_analysis else "chat")
 
     generator = (
         _stream_analysis_response(message, user_id, request.dataset_id)
