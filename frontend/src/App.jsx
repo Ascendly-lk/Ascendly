@@ -51,6 +51,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/payment" element={<PaymentPortal />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           <Route
             path="/account"
@@ -71,7 +73,6 @@ function App() {
           >
             <Route index element={<Navigate to="startup" replace />} />
             <Route path="startup" element={<StartupDashboard />} />
-            <Route path="logistics" element={<LogisticsPage />} />
             <Route path="patent" element={<PatentPage />} />
             <Route path="investors" element={<InvestorsPage />} />
             <Route path="tiers" element={<TiersPage />} />

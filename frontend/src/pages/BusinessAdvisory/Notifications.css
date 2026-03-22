@@ -5,7 +5,6 @@
 .notifications-layout {
   display: flex;
   min-height: 100vh;
-  background: #050509;
 }
 
 .notifications-page {
@@ -13,7 +12,6 @@
   min-width: 0;
   min-height: 100vh;
   padding: 24px 40px;
-  background: #050509;
   color: #ffffff;
   overflow-x: hidden;
   overflow-y: auto;

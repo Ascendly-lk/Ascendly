@@ -1,0 +1,197 @@
+/* ── Overlay ── */
+.pricing-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+/* ── Modal container ── */
+.pricing-modal {
+  background: #0f1117;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 1.25rem;
+  padding: 2rem;
+  width: 100%;
+  max-width: 860px;
+  position: relative;
+  color: #e2e8f0;
+  box-shadow: 0 0 60px rgba(99, 102, 241, 0.15);
+}
+
+/* ── Close button ── */
+.pricing-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+.pricing-close-btn:hover { color: #e2e8f0; }
+.pricing-close-icon { width: 20px; height: 20px; }
+
+/* ── Header ── */
+.pricing-header { margin-bottom: 1.25rem; text-align: center; }
+.pricing-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  background: linear-gradient(135deg, #818cf8, #6366f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.pricing-limit-msg {
+  font-size: 0.875rem;
+  color: #f59e0b;
+  margin: 0;
+}
+
+/* ── AI Suggestion Banner ── */
+.pricing-suggestion-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 0.625rem;
+  padding: 0.625rem 1rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.85rem;
+  color: #a5b4fc;
+}
+.pricing-spark-icon { width: 16px; height: 16px; color: #818cf8; flex-shrink: 0; }
+
+/* ── Tier Grid ── */
+.pricing-tiers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.pricing-loading {
+  text-align: center;
+  color: #64748b;
+  padding: 2rem;
+}
+
+/* ── Tier Card ── */
+.pricing-tier-card {
+  background: #1a1d2e;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: relative;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.pricing-tier-card:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  transform: translateY(-2px);
+}
+
+.pricing-tier-popular {
+  border-color: rgba(99, 102, 241, 0.5);
+  background: #1e2140;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+}
+
+.pricing-tier-suggested {
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+/* ── Badges ── */
+.pricing-badge {
+  position: absolute;
+  top: -0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.625rem;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+.pricing-badge-popular { background: #6366f1; color: #fff; }
+.pricing-badge-ai { background: #10b981; color: #fff; }
+
+/* ── Tier Name & Price ── */
+.pricing-tier-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+.pricing-tier-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+.pricing-price-free { font-size: 1.5rem; font-weight: 700; color: #64748b; }
+.pricing-price-amount { font-size: 1.75rem; font-weight: 700; color: #e2e8f0; }
+.pricing-price-period { font-size: 0.875rem; color: #64748b; }
+
+/* ── Features List ── */
+.pricing-features-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+}
+.pricing-features-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+.pricing-check-icon { width: 14px; height: 14px; color: #6366f1; flex-shrink: 0; }
+
+/* ── Upgrade Button ── */
+.pricing-upgrade-btn {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s, transform 0.15s;
+  margin-top: auto;
+}
+.pricing-upgrade-btn:hover:not(:disabled) { opacity: 0.85; transform: translateY(-1px); }
+.pricing-upgrade-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.pricing-upgrade-btn-primary {
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+  color: #fff;
+}
+.pricing-upgrade-btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: #64748b;
+  cursor: default;
+}
+
+/* ── Status messages ── */
+.pricing-status-msg {
+  text-align: center;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+}
+.pricing-status-demo { color: #a5b4fc; }
+.pricing-status-error { color: #f87171; }
