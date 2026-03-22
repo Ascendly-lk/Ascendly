@@ -7,21 +7,21 @@ import {
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-import Login from './pages/Login';
-import Register from './pages/Register';
-import DashboardPlaceholder from './pages/DashboardPlaceholder';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import DashboardPlaceholder from './pages/auth/DashboardPlaceholder';
 import Dashboard from './pages/BusinessAdvisory/Dashboard';
 import Clients from './pages/BusinessAdvisory/Clients';
 import Projects from './pages/BusinessAdvisory/Projects';
 import MarketingAgencyProjects from './pages/marketing-agency/Projects';
 import CalendarPage from './pages/BusinessAdvisory/Calendar';
 import Payments from './pages/BusinessAdvisory/Payments';
-import EditProfile from './components/dashboard/editProfile';
+import EditProfile from './components/dashboard/EditProfile';
 import Settings from './components/dashboard/Settings';
 import NotificationsPage from './pages/BusinessAdvisory/Notifications';
-import AccountPage from './pages/AccountPage';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
+import AccountPage from './pages/auth/AccountPage';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 import DashboardLayout from './pages/BusinessAdvisory/DashboardLayout';
 import StartupDashboard from './pages/dashboard/StartupDashboard';
 import AIAnalyticsDashboard from './pages/aianalytics/AIAnalyticsDashboard';
@@ -34,7 +34,7 @@ import TiersPage from './pages/dashboard/TiersPage';
 import AdvisorsPage from './pages/dashboard/AdvisorsPage';
 import MarketingAgency from './pages/dashboard/MarketingAgency';
 import DocumentReview from './pages/patent-firm/DocumentReview';
-import PaymentPortal from './pages/PaymentPortal';
+import PaymentPortal from './pages/auth/PaymentPortal';
 
 // Patent Firm
 import PatentFirmDashboard from "./pages/patent-firm/Dashboard";
