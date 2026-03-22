@@ -71,8 +71,9 @@ export default function Projects() {
     <div className="dashboard-container">
       <Sidebar />
 
-      <main className="projects-main" style={{ marginLeft: '260px', flexGrow: 1, minWidth: 0, padding: '28px 40px' }}>
-        <TopHeader showWelcome={false} />
+      <main className="projects-main" style={{ marginLeft: '260px', flexGrow: 1, minWidth: 0, padding: '28px 40px', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ width: '100%', maxWidth: '1400px' }}>
+          <TopHeader showWelcome={false} />
 
         <header className="projects-header">
           <h1>Projects</h1>
@@ -137,6 +138,7 @@ export default function Projects() {
             </article>
           ))}
         </section>
+        </div>
       </main>
     </div>
   );
