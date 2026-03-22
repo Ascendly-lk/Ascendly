@@ -5,6 +5,8 @@ import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
 import { apiFetch } from '../../api';
 import AnalyticsPopup from '../../components/aianalytics/AnalyticsPopup';
 import C1Message from '../../components/aianalytics/C1Message';
+import PricingModal from '../../components/aianalytics/PricingModal';
+import { useUsageGuard } from '../../hooks/useUsageGuard';
 import { BarChart2, FileDown } from 'lucide-react';
 import './AIAssistant.css';
 
@@ -89,6 +91,8 @@ const AIAssistant = () => {
     // Accumulates C1 DSL chunks keyed by assistantMsgId
     const c1AccumulatorRef = useRef({});
 
+    const { guardedFetch, showPricingModal, limitError, closePricingModal } = useUsageGuard();
+
     // Keep a ref to messages for history building without adding to sendMessage deps
     const messagesRef = useRef(messages);
     useEffect(() => { messagesRef.current = messages; }, [messages]);
@@ -135,10 +139,22 @@ const AIAssistant = () => {
             const body = { message: trimmed, history };
             if (selectedFileId) body.dataset_id = selectedFileId;
 
-            const res = await apiFetch('/api/chat', {
+            const res = await guardedFetch('/api/chat', {
                 method: 'POST',
                 body: JSON.stringify(body),
             });
+
+            if (res.status === 429) {
+                // Usage limit hit — modal already opened by guardedFetch
+                setMessages((prev) =>
+                    prev.map((m) =>
+                        m.id === assistantMsgId
+                            ? { ...m, text: "You've reached your plan limit. Please upgrade to continue.", streaming: false }
+                            : m
+                    )
+                );
+                return;
+            }
 
             if (!res.ok) {
                 const data = await res.json().catch(() => ({}));
@@ -464,10 +480,16 @@ const AIAssistant = () => {
                 </div>
             </div>
             
-            <AnalyticsPopup 
-                isOpen={showAnalyticsPopup} 
-                onClose={() => setShowAnalyticsPopup(false)} 
-                onSuggestionClick={sendMessage} 
+            <AnalyticsPopup
+                isOpen={showAnalyticsPopup}
+                onClose={() => setShowAnalyticsPopup(false)}
+                onSuggestionClick={sendMessage}
+            />
+
+            <PricingModal
+                isOpen={showPricingModal}
+                onClose={closePricingModal}
+                limitError={limitError}
             />
         </div>
     );
