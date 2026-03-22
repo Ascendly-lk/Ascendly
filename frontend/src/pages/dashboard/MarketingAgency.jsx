@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import BookingModal from '../../components/dashboard/BookingModal';
 import { getSubscriptionPlan } from '../../utils/auth';
+import TopBar from '../../components/dashboard/TopBar';
 import './MarketingAgency.css';
 
 /* ── Marketing Agency data (from mockup) ─────────────────────────────────── */
@@ -81,37 +82,8 @@ const MarketingAgency = () => {
     return (
         <div className="ma-main">
             {/* ── Top Bar ── */}
-            <div className="ma-topbar">
-                <h2 className="ma-topbar-title">Marketing Agency Network</h2>
-                <div className="ma-topbar-right">
-                    <div className="ma-search">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
-                        </svg>
-                        <input type="text" placeholder="Search" />
-                    </div>
-                    <div className="ma-topbar-icons">
-                        <button className="ma-icon-btn" aria-label="Notifications">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
-                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                            </svg>
-                        </button>
-                        <button className="ma-icon-btn" aria-label="Settings">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
-                                <circle cx="12" cy="12" r="3" />
-                                <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24" />
-                            </svg>
-                        </button>
-                        <button className="ma-icon-btn" aria-label="Profile">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                <circle cx="12" cy="7" r="4" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
+            {/* ── Top Bar ── */}
+            <TopBar title="Marketing Agency Network" />
 
             {/* ── Content ── */}
             <div className="ma-content">
