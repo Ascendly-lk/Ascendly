@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import './Login.css';
-import { login, getRoleDashboardRoute, signInWithGoogle, completeProfile } from '../utils/auth';
-import { useAuth } from '../context/AuthContext';
+import { login, getRoleDashboardRoute, signInWithGoogle, completeProfile } from '../../utils/auth';
+import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
     const navigate = useNavigate();

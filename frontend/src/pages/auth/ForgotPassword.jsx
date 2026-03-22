@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { resetPasswordForEmail } from '../utils/auth';
+import { resetPasswordForEmail } from '../../utils/auth';
 import './Login.css';
 
 const ForgotPassword = () => {

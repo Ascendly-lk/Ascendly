@@ -1,12 +1,9 @@
 import React from "react";
 import Sidebar from "./Sidebar";
-<<<<<<<< HEAD:frontend/src/pages/BusinessAdvisory/editProfile.jsx
 import TopHeader from "../../components/TopHeader";
-========
-import TopBar from "./TopBar";
-import "../../pages/BusinessAdvisory/DashboardLayout.css";
->>>>>>>> 14a6b947e18eb3ba16d59f179481dc0fe835a2db:frontend/src/components/dashboard/editProfile.jsx
+import "./EditProfile.css";
 import "./editProfile.css";
+
 
 const EditProfile = () => {
   return (

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Register.css'; // Using the Register specific css
-import { register, signInWithGoogle, getRoleDashboardRoute } from '../utils/auth';
-import { useAuth } from '../context/AuthContext';
+import { register, signInWithGoogle, getRoleDashboardRoute } from '../../utils/auth';
+import { useAuth } from '../../context/AuthContext';
 
 const Register = () => {
   const navigate = useNavigate();

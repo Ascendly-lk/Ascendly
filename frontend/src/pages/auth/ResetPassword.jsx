@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { updatePassword, supabase } from '../utils/auth';
+import { updatePassword, supabase } from '../../utils/auth';
 import './Login.css';
 
 const MIN_PASSWORD_LENGTH = 8;

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AccountPage.css';
-import Sidebar from "../components/dashboard/Sidebar";
-import TopBar from "../components/dashboard/TopBar";
+import Sidebar from "../../components/dashboard/Sidebar";
+import TopBar from "../../components/dashboard/TopBar";
 
 const EditProfile = () => {
     return (
