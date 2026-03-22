@@ -19,7 +19,13 @@ from app.api.endpoints.analysis import router as analysis_router
 from app.api.endpoints.dashboard import router as dashboard_router
 from app.api.endpoints.chat import router as chat_router
 from app.api.insights import router as insights_router
+<<<<<<< HEAD
 # from app.api.endpoints.patent_firm import router as patent_firm_router
+=======
+from app.api.endpoints.patent_firm import router as patent_firm_router
+from app.api.endpoints.subscription import router as subscription_router
+from app.api.endpoints.tier_suggestion import router as tier_suggestion_router
+>>>>>>> 14a6b947e18eb3ba16d59f179481dc0fe835a2db
 
 app = FastAPI(
     title="Ascendly API",
@@ -27,9 +33,10 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# CORS — allow Vite frontend dev server (port 5173)
+# CORS — allow Vite frontend dev server (port 5173, etc)
 app.add_middleware(
     CORSMiddleware,
+<<<<<<< HEAD
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
@@ -38,6 +45,9 @@ app.add_middleware(
         "http://127.0.0.1:5174",
         "http://[::1]:5174"
     ],
+=======
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1|\[::1\]|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$",
+>>>>>>> 14a6b947e18eb3ba16d59f179481dc0fe835a2db
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -49,7 +59,13 @@ app.include_router(analysis_router)
 app.include_router(dashboard_router)
 app.include_router(chat_router)
 app.include_router(insights_router)
+<<<<<<< HEAD
 # app.include_router(patent_firm_router)
+=======
+app.include_router(patent_firm_router)
+app.include_router(subscription_router)
+app.include_router(tier_suggestion_router)
+>>>>>>> 14a6b947e18eb3ba16d59f179481dc0fe835a2db
 
 
 # ============ SCHEMAS ============
@@ -273,9 +289,18 @@ async def get_me(current_user=Depends(require_auth)):
             create_profile(upsert_data)
         except Exception as e:
             print(f"[get_me] Profile sync FAILED for {auth_user_id}: {str(e)}")
+<<<<<<< HEAD
             # If this is a first-time Google login, we NEED this profile. 
             # If it fails, we should let the user know why instead of a 404 later.
             raise HTTPException(status_code=500, detail=f"Profile synchronization failed: {str(e)}")
+=======
+            # `profile` holds the record fetched before the sync attempt.
+            # If it was None the user has no existing profile row, so a sync
+            # failure is fatal — raise immediately.  If a profile already existed,
+            # the user can still log in with that record.
+            if not profile:
+                raise HTTPException(status_code=500, detail=f"Profile synchronization failed: {str(e)}")
+>>>>>>> 14a6b947e18eb3ba16d59f179481dc0fe835a2db
             
         profile = get_profile_by_auth_id(auth_user_id)
         is_newly_synced = True

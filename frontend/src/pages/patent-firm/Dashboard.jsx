@@ -1,10 +1,44 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StatCard from "../../components/dashboard/StatCard";
 import TopBar from "../../components/dashboard/TopBar";
+import { fetchDashboardStats, fetchActivities, fetchDashboardPipeline, fetchUrgentActions } from '../../utils/patent-api';
 import "./Dashboard.css";
 
 const PatentFirmDashboard = () => {
     const navigate = useNavigate();
+    const [stats, setStats] = useState(null);
+    const [activity, setActivity] = useState([]);
+    const [pipeline, setPipeline] = useState(null);
+    const [urgent, setUrgent] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [debugError, setDebugError] = useState(null);
+
+    const loadDashboardData = async () => {
+        setLoading(true);
+        setDebugError(null);
+        try {
+            const [statsData, actData, pipeData, urgData] = await Promise.all([
+                fetchDashboardStats(),
+                fetchActivities(),
+                fetchDashboardPipeline(),
+                fetchUrgentActions()
+            ]);
+            setStats(statsData);
+            setActivity(actData);
+            setPipeline(pipeData);
+            setUrgent(urgData);
+        } catch (error) {
+            console.error("Failed to load dashboard data:", error);
+            setDebugError(error.toString());
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        loadDashboardData();
+    }, []);
     // Icons
     const fileIcon = (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" strokeWidth="2">
@@ -82,38 +116,40 @@ const PatentFirmDashboard = () => {
             </div> */}
 
             <div className="dashboard-content pf-content">
+                {debugError && (
+                    <div style={{ background: '#FECDD3', color: '#9F1239', padding: '12px', borderRadius: '8px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div><strong>Debug Error:</strong> {debugError}.</div>
+                        <button onClick={loadDashboardData} style={{ background: '#9F1239', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}>Retry Fetch</button>
+                    </div>
+                )}
                 {/* Row 1: Stat Cards */}
                 <div className="dashboard-row dashboard-stats">
                     <StatCard
                         title="Active Applications"
-                        value="18"
+                        value={stats ? stats.active_applications : "..."}
                         icon={fileIcon}
                         variant="dark"
-                        decoration={<div className="pf-stat-subtitle">+3 this week</div>}
                     />
 
                     <StatCard
                         title="Total Clients"
-                        value="42"
+                        value={stats ? stats.total_clients : "..."}
                         icon={usersIcon}
                         variant="dark"
-                        decoration={<div className="pf-stat-subtitle">+2 new this month</div>}
                     />
 
                     <StatCard
                         title="Pending Reviews"
-                        value="7"
+                        value={stats ? stats.pending_reviews : "..."}
                         icon={clockIcon}
                         variant="dark"
-                        decoration={<div className="pf-stat-subtitle text-orange">Needs attention</div>}
                     />
 
                     <StatCard
-                        title="Revenue (MTD)"
-                        value="$85K"
+                        title="Revenue"
+                        value={stats ? stats.revenue_formatted : "..."}
                         icon={dollarIcon}
                         variant="gradient"
-                        decoration={<div className="pf-stat-subtitle">+12% vs last month</div>}
                     />
                 </div>
 
@@ -121,34 +157,31 @@ const PatentFirmDashboard = () => {
                 <div className="pf-urgent-card">
                     <div className="pf-urgent-header">
                         {warningIcon}
-                        <h2>Urgent: Applications Needing Attention</h2>
+                        <h2>Action Required</h2>
                     </div>
-                    <p className="pf-urgent-desc">These applications have approaching deadlines</p>
 
                     <div className="pf-urgent-list">
-                        <button type="button" className="pf-urgent-item pf-urgent-link" onClick={() => { window.location.href = '/dashboard/patent-firm/applications'; }}>
-                            <div className="pf-urgent-info">
-                                <h3>AI-Powered Task Automation</h3>
-                                <p>TechCo AI • PAT-2026-018</p>
-                                <span className="pf-status-text">Pending Review</span>
-                            </div>
-                            <div className="pf-urgent-actions">
-                                <span className="pf-badge pf-orange-badge">2 days left</span>
-                                <span className="pf-btn-outline">Review →</span>
-                            </div>
-                        </button>
-
-                        <button type="button" className="pf-urgent-item pf-urgent-link" onClick={() => { window.location.href = '/dashboard/patent-firm/applications'; }}>
-                            <div className="pf-urgent-info">
-                                <h3>Smart IoT Sensor System</h3>
-                                <p>IoT Innovations • PAT-2026-015</p>
-                                <span className="pf-status-text">Draft Due</span>
-                            </div>
-                            <div className="pf-urgent-actions">
-                                <span className="pf-badge pf-orange-badge">4 days left</span>
-                                <span className="pf-btn-outline">Review →</span>
-                            </div>
-                        </button>
+                        {urgent.map((item, idx) => {
+                            const dueDate = new Date(item.due_date);
+                            const daysLeft = Math.ceil((dueDate - new Date()) / (1000 * 60 * 60 * 24));
+                            const dueText = daysLeft === 0 ? "Due Today" : daysLeft === 1 ? "Due Tomorrow" : `Due in ${daysLeft} Days`;
+                            
+                            return (
+                                <button key={idx} type="button" className="pf-urgent-item pf-urgent-link" onClick={() => { if(item.file_url) window.open(item.file_url, '_blank'); }}>
+                                    <div className="pf-urgent-info">
+                                        <h3>{item.title}</h3>
+                                        <p>{item.id} • {item.company_name}</p>
+                                    </div>
+                                    <div className="pf-urgent-actions">
+                                        <span className="pf-text-muted" style={{ fontSize: '13px', marginRight: '16px', color: '#9CA3AF' }}>{dueText}</span>
+                                        <span className="pf-btn-outline" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>Open PDF</span>
+                                    </div>
+                                </button>
+                            );
+                        })}
+                        {urgent.length === 0 && (
+                            <div style={{ color: 'var(--text-gray)', padding: '16px 0' }}>No urgent applications immediately due.</div>
+                        )}
                     </div>
                 </div>
 
@@ -160,28 +193,27 @@ const PatentFirmDashboard = () => {
                             {fileIcon}
                             <h3>Application Pipeline</h3>
                         </div>
-                        <p className="pf-card-desc">Track the status of all client applications</p>
 
                         <div className="pf-pipeline-list">
                             <div className="pf-pipeline-item">
                                 <div className="pf-dot dot-orange"></div>
                                 <span className="pf-pipeline-label">Pending Review</span>
-                                <span className="pf-pipeline-val">7</span>
+                                <span className="pf-pipeline-val">{pipeline ? pipeline.pending_review : "..."}</span>
                             </div>
                             <div className="pf-pipeline-item">
                                 <div className="pf-dot dot-blue"></div>
                                 <span className="pf-pipeline-label">In Progress</span>
-                                <span className="pf-pipeline-val">8</span>
+                                <span className="pf-pipeline-val">{pipeline ? pipeline.in_progress : "..."}</span>
                             </div>
                             <div className="pf-pipeline-item">
                                 <div className="pf-dot dot-purple"></div>
                                 <span className="pf-pipeline-label">Filing Ready</span>
-                                <span className="pf-pipeline-val">3</span>
+                                <span className="pf-pipeline-val">{pipeline ? pipeline.filing_ready : "..."}</span>
                             </div>
                             <div className="pf-pipeline-item">
                                 <div className="pf-dot dot-green"></div>
                                 <span className="pf-pipeline-label">Filed/Complete</span>
-                                <span className="pf-pipeline-val">24</span>
+                                <span className="pf-pipeline-val">{pipeline ? pipeline.filed_completed : "..."}</span>
                             </div>
                         </div>
 
@@ -199,13 +231,12 @@ const PatentFirmDashboard = () => {
                         <div className="pf-card-header no-icon">
                             <h3>Quick Actions</h3>
                         </div>
-                        <p className="pf-card-desc">Common tasks and shortcuts</p>
 
                         <div className="pf-quick-list">
-                            <button className="pf-list-btn">
+                            <button className="pf-list-btn" onClick={() => navigate('/dashboard/patent-firm/clients')}>
                                 {usersIcon} View All Clients
                             </button>
-                            <button className="pf-list-btn">
+                            <button className="pf-list-btn" onClick={() => navigate('/dashboard/patent-firm/applications?status=pending_review')}>
                                 {fileIcon} Review Pending Applications
                             </button>
                             <button className="pf-list-btn">
@@ -219,38 +250,34 @@ const PatentFirmDashboard = () => {
                 </div>
 
                 {/* Additional Cards */}
-                <div className="pf-card pf-activity-card">
+                <div className="dashboard-row pf-row-2">
+                    <div className="pf-card pf-activity-card" style={{ marginBottom: 0 }}>
                     <div className="pf-card-header no-icon">
                         <h3>Recent Activity</h3>
                     </div>
                     <p className="pf-card-desc">Latest updates from your clients and team</p>
 
                     <div className="pf-activity-list">
-                        <div className="pf-activity-item">
-                            <div className="pf-icon-circle bg-blue-subtle">{fileIcon}</div>
-                            <div className="pf-activity-info">
-                                <h4>New application submitted by TechCo AI</h4>
-                                <p>TechCo AI • 2 hours ago</p>
-                            </div>
-                        </div>
-                        <div className="pf-activity-item">
-                            <div className="pf-icon-circle bg-green-subtle">{checkIcon}</div>
-                            <div className="pf-activity-info">
-                                <h4>Completed novelty assessment for IoT Innovations</h4>
-                                <p>IoT Innovations • 5 hours ago</p>
-                            </div>
-                        </div>
-                        <div className="pf-activity-item">
-                            <div className="pf-icon-circle bg-purple-subtle">{calendarIcon}</div>
-                            <div className="pf-activity-info">
-                                <h4>Scheduled consultation with DataFlow Inc</h4>
-                                <p>DataFlow Inc • 1 day ago</p>
-                            </div>
-                        </div>
+                        {activity.map((item, idx) => {
+                            const actionKey = (item.action || "").toLowerCase();
+                            const icon = actionKey.includes('document') ? fileIcon : actionKey.includes('review') ? checkIcon : calendarIcon;
+                            
+                            return (
+                                <div className="pf-activity-item" key={idx}>
+                                    <div className="pf-icon-circle bg-blue-subtle">
+                                        {icon}
+                                    </div>
+                                    <div className="pf-activity-info">
+                                        <h4>{item.action}</h4>
+                                        <p>{item.description} • {item.client_name}</p>
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
 
-                <div className="pf-card pf-performance-card">
+                <div className="pf-card pf-performance-card" style={{ marginBottom: 0 }}>
                     <div className="pf-card-header">
                         {trendUpIcon}
                         <h3>Firm Performance</h3>
@@ -283,6 +310,7 @@ const PatentFirmDashboard = () => {
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
     );

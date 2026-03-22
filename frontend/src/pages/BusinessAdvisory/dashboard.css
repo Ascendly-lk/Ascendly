@@ -45,7 +45,7 @@ body {
   align-items: stretch;
 }
 
-.dashboard-container > .sidebar {
+.dashboard-container>.sidebar {
   flex: 0 0 220px;
   max-width: 220px;
 }
@@ -148,7 +148,7 @@ body {
 }
 
 .welcome-text h1 {
-  font-size: 2rem;
+  font-size: 1.6rem;
   font-weight: 700;
 }
 
@@ -221,20 +221,20 @@ body {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 25px;
-  margin-bottom: 50px;
+  gap: 18px;
+  margin-bottom: 36px;
 }
 
 .stat-card {
   background-color: var(--card-bg-lighter);
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 14px;
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 180px;
+  min-height: 150px;
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .stat-card.primary {
@@ -298,13 +298,13 @@ body {
 }
 
 .stat-value {
-  font-size: 2rem;
+  font-size: 1.7rem;
   font-weight: 700;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
 
 .stat-label {
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   color: var(--text-secondary);
 }
 
@@ -314,22 +314,22 @@ body {
 
 /* Quick Actions Section */
 .section-headline {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  margin-bottom: 25px;
+  margin-bottom: 18px;
 }
 
 .actions-grid {
   display: grid;
   grid-template-columns: 1fr 1.5fr 1fr;
-  gap: 25px;
+  gap: 18px;
 }
 
 .action-card {
   background-color: var(--card-bg-lighter);
-  border-radius: 20px;
-  padding: 25px;
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
   height: 100%;
 }
 
@@ -344,9 +344,9 @@ body {
 .card-title {
   width: 100%;
   text-align: left;
-  font-size: 1.1rem;
+  font-size: 0.92rem;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .profile-avatar-large {
@@ -367,18 +367,18 @@ body {
 }
 
 .profile-name {
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 700;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
 
 .profile-location {
   color: var(--accent-cyan);
-  font-size: 0.9rem;
-  margin-bottom: 25px;
+  font-size: 0.78rem;
+  margin-bottom: 18px;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
 }
 
 .profile-location svg {
@@ -402,12 +402,12 @@ body {
 }
 
 .p-stat-label {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: var(--text-secondary);
 }
 
 .p-stat-value {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--accent-cyan);
 }
@@ -440,12 +440,12 @@ body {
 
 .meeting-title {
   font-weight: 600;
-  font-size: 0.95rem;
-  margin-bottom: 4px;
+  font-size: 0.85rem;
+  margin-bottom: 3px;
 }
 
 .meeting-time {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: var(--accent-cyan);
 }
 
@@ -475,24 +475,23 @@ body {
 
 .status-card-small {
   background-color: var(--card-bg-lighter);
-  border-radius: 16px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 16px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .status-header {
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   color: var(--accent-cyan);
-
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .status-value-large {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .trend-badge {
@@ -522,7 +521,7 @@ body {
     flex-direction: column;
   }
 
-  .dashboard-container > .sidebar {
+  .dashboard-container>.sidebar {
     flex: none;
     max-width: 100%;
   }

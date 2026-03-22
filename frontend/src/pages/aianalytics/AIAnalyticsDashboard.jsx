@@ -4,6 +4,7 @@ import AIStatCard from '../../components/aianalytics/AIStatCard';
 import AIAnalyticsChart from '../../components/aianalytics/AIAnalyticsChart';
 import RecentUploads from '../../components/aianalytics/RecentUploads';
 import QuickActions from '../../components/aianalytics/QuickActions';
+import AIInsightNudges from '../../components/aianalytics/AIInsightNudges';
 import { apiFetch } from '../../api';
 import './AIAnalyticsDashboard.css';
 
@@ -100,7 +101,10 @@ const AIAnalyticsDashboard = () => {
                     />
                 </div>
 
-                {/* Row 2 — Chart */}
+                {/* Row 2 — AI Insight Nudges */}
+                <AIInsightNudges metrics={metrics} />
+
+                {/* Row 3 — Chart */}
                 <AIAnalyticsChart />
 
                 {/* Row 3 — Bottom cards */}

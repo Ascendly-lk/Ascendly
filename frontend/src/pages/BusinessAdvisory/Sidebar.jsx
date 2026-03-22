@@ -19,35 +19,31 @@ const Sidebar = () => {
       end: true,
     },
     {
-      path: "/dashboard/ai-analytics",
+      path: "/business-advisory/ai-analytics",
       icon: <BarChart3 size={16} strokeWidth={2} />,
       label: "AI Analytics",
     },
     {
-      path: "/dashboard/clients",
+      path: "/business-advisory/clients",
       icon: <Users size={16} strokeWidth={2} />,
       label: "Clients",
     },
     {
-      path: "/dashboard/projects",
+      path: "/business-advisory/projects",
       icon: <FolderKanban size={16} strokeWidth={2} />,
       label: "Projects",
     },
     {
-      path: "/dashboard/calendar",
+      path: "/business-advisory/calendar",
       icon: <CalendarDays size={16} strokeWidth={2} />,
       label: "Calendar",
     },
-    {
-      path: "/dashboard/payments",
-      icon: <Wallet size={16} strokeWidth={2} />,
-      label: "Payments",
-    },
+
   ];
 
   const footerItems = [
     {
-      path: "/dashboard/help",
+      path: "/business-advisory/help",
       icon: <CircleHelp size={16} strokeWidth={2} />,
       label: "Help",
     },

@@ -40,7 +40,6 @@ import PaymentPortal from './pages/auth/PaymentPortal';
 import PatentFirmDashboard from "./pages/patent-firm/Dashboard";
 import PatentFirmClients from "./pages/patent-firm/Clients";
 import Applications from "./pages/patent-firm/Applications";
-import ApplicationDetail from "./pages/patent-firm/ApplicationDetail";
 import PatentFirmPayments from "./pages/patent-firm/Payments";
 
 function App() {
@@ -82,25 +81,15 @@ function App() {
             <Route path="clients" element={<Clients />} />
             <Route path="projects" element={<Projects />} />
             <Route path="calendar" element={<CalendarPage />} />
-            <Route path="payments" element={<Payments />} />
+
             <Route path="profile" element={<DashboardPlaceholder />} />
             <Route path="help" element={<DashboardPlaceholder />} />
 
             {/* Patent Firm Dashboard Routes */}
-            <Route
-              path="patent-firm/dashboard"
-              element={<PatentFirmDashboard />}
-            />
+            <Route path="patent-firm/dashboard" element={<PatentFirmDashboard />} />
             <Route path="patent-firm/clients" element={<PatentFirmClients />} />
             <Route path="patent-firm/applications" element={<Applications />} />
-            <Route
-              path="patent-firm/applications/:id"
-              element={<ApplicationDetail />}
-            />
-            <Route
-              path="patent-firm/document-review"
-              element={<DocumentReview />}
-            />
+            <Route path="patent-firm/document-review" element={<DocumentReview />} />
             <Route
               path="patent-firm/payments"
               element={<PatentFirmPayments />}
@@ -145,14 +134,14 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/notifications" element={<NotificationsPage />} />
 
-          <Route
-            path="/business-advisory"
-            element={
-              <ProtectedRoute>
-                <Navigate to="/dashboard" replace />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/business-advisory" element={<Dashboard />} />
+          <Route path="/business-advisory/clients" element={<Clients />} />
+          <Route path="/business-advisory/projects" element={<Projects />} />
+          <Route path="/business-advisory/calendar" element={<CalendarPage />} />
+
+          <Route path="/business-advisory/settings" element={<Settings />} />
+          <Route path="/business-advisory/notifications" element={<NotificationsPage />} />
+          <Route path="/business-advisory/edit-profile" element={<EditProfile />} />
 
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
