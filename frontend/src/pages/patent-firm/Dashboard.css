@@ -349,11 +349,19 @@
     color: #C084FC;
 }
 
+.pf-activity-info {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    margin-top: 2px;
+}
+
 .pf-activity-info h4 {
     color: var(--text-white);
     font-size: 14px;
     font-weight: 500;
     margin-bottom: 4px;
+    margin-top: 0;
 }
 
 .pf-activity-info p {

@@ -35,11 +35,9 @@ import MarketingAgency from "./pages/dashboard/MarketingAgency";
 import DocumentReview from "./pages/patent-firm/DocumentReview";
 import PaymentPortal from "./pages/PaymentPortal";
 
-// Patent Firm
 import PatentFirmDashboard from "./pages/patent-firm/Dashboard";
 import PatentFirmClients from "./pages/patent-firm/Clients";
 import Applications from "./pages/patent-firm/Applications";
-import ApplicationDetail from "./pages/patent-firm/ApplicationDetail";
 import PatentFirmPayments from "./pages/patent-firm/Payments";
 
 function App() {
@@ -86,20 +84,10 @@ function App() {
             <Route path="help" element={<DashboardPlaceholder />} />
 
             {/* Patent Firm Dashboard Routes */}
-            <Route
-              path="patent-firm/dashboard"
-              element={<PatentFirmDashboard />}
-            />
+            <Route path="patent-firm/dashboard" element={<PatentFirmDashboard />} />
             <Route path="patent-firm/clients" element={<PatentFirmClients />} />
             <Route path="patent-firm/applications" element={<Applications />} />
-            <Route
-              path="patent-firm/applications/:id"
-              element={<ApplicationDetail />}
-            />
-            <Route
-              path="patent-firm/document-review"
-              element={<DocumentReview />}
-            />
+            <Route path="patent-firm/document-review" element={<DocumentReview />} />
             <Route
               path="patent-firm/payments"
               element={<PatentFirmPayments />}
