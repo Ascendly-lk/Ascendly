@@ -34,6 +34,7 @@ import AdvisorsPage from './pages/dashboard/AdvisorsPage';
 import MarketingAgency from './pages/dashboard/MarketingAgency';
 import DocumentReview from './pages/patent-firm/DocumentReview';
 import PaymentPortal from './pages/auth/PaymentPortal';
+import QAStatus from './pages/QAStatus';
 
 // Patent Firm
 import PatentFirmDashboard from "./pages/patent-firm/Dashboard";
@@ -141,6 +142,8 @@ function App() {
           <Route path="/business-advisory/settings" element={<Settings />} />
           <Route path="/business-advisory/notifications" element={<NotificationsPage />} />
           <Route path="/business-advisory/edit-profile" element={<EditProfile />} />
+
+          <Route path="/qa-status" element={<QAStatus />} />
 
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
