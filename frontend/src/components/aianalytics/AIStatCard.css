@@ -117,3 +117,9 @@
 .ai-stat-card--highlight .ai-stat-card__value {
     color: #ffffff;
 }
+
+/* ── Sparkline ── */
+.ai-stat-card__sparkline {
+    margin-top: 8px;
+    opacity: 0.85;
+}
