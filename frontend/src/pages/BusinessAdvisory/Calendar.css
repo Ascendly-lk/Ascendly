@@ -37,13 +37,8 @@
   background: #11161D;
   border-radius: 16px;
   padding: 20px;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
   position: relative;
   overflow: hidden;
-}
-
-.meeting-card:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 255, 239, 0.1) inset;
 }
 
 .meeting-card::before {
@@ -143,14 +138,8 @@
   border-radius: 16px;
   background: #11161D;
   padding: 20px;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
   position: relative;
   overflow: hidden;
-}
-
-.month-panel:hover,
-.agenda-panel:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 255, 239, 0.03) inset;
 }
 
 .month-panel::before,
@@ -331,13 +320,7 @@
   padding: 24px;
   background: var(--gradient-cyan, linear-gradient(135deg, #00ffef 0%, #0f1720 100%));
   color: #fff;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-}
-
-.agenda-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(0, 255, 239, 0.15);
 }
 
 .agenda-card:last-child {
