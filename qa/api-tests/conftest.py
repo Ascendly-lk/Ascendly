@@ -39,6 +39,20 @@ def client():
     app.dependency_overrides.clear()
 
 
+@pytest.fixture
+def no_auth_client():
+    """TestClient with NO auth override — verifies endpoints reject unauthenticated requests.
+
+    Temporarily clears dependency_overrides so the real require_auth runs,
+    then restores them after the test.
+    """
+    saved = dict(app.dependency_overrides)
+    app.dependency_overrides.clear()
+    with TestClient(app, raise_server_exceptions=False) as c:
+        yield c
+    app.dependency_overrides.update(saved)
+
+
 @pytest.fixture(scope="session")
 def real_client():
     """TestClient that sends a real token — for integration tests.

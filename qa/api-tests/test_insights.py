@@ -1,7 +1,5 @@
 """
 Tests for AI Insights / Analysis pipeline endpoint POST /api/analyze.
-
-The actual CrewAI pipeline is monkeypatched so tests are fast and deterministic.
 """
 import io
 import json
@@ -23,17 +21,12 @@ MOCK_RESULT = {
 
 
 class TestAnalyzeEndpoint:
-    def test_analyze_requires_auth(self, client):
-        from fastapi.testclient import TestClient
-        import sys, os
-        sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../backend")))
-        from main import app
-        with TestClient(app, raise_server_exceptions=False) as raw:
-            resp = raw.post(
-                "/api/analyze",
-                data={"user_id": "some-id"},
-                files={"file": ("test.csv", io.BytesIO(SAMPLE_CSV), "text/csv")},
-            )
+    def test_analyze_requires_auth(self, no_auth_client):
+        resp = no_auth_client.post(
+            "/api/analyze",
+            data={"user_id": "some-id"},
+            files={"file": ("test.csv", io.BytesIO(SAMPLE_CSV), "text/csv")},
+        )
         assert resp.status_code in (401, 403, 422)
 
     def test_analyze_rejects_non_csv(self, client):
@@ -68,15 +61,7 @@ class TestAnalyzeEndpoint:
         """Happy path — mocked pipeline returns structured result."""
         import ai_engine.tasks as tasks_mod
         monkeypatch.setattr(tasks_mod, "run_analysis", lambda path: dict(MOCK_RESULT))
-
         import database.supabase_client as sc
-
-        class _FakeTable:
-            def insert(self, *a, **kw): return self
-            def select(self, *a, **kw): return self
-            def eq(self, *a, **kw): return self
-            def execute(self): return type("R", (), {"data": []})()
-
         monkeypatch.setattr(sc, "insert_record", lambda *a, **kw: None)
 
         resp = client.post(
@@ -86,7 +71,6 @@ class TestAnalyzeEndpoint:
         )
         assert resp.status_code == 200
         body = resp.json()
-        # agent_logs and request_id must be stripped from response
         assert "agent_logs" not in body
         assert "request_id" not in body
         assert "data" in body

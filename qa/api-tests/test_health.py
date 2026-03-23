@@ -9,22 +9,15 @@ def test_root_returns_200(client):
     assert "message" in body
 
 
-def test_root_no_auth_required(client):
+def test_root_no_auth_required(no_auth_client):
     """Root endpoint must be publicly accessible."""
-    # Remove auth header if present
-    resp = client.get("/", headers={"Authorization": ""})
+    resp = no_auth_client.get("/")
     assert resp.status_code == 200
 
 
-def test_health_db_requires_auth(client):
-    """GET /health/db should return 401/403 without a token."""
-    # Use a fresh client without the dependency override
-    from fastapi.testclient import TestClient
-    import sys, os
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../backend")))
-    from main import app
-    with TestClient(app, raise_server_exceptions=False) as raw:
-        resp = raw.get("/health/db")
+def test_health_db_requires_auth(no_auth_client):
+    """GET /health/db should return 401/403/422 without a token."""
+    resp = no_auth_client.get("/health/db")
     assert resp.status_code in (401, 403, 422)
 
 

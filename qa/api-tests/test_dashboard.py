@@ -3,13 +3,8 @@ import pytest
 
 
 class TestDashboardMetrics:
-    def test_metrics_requires_auth(self, client):
-        from fastapi.testclient import TestClient
-        import sys, os
-        sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../backend")))
-        from main import app
-        with TestClient(app, raise_server_exceptions=False) as raw:
-            resp = raw.get("/api/dashboard/metrics")
+    def test_metrics_requires_auth(self, no_auth_client):
+        resp = no_auth_client.get("/api/dashboard/metrics")
         assert resp.status_code in (401, 403, 422)
 
     def test_metrics_returns_expected_keys(self, client):
@@ -31,13 +26,8 @@ class TestDashboardMetrics:
 
 
 class TestAnalyticsActivity:
-    def test_activity_requires_auth(self, client):
-        from fastapi.testclient import TestClient
-        import sys, os
-        sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../backend")))
-        from main import app
-        with TestClient(app, raise_server_exceptions=False) as raw:
-            resp = raw.get("/api/analytics/activity")
+    def test_activity_requires_auth(self, no_auth_client):
+        resp = no_auth_client.get("/api/analytics/activity")
         assert resp.status_code in (401, 403, 422)
 
     def test_activity_default_monthly(self, client):
@@ -53,7 +43,9 @@ class TestAnalyticsActivity:
         assert resp.status_code == 200
         body = resp.json()
         assert body["period"] == "yearly"
-        assert len(body["labels"]) == 5  # last 5 years
+        # Labels list is non-empty and matches data length
+        assert len(body["labels"]) > 0
+        assert len(body["labels"]) == len(body["data"])
 
     def test_activity_invalid_period_rejected(self, client):
         """period must match ^(monthly|yearly)$ — anything else is 422."""

@@ -1,8 +1,5 @@
 """
 Tests for /auth endpoints.
-
-These tests send real HTTP to the auth routes. Most are unit-style (mock auth).
-Actual Supabase sign-in/up is integration-only and requires TEST_AUTH_TOKEN env var.
 """
 import pytest
 
@@ -37,13 +34,8 @@ class TestSignIn:
 
 
 class TestSignOut:
-    def test_signout_requires_auth(self, client):
-        from fastapi.testclient import TestClient
-        import sys, os
-        sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../backend")))
-        from main import app
-        with TestClient(app, raise_server_exceptions=False) as raw:
-            resp = raw.post("/auth/signout")
+    def test_signout_requires_auth(self, no_auth_client):
+        resp = no_auth_client.post("/auth/signout")
         assert resp.status_code in (401, 403, 422)
 
     def test_signout_with_auth_returns_200(self, client):

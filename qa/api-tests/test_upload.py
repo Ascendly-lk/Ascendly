@@ -1,6 +1,5 @@
 """
 Tests for /api/upload and /api/files/recent endpoints.
-File I/O is mocked at the Supabase admin client level via dependency override.
 """
 import io
 import pytest
@@ -10,13 +9,11 @@ SAMPLE_CSV = b"date,revenue,expenses\n2024-01,10000,6000\n2024-02,12000,7000\n20
 
 
 class TestFileUpload:
-    def test_upload_requires_auth(self, client):
-        from fastapi.testclient import TestClient
-        import sys, os
-        sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../backend")))
-        from main import app
-        with TestClient(app, raise_server_exceptions=False) as raw:
-            resp = raw.post("/api/upload", files={"file": ("test.csv", io.BytesIO(SAMPLE_CSV), "text/csv")})
+    def test_upload_requires_auth(self, no_auth_client):
+        resp = no_auth_client.post(
+            "/api/upload",
+            files={"file": ("test.csv", io.BytesIO(SAMPLE_CSV), "text/csv")},
+        )
         assert resp.status_code in (401, 403, 422)
 
     def test_upload_rejects_disallowed_extension(self, client):
@@ -41,7 +38,6 @@ class TestFileUpload:
         """Valid CSV upload returns file_id and filename in response."""
         import uuid
 
-        # Patch Supabase admin so no real DB call is made
         fake_id = str(uuid.uuid4())
 
         class _FakeTable:
@@ -57,7 +53,6 @@ class TestFileUpload:
         import database.supabase_client as sc
         monkeypatch.setattr(sc, "get_supabase_admin", lambda: _FakeAdmin())
 
-        # Also patch uploads directory to tmp_path
         import app.api.endpoints.analysis as analysis_mod
         monkeypatch.setattr(analysis_mod, "UPLOADS_DIR", str(tmp_path))
 
@@ -73,17 +68,12 @@ class TestFileUpload:
 
 
 class TestRecentFiles:
-    def test_recent_files_requires_auth(self, client):
-        from fastapi.testclient import TestClient
-        import sys, os
-        sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../backend")))
-        from main import app
-        with TestClient(app, raise_server_exceptions=False) as raw:
-            resp = raw.get("/api/files/recent")
+    def test_recent_files_requires_auth(self, no_auth_client):
+        resp = no_auth_client.get("/api/files/recent")
         assert resp.status_code in (401, 403, 422)
 
     def test_recent_files_returns_list(self, client):
-        """With mocked auth, endpoint returns files list (empty is fine — no real DB)."""
+        """With mocked auth, endpoint returns files list."""
         resp = client.get("/api/files/recent")
         assert resp.status_code == 200
         body = resp.json()
