@@ -5,7 +5,9 @@ import {
   Navigate,
 } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { getRoleDashboardRoute } from "./utils/auth";
 
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
@@ -41,6 +43,11 @@ import PatentFirmClients from "./pages/patent-firm/Clients";
 import Applications from "./pages/patent-firm/Applications";
 import PatentFirmPayments from "./pages/patent-firm/Payments";
 
+function RoleBasedRedirect() {
+  const { user } = useAuth();
+  return <Navigate to={getRoleDashboardRoute(user?.role)} replace />;
+}
+
 function App() {
   return (
     <AuthProvider>
@@ -70,7 +77,7 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route index element={<Navigate to="startup" replace />} />
+            <Route index element={<RoleBasedRedirect />} />
             <Route path="startup" element={<StartupDashboard />} />
             <Route path="patent" element={<PatentPage />} />
             <Route path="investors" element={<InvestorsPage />} />

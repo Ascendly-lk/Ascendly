@@ -22,6 +22,7 @@ from app.api.insights import router as insights_router
 # from app.api.endpoints.patent_firm import router as patent_firm_router
 from app.api.endpoints.subscription import router as subscription_router
 from app.api.endpoints.tier_suggestion import router as tier_suggestion_router
+from app.api.endpoints.conversations import router as conversations_router
 from observability.tracing import init_tracing
 
 app = FastAPI(
@@ -30,10 +31,14 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# CORS — allow Vite frontend dev server (port 5173, etc)
+# CORS — allow local dev + Azure Static Web Apps production domain
+ALLOWED_ORIGIN_REGEX = (
+    r"^https?://(localhost|127\.0\.0\.1|\[::1\]|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$"
+    r"|^https://[a-z0-9-]+\.azurestaticapps\.net$"
+)
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1|\[::1\]|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$",
+    allow_origin_regex=ALLOWED_ORIGIN_REGEX,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -48,6 +53,7 @@ app.include_router(insights_router)
 # app.include_router(patent_firm_router)
 app.include_router(subscription_router)
 app.include_router(tier_suggestion_router)
+app.include_router(conversations_router)
 
 
 # ============ SCHEMAS ============
@@ -456,4 +462,4 @@ async def get_dashboard_metrics(current_user=Depends(require_auth)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
