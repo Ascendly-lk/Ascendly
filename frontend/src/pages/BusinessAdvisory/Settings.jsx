@@ -32,7 +32,7 @@ const Settings = () => {
 
           <div className="form-group">
             <label>Email</label>
-            <input type="email" defaultValue="janithyavinuthmi27@gmail.com" />
+            <input type="email" defaultValue="admin@ascendly.com" />
           </div>
 
           <button className="btn-save-block">Save Email</button>
@@ -74,7 +74,7 @@ const Settings = () => {
               </div>
               <div className="account-details">
                 <h4>Google</h4>
-                <span>Account: janithyavinuthmi27@gmail.com</span>
+                <span>Account: admin@ascendly.com</span>
               </div>
             </div>
             <button className="btn-remove">Remove</button>

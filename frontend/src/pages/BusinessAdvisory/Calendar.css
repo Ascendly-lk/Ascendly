@@ -43,8 +43,7 @@
 }
 
 .meeting-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 255, 239, 0.1) inset;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 255, 239, 0.1) inset;
 }
 
 .meeting-card::before {
@@ -109,7 +108,6 @@
 
 .meeting-item:hover {
   background: rgba(0, 255, 239, 0.04);
-  transform: translateX(4px);
 }
 
 .meeting-item h3 {
@@ -152,8 +150,7 @@
 
 .month-panel:hover,
 .agenda-panel:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 255, 239, 0.05) inset;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 255, 239, 0.03) inset;
 }
 
 .month-panel::before,
@@ -276,8 +273,6 @@
 
 .day-cell:not(.blank):hover {
   background: #1c2533;
-  transform: scale(1.08);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
   z-index: 2;
 }
 
@@ -301,8 +296,7 @@
 }
 
 .day-cell.active:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 20px rgba(0, 255, 239, 0.5);
+  box-shadow: 0 6px 20px rgba(0, 255, 239, 0.6);
 }
 
 .day-cell.outlined {
@@ -342,8 +336,8 @@
 }
 
 .agenda-card:hover {
-  transform: translateY(-3px) scale(1.01);
-  box-shadow: 0 10px 24px rgba(0, 255, 239, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0, 255, 239, 0.15);
 }
 
 .agenda-card:last-child {

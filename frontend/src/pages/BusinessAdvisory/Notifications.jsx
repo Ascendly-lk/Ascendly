@@ -5,7 +5,7 @@ import "./DashboardLayout.css";
 import "./Notifications.css";
 
 export default function NotificationsPage() {
-  const initialEmail = "janithyavinuthmi27@gmail.com";
+  const initialEmail = "admin@ascendly.com";
   const [messageNotifications, setMessageNotifications] = useState(true);
   const [email, setEmail] = useState(initialEmail);
   const [emailTouched, setEmailTouched] = useState(false);

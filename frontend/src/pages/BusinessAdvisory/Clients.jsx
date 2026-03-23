@@ -21,38 +21,38 @@ import "./clients.css";
 const clientRequests = [
   {
     id: 1,
-    initials: "AH",
-    name: "Adam Hooper",
+    initials: "SC",
+    name: "Sarah Chen",
     date: "2025 - 06 - 25",
     time: "10.00 a.m",
     duration: "01 hour",
-    tag: "Fundraising Strategy",
+    tag: "Fundraising",
     message:
-      "Hi I’d love to speak regarding your startup strategy and fundraising roadmap for the next quarter.",
+      "Hi! I'd love to review our Q3 pitch deck before we present to Sequoia next week.",
     variant: "large",
   },
   {
     id: 2,
-    initials: "JB",
-    name: "James Bond",
+    initials: "MC",
+    name: "Michael Chang",
     date: "2025 - 07 - 21",
     time: "12.00 p.m",
     duration: "45 minutes",
-    tag: "Market Expansion",
+    tag: "Go-to-Market",
     message:
-      "Hi I’d love to speak regarding your startup strategy and fundraising roadmap for the next quarter.",
+      "We are launching our new enterprise tier and need your advice on the pricing structure.",
     variant: "compact",
   },
   {
     id: 3,
-    initials: "TC",
-    name: "Tom Cruise",
+    initials: "ER",
+    name: "Elena Rostova",
     date: "2025 - 05 - 18",
     time: "6.00 p.m",
     duration: "15 minutes",
-    tag: "Product Roadmap",
+    tag: "Hiring Strategy",
     message:
-      "Hi I’d love to speak regarding your startup strategy and fundraising roadmap for the next quarter.",
+      "Could we schedule a quick sync? We're expanding the engineering team and need insights on equity.",
     variant: "compact",
   },
 ];
@@ -60,49 +60,33 @@ const clientRequests = [
 const messageThreads = [
   {
     id: 1,
-    initials: "AH",
-    name: "Adam Hooper",
-    preview: "sfhrshfugk ftujdjtkyf drjhdjyfyk dtjdy...",
+    initials: "NK",
+    name: "Nadia Khan",
+    preview: "Sounds great! Let's align on...",
     unread: 2,
     online: true,
   },
   {
     id: 2,
-    initials: "AH",
-    name: "Adam Hooper",
-    preview: "sfhrshfugk ftujdjtkyf drjhdjyfyk dtjdy...",
-    unread: 6,
+    initials: "JD",
+    name: "James Doe",
+    preview: "I've attached the Q2 financial...",
+    unread: 1,
     online: true,
   },
   {
     id: 3,
-    initials: "AH",
-    name: "Adam Hooper",
-    preview: "sfhrshfugk ftujdjtkyf drjhdjyfyk dtjdy...",
+    initials: "LO",
+    name: "Liam O'Connor",
+    preview: "How does next Tuesday work?",
     unread: 0,
     online: false,
   },
   {
     id: 4,
-    initials: "AH",
-    name: "Adam Hooper",
-    preview: "sfhrshfugk ftujdjtkyf drjhdjyfyk dtjdy...",
-    unread: 0,
-    online: false,
-  },
-  {
-    id: 5,
-    initials: "AH",
-    name: "Adam Hooper",
-    preview: "sfhrshfugk ftujdjtkyf drjhdjyfyk dtjdy...",
-    unread: 0,
-    online: false,
-  },
-  {
-    id: 6,
-    initials: "AH",
-    name: "Adam Hooper",
-    preview: "sfhrshfugk ftujdjtkyf drjhdjyfyk dtjdy...",
+    initials: "AM",
+    name: "Aisha Martinez",
+    preview: "Thanks for the swift feedback.",
     unread: 0,
     online: false,
   },
@@ -120,12 +104,17 @@ export default function Clients() {
 
   const [messagesState, setMessagesState] = useState({
     1: [
-      { id: 1, text: "dhndrubholi asetgjbho slirgh osiu se;ojo agjhJh sklj silk", type: "incoming", timestamp: "10:30 AM", seen: false },
-      { id: 2, text: "Just looking over the new roadmap docs. Looking solid!", type: "outgoing", timestamp: "10:35 AM", seen: true },
+      { id: 1, text: "Hey! Did you have a chance to look at the revised term sheet?", type: "incoming", timestamp: "10:30 AM", seen: false },
+      { id: 2, text: "Yes, just finished reviewing it. The valuation looks much better now.", type: "outgoing", timestamp: "10:35 AM", seen: true },
+      { id: 3, text: "Good to hear. Do you think we should push for a board seat?", type: "incoming", timestamp: "10:42 AM", seen: false }
     ],
     2: [
-      { id: Date.now(), text: "Are you available for a quick sync tomorrow?", type: "incoming", timestamp: "09:15 AM", seen: false },
-    ]
+      { id: Date.now(), text: "I've uploaded the Cap Table to the shared drive.", type: "incoming", timestamp: "09:15 AM", seen: false },
+    ],
+    3: [
+      { id: Date.now(), text: "Looking forward to our sync next week.", type: "incoming", timestamp: "02:15 PM", seen: false },
+    ],
+    4: []
   });
 
   // Session Requests State
