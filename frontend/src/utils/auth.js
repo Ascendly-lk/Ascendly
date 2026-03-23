@@ -235,11 +235,11 @@ export function getRoleDashboardRoute(role) {
     const r = role.toLowerCase();
     
     if (r.includes('startup') || r.includes('founder')) return '/dashboard/startup';
-    if (r.includes('investor')) return '/dashboard/investor';
+    if (r.includes('investor')) return '/dashboard/investors';
     if (r.includes('marketing') || r.includes('agency')) return '/dashboard/marketing-agency/projects';
     if (r.includes('patent')) return '/dashboard/patent-firm/dashboard';
-    if (r.includes('business') || r.includes('advisor')) return '/dashboard/advisor';
-    if (r.includes('admin')) return '/dashboard/admin';
+    if (r.includes('business') || r.includes('advisor')) return '/business-advisory';
+    if (r.includes('admin')) return '/dashboard/startup';
     
     // Default fallback
     return '/dashboard/startup';
