@@ -147,7 +147,7 @@ jobs:
       - name: Start frontend (background)
         working-directory: frontend
         run: |
-          npm ci --prefer-offline 2>/dev/null || npm install
+          npm ci --prefer-offline 2>/dev/null || npm install --legacy-peer-deps
           npm run dev &
           sleep 8
 

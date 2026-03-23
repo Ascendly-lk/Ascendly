@@ -34,9 +34,10 @@ class TestSignIn:
 
 
 class TestSignOut:
-    def test_signout_requires_auth(self, no_auth_client):
+    def test_signout_is_publicly_accessible(self, no_auth_client):
+        """Signout has no require_auth dep — it is a public endpoint."""
         resp = no_auth_client.post("/auth/signout")
-        assert resp.status_code in (401, 403, 422)
+        assert resp.status_code == 200
 
     def test_signout_with_auth_returns_200(self, client):
         resp = client.post("/auth/signout")

@@ -26,24 +26,27 @@ export const handlers = [
   // ── Dashboard ───────────────────────────────────────────
   http.get(`${BASE}/api/dashboard/metrics`, () =>
     HttpResponse.json({
-      total_files: 12,
-      total_analyses: 47,
-      recent_activity: 5,
-      plan: 'pro',
+      files_uploaded:  { value: 12,   change_percent: 5  },
+      ai_queries:      { value: 47,   change_percent: 10 },
+      data_processed:  { value: 1200, change_percent: 3  },
+      active_reports:  { value: 5,    change_percent: -2 },
     })
   ),
 
   // ── Files / Upload ──────────────────────────────────────
   http.get(`${BASE}/api/files/recent`, () =>
-    HttpResponse.json([
-      { id: '1', filename: 'sales_q1.csv', created_at: '2026-03-01T10:00:00Z' },
-      { id: '2', filename: 'financials.xlsx', created_at: '2026-03-10T14:30:00Z' },
-    ])
+    HttpResponse.json({
+      files: [
+        { id: '1', filename: 'sales_q1.csv',    created_at: '2026-03-01T10:00:00Z' },
+        { id: '2', filename: 'financials.xlsx', created_at: '2026-03-10T14:30:00Z' },
+      ],
+      count: 2,
+    })
   ),
-  http.post(`${BASE}/api/analysis/upload`, () =>
+  http.post(`${BASE}/api/upload`, () =>
     HttpResponse.json({ file_id: 'mock-file-id-999', message: 'File uploaded successfully' })
   ),
-  http.post(`${BASE}/api/analysis/analyze`, () =>
+  http.post(`${BASE}/api/analyze`, () =>
     HttpResponse.json({
       insights: ['Revenue grew 12% QoQ', 'Churn rate decreased to 3.2%'],
       summary: 'Overall positive performance trajectory.',
@@ -52,7 +55,13 @@ export const handlers = [
 
   // ── Analytics ───────────────────────────────────────────
   http.get(`${BASE}/api/analytics/activity`, () =>
-    HttpResponse.json({ labels: ['Mon', 'Tue', 'Wed'], values: [3, 7, 2] })
+    HttpResponse.json({
+      period:      'monthly',
+      labels:      ['Jan', 'Feb', 'Mar'],
+      data:        [30, 70, 50],
+      values:      [3000, 7000, 5000],
+      total_value: 15000,
+    })
   ),
 
   // ── AI Chat ─────────────────────────────────────────────

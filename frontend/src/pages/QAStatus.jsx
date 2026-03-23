@@ -19,7 +19,7 @@ const ENDPOINTS = [
   { label: 'Dashboard Metrics', method: 'GET',  path: '/api/dashboard/metrics',    auth: true  },
   { label: 'Recent Files',      method: 'GET',  path: '/api/files/recent',         auth: true  },
   { label: 'Analytics Activity',method: 'GET',  path: '/api/analytics/activity',   auth: true  },
-  { label: 'Auth (401 check)',  method: 'POST', path: '/auth/signin',              auth: false,
+  { label: 'Auth (400 check)',  method: 'POST', path: '/auth/signin',              auth: false,
     body: JSON.stringify({ email: 'qa-probe@ascendly.test', password: 'wrong' }),
     expectedStatus: 400 },
 ];

@@ -3,7 +3,7 @@
  * Pure presentational — no API calls, no router needed.
  */
 import React from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import AIStatCard from '@/components/aianalytics/AIStatCard.jsx';
 

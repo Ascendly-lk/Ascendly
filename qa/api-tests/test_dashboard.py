@@ -52,10 +52,11 @@ class TestAnalyticsActivity:
         resp = client.get("/api/analytics/activity?period=weekly")
         assert resp.status_code == 422
 
-    def test_activity_response_has_series(self, client):
+    def test_activity_response_has_values(self, client):
+        """Response must contain labels, data, and values arrays."""
         resp = client.get("/api/analytics/activity")
         assert resp.status_code == 200
         body = resp.json()
-        assert "series" in body
-        assert "analyses" in body["series"]
-        assert "chats" in body["series"]
+        assert "values" in body
+        assert "total_value" in body
+        assert len(body["values"]) == len(body["labels"])

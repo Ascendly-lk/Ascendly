@@ -44,6 +44,7 @@ async function upload() {
     method: 'PUT',
     headers: {
       'Authorization': `Bearer ${SERVICE_KEY}`,
+      'apikey': SERVICE_KEY,
       'Content-Type': 'application/json',
       'x-upsert': 'true',
     },

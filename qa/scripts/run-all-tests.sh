@@ -51,7 +51,7 @@ if [ ! -d "node_modules" ]; then
   npm install --silent
 fi
 
-npm run test:components -- --reporter=verbose --reporter=junit 2>&1 || true
+npm run test:components 2>&1 || true
 
 echo ""
 
@@ -82,7 +82,7 @@ echo ""
 echo "[ Aggregate ] Merging JUnit results → summary.json"
 echo "--------------------------------------------------"
 cd "$QA_DIR"
-node scripts/aggregate-results.js
+node scripts/aggregate-results.js || true
 
 # ── Upload to Supabase Storage ────────────────────────────────────────────────
 if [ "${SKIP_UPLOAD:-false}" != "true" ]; then

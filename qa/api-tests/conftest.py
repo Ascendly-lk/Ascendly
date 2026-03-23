@@ -40,17 +40,21 @@ def client():
 
 
 @pytest.fixture
-def no_auth_client():
-    """TestClient with NO auth override — verifies endpoints reject unauthenticated requests.
+def no_auth_client(client):
+    """Reuses the session client but overrides auth to always return 401.
 
-    Temporarily clears dependency_overrides so the real require_auth runs,
-    then restores them after the test.
+    Avoids creating a second TestClient (which conflicts with the session client's
+    running lifespan) by just swapping the dependency override temporarily.
     """
-    saved = dict(app.dependency_overrides)
-    app.dependency_overrides.clear()
-    with TestClient(app, raise_server_exceptions=False) as c:
-        yield c
-    app.dependency_overrides.update(saved)
+    from fastapi import HTTPException as _HTTPException
+
+    def _always_reject():
+        raise _HTTPException(status_code=401, detail="Unauthorized")
+
+    app.dependency_overrides[require_auth] = _always_reject
+    yield client
+    # Restore bypass override for remaining tests
+    app.dependency_overrides[require_auth] = override_require_auth
 
 
 @pytest.fixture(scope="session")

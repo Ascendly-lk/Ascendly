@@ -50,10 +50,9 @@ class TestFileUpload:
             def table(self, name): return _FakeTable()
 
         monkeypatch.setenv("SUPABASE_SERVICE_KEY", "fake")
-        import database.supabase_client as sc
-        monkeypatch.setattr(sc, "get_supabase_admin", lambda: _FakeAdmin())
-
+        # Patch in analysis module where the name is bound (not in supabase_client)
         import app.api.endpoints.analysis as analysis_mod
+        monkeypatch.setattr(analysis_mod, "get_supabase_admin", lambda: _FakeAdmin())
         monkeypatch.setattr(analysis_mod, "UPLOADS_DIR", str(tmp_path))
 
         resp = client.post(

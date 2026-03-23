@@ -71,8 +71,8 @@ describe('apiFetch', () => {
     // We only verify no exception — Content-Type is set by browser for FormData
     const form = new FormData();
     form.append('key', 'value');
-    // MSW will intercept — we just check no error thrown
-    await expect(apiFetch('/', { method: 'GET', body: form })).resolves.toBeDefined();
+    // Must use POST — GET/HEAD cannot have a body per the Fetch spec
+    await expect(apiFetch('/auth/signout', { method: 'POST', body: form })).resolves.toBeDefined();
   });
 
   it('sets Content-Type: application/json for JSON bodies', async () => {

@@ -59,10 +59,10 @@ class TestAnalyzeEndpoint:
 
     def test_analyze_success(self, client, monkeypatch):
         """Happy path — mocked pipeline returns structured result."""
-        import ai_engine.tasks as tasks_mod
-        monkeypatch.setattr(tasks_mod, "run_analysis", lambda path: dict(MOCK_RESULT))
-        import database.supabase_client as sc
-        monkeypatch.setattr(sc, "insert_record", lambda *a, **kw: None)
+        # Must patch in the analysis module (where the name is bound after import)
+        import app.api.endpoints.analysis as analysis_mod
+        monkeypatch.setattr(analysis_mod, "run_analysis", lambda path: dict(MOCK_RESULT))
+        monkeypatch.setattr(analysis_mod, "insert_record", lambda *a, **kw: None)
 
         resp = client.post(
             "/api/analyze",
