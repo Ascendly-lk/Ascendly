@@ -1,20 +1,20 @@
 import React from "react";
-import Sidebar from "./Sidebar";
-import TopBar from "./TopBar";
+import Sidebar from "../../pages/BusinessAdvisory/Sidebar";
+import TopHeader from "../TopHeader";
 import "../../pages/BusinessAdvisory/DashboardLayout.css";
 import "./editProfile.css";
 
 const EditProfile = () => {
   return (
-    <div className="dl-shell app-container">
+    <div className="dashboard-container app-container">
       <Sidebar />
 
-      <main className="dl-main main-content">
-        <TopBar />
+      <main className="main-content" style={{ marginLeft: '260px', flexGrow: 1, minWidth: 0, padding: '28px 40px' }}>
+        <div style={{ width: '100%', maxWidth: '1400px', margin: '0 auto' }}>
+          <TopHeader showWelcome={false} title="Edit Profile" />
 
         <div className="content-wrapper">
           <div className="page-header">
-            <h2 className="page-title">Edit Profile</h2>
             <p className="page-subtitle">
               Update your personal information and contact details.
             </p>
@@ -86,6 +86,7 @@ const EditProfile = () => {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </main>
     </div>

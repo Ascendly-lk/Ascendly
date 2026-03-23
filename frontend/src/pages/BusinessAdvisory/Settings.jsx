@@ -1,18 +1,18 @@
 import React from "react";
 import Sidebar from "./Sidebar";
-import TopHeader from "../../components/dashboard/TopBar";
+import TopHeader from "../../components/TopHeader";
 import "./Settings.css";
 
 const Settings = () => {
   return (
-    <div className="settings-container">
+    <div className="dashboard-container">
       <Sidebar />
 
-      <main className="settings-main">
-        <TopBar showWelcome={false} />
+      <main className="settings-main" style={{ marginLeft: '260px', flexGrow: 1, minWidth: 0, padding: '28px 40px' }}>
+        <div style={{ width: '100%', maxWidth: '1400px', margin: '0 auto' }}>
+          <TopHeader showWelcome={false} title="Settings" />
 
         <div className="settings-header">
-          <h2 className="settings-title">Settings</h2>
           <p className="settings-subtitle">
             Manage your account preferences and application settings.
           </p>
@@ -121,6 +121,7 @@ const Settings = () => {
             </div>
             <button className="btn-connect">Connect</button>
           </div>
+        </div>
         </div>
       </main>
     </div>
