@@ -17,3 +17,9 @@ google-adk
 yfinance
 openai
 requests
+# ── Observability (Arize Phoenix) ──────────────────────────────────────────────
+arize-phoenix>=8.0.0
+arize-phoenix-otel
+opentelemetry-api
+openinference-instrumentation-crewai
+openinference-instrumentation-litellm

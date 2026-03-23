@@ -1,4 +1,0 @@
-Auto-merging backend/database/supabase_client.py
-Auto-merging backend/main.py
-CONFLICT (content): Merge conflict in backend/main.py
-Automatic merge failed; fix conflicts and then commit the result.

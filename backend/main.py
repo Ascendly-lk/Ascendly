@@ -19,9 +19,10 @@ from app.api.endpoints.analysis import router as analysis_router
 from app.api.endpoints.dashboard import router as dashboard_router
 from app.api.endpoints.chat import router as chat_router
 from app.api.insights import router as insights_router
-from app.api.endpoints.patent_firm import router as patent_firm_router
+# from app.api.endpoints.patent_firm import router as patent_firm_router
 from app.api.endpoints.subscription import router as subscription_router
 from app.api.endpoints.tier_suggestion import router as tier_suggestion_router
+from observability.tracing import init_tracing
 
 app = FastAPI(
     title="Ascendly API",
@@ -44,7 +45,7 @@ app.include_router(analysis_router)
 app.include_router(dashboard_router)
 app.include_router(chat_router)
 app.include_router(insights_router)
-app.include_router(patent_firm_router)
+# app.include_router(patent_firm_router)
 app.include_router(subscription_router)
 app.include_router(tier_suggestion_router)
 
@@ -68,6 +69,9 @@ class ProfileCompleteRequest(BaseModel):
     first_name: str
     last_name: str
     role: str
+
+
+init_tracing(app)
 
 
 # ============ HEALTH CHECK ============
@@ -452,4 +456,4 @@ async def get_dashboard_metrics(current_user=Depends(require_auth)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
