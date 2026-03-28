@@ -37,8 +37,8 @@ export const handlers = [
   http.get(`${BASE}/api/files/recent`, () =>
     HttpResponse.json({
       files: [
-        { id: '1', filename: 'sales_q1.csv',    created_at: '2026-03-01T10:00:00Z' },
-        { id: '2', filename: 'financials.xlsx', created_at: '2026-03-10T14:30:00Z' },
+        { id: '1', name: 'sales_q1.csv',    uploaded_at: '2026-03-01T10:00:00Z', size_bytes: 24576 },
+        { id: '2', name: 'financials.xlsx', uploaded_at: '2026-03-10T14:30:00Z', size_bytes: 102400 },
       ],
       count: 2,
     })

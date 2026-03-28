@@ -51,8 +51,9 @@ describe('Login page', () => {
 
   it('renders email and password fields', async () => {
     await renderLogin();
-    expect(screen.getByLabelText(/email/i) || screen.getByPlaceholderText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i) || screen.getByPlaceholderText(/password/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/email/i)).toBeInTheDocument();
+    // Use getByPlaceholderText to avoid ambiguity with the "Toggle password visibility" button
+    expect(screen.getByPlaceholderText(/password/i)).toBeInTheDocument();
   });
 
   it('renders a submit button', async () => {
@@ -85,10 +86,12 @@ describe('Login page', () => {
     await user.click(submitBtn);
 
     await waitFor(() => {
+      // Login form calls login({ email, password }) as a single object
       expect(mockLogin).toHaveBeenCalledWith(
-        expect.stringMatching(/test@ascendly\.test/),
-        expect.stringMatching(/Password123!/),
-        expect.anything()
+        expect.objectContaining({
+          email: expect.stringMatching(/test@ascendly\.test/),
+          password: expect.stringMatching(/Password123!/),
+        })
       );
     });
   });
