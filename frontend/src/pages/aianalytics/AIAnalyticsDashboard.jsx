@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
+import TopBar from '../../components/dashboard/TopBar';
 import AIStatCard from '../../components/aianalytics/AIStatCard';
 import AIAnalyticsChart from '../../components/aianalytics/AIAnalyticsChart';
 import RecentUploads from '../../components/aianalytics/RecentUploads';
@@ -66,7 +66,7 @@ const AIAnalyticsDashboard = () => {
 
     return (
         <div className="ai-dashboard-main">
-            <AIAnalyticsTopBar />
+            <TopBar title="Welcome to Analytics!" />
 
             <div className="ai-dashboard-content">
                 {/* Row 1 — Stats */}
