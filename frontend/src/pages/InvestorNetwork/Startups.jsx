@@ -71,10 +71,10 @@ const Startups = () => {
               
               <div className="metric-row tags">
                 <div className="metric-tag">
-                  <i className="fi fi-rr-document-signed"></i> Patency Received
+                  <i className="fi fi-rr-document-signed"></i> {startup.patency}
                 </div>
                 <div className="metric-tag">
-                  <i className="fi fi-rr-megaphone"></i> Marketing exposure Received
+                  <i className="fi fi-rr-megaphone"></i> {startup.marketing}
                 </div>
               </div>
             </div>

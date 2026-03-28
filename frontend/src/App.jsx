@@ -35,6 +35,16 @@ import MarketingAgency from './pages/dashboard/MarketingAgency';
 import DocumentReview from './pages/patent-firm/DocumentReview';
 import PaymentPortal from './pages/PaymentPortal';
 
+// Investor Network
+import InvestorDashboard from './pages/InvestorNetwork/Dashboard';
+import InvestorRequests from './pages/InvestorNetwork/Requests';
+import InvestorStartups from './pages/InvestorNetwork/Startups';
+import InvestorCalendar from './pages/InvestorNetwork/Calendar';
+import InvestorPayments from './pages/InvestorNetwork/Payments';
+import InvestorProjects from './pages/InvestorNetwork/Projects';
+import InvestorProfile from './pages/InvestorNetwork/Profile';
+import InvestorSettings from './pages/InvestorNetwork/Settings';
+
 // Patent Firm
 import PatentFirmDashboard from "./pages/patent-firm/Dashboard";
 import PatentFirmClients from "./pages/patent-firm/Clients";
@@ -109,9 +119,19 @@ function App() {
             <Route path="ai-analytics/upload" element={<UploadData />} />
             <Route path="ai-analytics/assistant" element={<AIAssistant />} />
 
+            {/* Investor Network Routes */}
+            <Route path="investor" element={<InvestorDashboard />} />
+            <Route path="investor/requests" element={<InvestorRequests />} />
+            <Route path="investor/startups" element={<InvestorStartups />} />
+            <Route path="investor/calendar" element={<InvestorCalendar />} />
+            <Route path="investor/payments" element={<InvestorPayments />} />
+            <Route path="investor/projects" element={<InvestorProjects />} />
+            <Route path="investor/profile" element={<InvestorProfile />} />
+            <Route path="investor/settings" element={<InvestorSettings />} />
+            <Route path="investor/help" element={<DashboardPlaceholder />} />
+
             {/* Role placeholders */}
             <Route path="founder" element={<DashboardPlaceholder />} />
-            <Route path="investor" element={<DashboardPlaceholder />} />
             <Route path="marketing" element={<DashboardPlaceholder />} />
             <Route path="advisor" element={<DashboardPlaceholder />} />
             <Route path="admin" element={<DashboardPlaceholder />} />

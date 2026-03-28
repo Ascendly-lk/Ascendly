@@ -4,32 +4,32 @@ import "./Sidebar.css";
 const Sidebar = () => {
   const menuItems = [
     {
-      path: "/dashboard",
+      path: "/dashboard/investor",
       icon: <i className="fi fi-rr-layout-fluid"></i>,
       label: "Dashboard",
     },
     {
-      path: "/requests",
+      path: "/dashboard/investor/requests",
       icon: <i className="fi fi-rr-users-alt"></i>,
       label: "Requests",
     },
     {
-      path: "/startups",
+      path: "/dashboard/investor/startups",
       icon: <i className="fi fi-rr-rocket-lunch"></i>,
       label: "Startups",
     },
     {
-      path: "/calendar",
+      path: "/dashboard/investor/calendar",
       icon: <i className="fi fi-rr-calendar"></i>,
       label: "Calendar",
     },
     {
-      path: "/payments",
+      path: "/dashboard/investor/payments",
       icon: <i className="fi fi-rr-usd-square"></i>,
       label: "Payments",
     },
     {
-      path: "/profile",
+      path: "/dashboard/investor/profile",
       icon: <i className="fi fi-rr-user"></i>,
       label: "Profile",
     },
@@ -65,7 +65,7 @@ const Sidebar = () => {
         <ul className="nav-list secondary">
           <li className="nav-item">
             <NavLink
-              to="/settings"
+              to="/dashboard/investor/settings"
               className={({ isActive }) =>
                 `nav-link ${isActive ? "active" : ""}`
               }
@@ -77,7 +77,7 @@ const Sidebar = () => {
           </li>
           <li className="nav-item">
             <NavLink
-              to="/help"
+              to="/dashboard/investor/help"
               className={({ isActive }) =>
                 `nav-link ${isActive ? "active" : ""}`
               }

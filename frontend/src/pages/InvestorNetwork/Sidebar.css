@@ -98,7 +98,7 @@
         width: 200px;
     }
 
-    .sidebar-item {
+    .nav-link {
         padding: var(--spacing-sm) var(--spacing-md);
     }
 }

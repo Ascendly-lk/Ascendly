@@ -63,11 +63,15 @@ const Projects = () => {
               </div>
               <div className="metric-col text-center document-col">
                 <i className="fi fi-rr-document-signed"></i>
-                <span dangerouslySetInnerHTML={{ __html: project.patency.replace(' ', '<br/>') }}></span>
+                <span>
+                  {project.patency.split(' ').reduce((acc, word, i) => i === 0 ? [word] : [...acc, <br key={i} />, word], [])}
+                </span>
               </div>
               <div className="metric-col text-center chat-col">
                 <i className="fi fi-rr-messages"></i>
-                <span dangerouslySetInnerHTML={{ __html: project.marketing.replace(' ', '<br/>').replace(' ', '<br/>') }}></span>
+                <span>
+                  {project.marketing.split(' ').reduce((acc, word, i) => i === 0 ? [word] : [...acc, <br key={i} />, word], [])}
+                </span>
               </div>
             </div>
 
