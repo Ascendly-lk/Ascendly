@@ -86,19 +86,28 @@
 .project-card {
   border-radius: 20px;
   padding: 24px;
-  background: linear-gradient(180deg, #182C35 0%, #00F0CD 100%);
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 60%), #111a24;
   color: #fff;
   min-height: 286px;
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 20px rgba(0, 240, 255, 0.04);
-  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  overflow: hidden;
 }
 
 .project-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-6px) scale(1.02);
   box-shadow: 0 15px 35px rgba(0, 240, 255, 0.15);
+}
+
+.project-card:hover .project-detail-btn {
+  background: rgba(0, 255, 239, 0.1);
+  color: #00ffef;
+  border-color: rgba(0, 255, 239, 0.4);
+  box-shadow: 0 4px 15px rgba(0, 255, 239, 0.15);
 }
 
 .project-card-top {
@@ -140,10 +149,11 @@
 .project-progress-wrap > span {
   display: block;
   margin-bottom: 8px;
-  font-style: italic;
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  color: #022f3f;
+  color: #8998b0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .project-progress-track {
@@ -158,7 +168,7 @@
   height: 100%;
   display: block;
   border-radius: inherit;
-  background: #11e83a;
+  background: #00ffef;
 }
 
 .project-meta-row {
@@ -182,16 +192,7 @@
   width: 18px;
   height: 18px;
   stroke-width: 1.5;
-}
-
-.project-meta-item:nth-child(1) svg,
-.project-meta-item:nth-child(2) svg {
-  color: #fb3b66;
-}
-
-.project-meta-item:nth-child(3) svg,
-.project-meta-item:nth-child(4) svg {
-  color: #ffffff;
+  color: #00ffef;
 }
 
 .project-meta-item small {
@@ -223,6 +224,37 @@
   width: 12px;
   height: 12px;
   stroke-width: 2;
+}
+
+.project-progress-fill.danger {
+  background: #ff4d4d;
+  box-shadow: 0 0 10px rgba(255, 77, 77, 0.4);
+}
+
+.project-progress-fill.excellent {
+  background: #00ffef;
+  box-shadow: 0 0 12px rgba(0, 255, 239, 0.6);
+}
+
+.project-meta-item.active-icon svg {
+  color: #00ffef !important;
+}
+
+.project-meta-item.active-icon small {
+  color: #fff;
+}
+
+.project-meta-item.inactive-icon {
+  opacity: 0.4;
+  filter: grayscale(100%);
+}
+
+.project-meta-item.inactive-icon svg {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.project-meta-item.inactive-icon small {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 @media (max-width: 1200px) {

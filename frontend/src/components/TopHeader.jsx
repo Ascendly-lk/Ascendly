@@ -21,7 +21,7 @@ export default function TopHeader({ showWelcome = true, title }) {
 
         <div className="top-header-icon-group">
           <Link
-            to="/notifications"
+            to="/business-advisory/notifications"
             className="top-header-circle-btn"
             aria-label="Open notifications"
           >
@@ -29,7 +29,7 @@ export default function TopHeader({ showWelcome = true, title }) {
           </Link>
 
           <Link
-            to="/settings"
+            to="/business-advisory/settings"
             className="top-header-circle-btn"
             aria-label="Open settings"
           >
@@ -37,7 +37,7 @@ export default function TopHeader({ showWelcome = true, title }) {
           </Link>
 
           <Link
-            to="/edit-profile"
+            to="/business-advisory/edit-profile"
             className="top-header-circle-btn"
             aria-label="Open profile"
           >

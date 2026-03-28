@@ -1,11 +1,11 @@
 import { useState } from "react";
-import Sidebar from "../../components/dashboard/Sidebar";
-import TopBar from "../../components/dashboard/TopBar";
+import Sidebar from "./Sidebar";
+import TopHeader from "../../components/TopHeader";
 import "./DashboardLayout.css";
 import "./Notifications.css";
 
 export default function NotificationsPage() {
-  const initialEmail = "janithyavinuthmi27@gmail.com";
+  const initialEmail = "admin@ascendly.com";
   const [messageNotifications, setMessageNotifications] = useState(true);
   const [email, setEmail] = useState(initialEmail);
   const [emailTouched, setEmailTouched] = useState(false);
@@ -56,11 +56,12 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="dl-shell notifications-layout">
+    <div className="dashboard-container notifications-layout">
       <Sidebar />
 
-      <main className="dl-main notifications-page">
-        <TopBar />
+      <main className="notifications-page" style={{ marginLeft: '260px', flexGrow: 1, minWidth: 0, padding: '28px 40px' }}>
+        <div style={{ width: '100%', maxWidth: '1400px', margin: '0 auto' }}>
+          <TopHeader showWelcome={false} title="Notifications" />
 
         <div className="notifications-shell">
           <section className="notifications-section">
@@ -151,6 +152,7 @@ export default function NotificationsPage() {
               </p>
             )}
           </section>
+        </div>
         </div>
       </main>
     </div>
