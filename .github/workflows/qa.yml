@@ -2,7 +2,7 @@ name: QA — Full Test Suite
 
 on:
   push:
-    branches: [Main, feat/**]
+    branches: [main, feat/**]
   pull_request:
     branches: [Main]
   workflow_dispatch:   # manual trigger from GitHub UI

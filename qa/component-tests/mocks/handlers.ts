@@ -56,11 +56,11 @@ export const handlers = [
   // ── Analytics ───────────────────────────────────────────
   http.get(`${BASE}/api/analytics/activity`, () =>
     HttpResponse.json({
-      period:      'monthly',
-      labels:      ['Jan', 'Feb', 'Mar'],
-      data:        [30, 70, 50],
-      values:      [3000, 7000, 5000],
-      total_value: 15000,
+      period:      '7d',
+      labels:      ['Mon', 'Tue', 'Wed'],
+      data:        [3, 7, 2],
+      series:      ['Activity'],
+      total_value: 12,
     })
   ),
 
