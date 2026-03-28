@@ -1,0 +1,211 @@
+.calendar-page {
+  padding: 0 40px 40px;
+}
+
+.calendar-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 32px;
+  margin-top: 20px;
+}
+
+.calendar-card {
+  background-color: #121A20;
+  border-radius: 24px;
+  padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.calendar-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+}
+
+.calendar-controls {
+  display: flex;
+  gap: 12px;
+}
+
+.ctrl-btn {
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ctrl-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+}
+
+.day-name {
+  color: #8da4be;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.calendar-day:hover:not(.empty) {
+  background-color: rgba(0, 217, 201, 0.1);
+  color: #00D9C9;
+}
+
+.calendar-day.empty {
+  background: transparent;
+  cursor: default;
+}
+
+.calendar-day.today {
+  border: 1px solid #00D9C9;
+  color: #00D9C9;
+}
+
+.calendar-day.has-event {
+  background-color: rgba(0, 217, 201, 0.05);
+}
+
+.event-dot {
+  position: absolute;
+  bottom: 12px;
+  width: 6px;
+  height: 6px;
+  background-color: #00D9C9;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0, 217, 201, 0.5);
+}
+
+.calendar-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sidebar-box {
+  background-color: #121A20;
+  border-radius: 24px;
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.sidebar-box h3 {
+  color: white;
+  font-size: 18px;
+  margin-bottom: 24px;
+}
+
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.session-item {
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.2s;
+}
+
+.session-item:hover {
+  border-color: rgba(0, 217, 201, 0.2);
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.session-time {
+  color: #00D9C9;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.session-type {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #8da4be;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.session-client {
+  color: white;
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+.session-topic {
+  color: #8da4be;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.session-footer {
+  color: #4b5563;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-add-session {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #00D9C9 0%, #00897B 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-add-session:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+}
