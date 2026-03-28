@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
+import TopBar from '../../components/dashboard/TopBar';
 import RecentUploads from '../../components/aianalytics/RecentUploads';
 import { apiFetch } from '../../api';
 import { formatBytes, timeAgo } from '../../utils/format';
@@ -111,7 +111,7 @@ const UploadData = () => {
 
     return (
         <div className="upload-main">
-            <AIAnalyticsTopBar />
+            <TopBar title="Upload Data" />
 
             {/* ── Content ── */}
             <div className="upload-content">

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
+import TopBar from '../../components/dashboard/TopBar';
 import { apiFetch, getToken } from '../../api';
 import AnalyticsPopup from '../../components/aianalytics/AnalyticsPopup';
 import C1Message from '../../components/aianalytics/C1Message';
@@ -396,7 +396,7 @@ const AIAssistant = () => {
 
     return (
         <div className="ai-assistant-main">
-            <AIAnalyticsTopBar />
+            <TopBar title="AI Assistant" />
 
             <div className="ai-assistant-content">
                 {/* Chat Card */}
