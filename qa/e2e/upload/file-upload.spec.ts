@@ -25,6 +25,10 @@ test.describe('File Upload', () => {
   });
 
   test('can upload a CSV file and see success feedback', async ({ page, mockApi }) => {
+    // Mock recent files endpoint (component uses ?limit=N query param)
+    await page.route('**/api/files/recent**', (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ files: [], count: 0 }) })
+    );
     // Mock upload endpoint
     await mockApi.json(`${mockApi.apiBase}/api/upload`, {
       file_id: 'test-file-id-001',

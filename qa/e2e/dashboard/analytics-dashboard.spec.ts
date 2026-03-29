@@ -25,31 +25,36 @@ test.describe('AI Analytics Dashboard', () => {
   test.beforeEach(async ({ page, mockApi }) => {
     await mockApi.json(`${mockApi.apiBase}/api/dashboard/metrics`, MOCK_METRICS);
     await mockApi.json(`${mockApi.apiBase}/api/analytics/activity`, MOCK_ACTIVITY);
-    await mockApi.json(`${mockApi.apiBase}/api/files/recent`, {
-      files: [
-        { file_id: '1', name: 'sales_q1.csv', size_bytes: 2048, file_type: 'csv', status: 'processed', uploaded_at: '2026-03-01T10:00:00Z' },
-      ],
-      count: 1,
-    });
+    // Mock both /api/files/recent and /api/files/recent?limit=* (component appends query params)
+    await page.route('**/api/files/recent**', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          files: [{ file_id: '1', name: 'sales_q1.csv', size_bytes: 2048, file_type: 'csv', status: 'processed', uploaded_at: '2026-03-01T10:00:00Z' }],
+          count: 1,
+        }),
+      })
+    );
 
     await page.goto('/dashboard/ai-analytics');
   });
 
   test('renders metric stat cards', async ({ page }) => {
-    // Wait for data to load
-    await expect(page.getByText('12').or(page.getByText('47'))).toBeVisible({ timeout: 8000 });
+    // Use first() to avoid strict mode error when '12' appears multiple times
+    await expect(page.getByText('12').first()).toBeVisible({ timeout: 8000 });
   });
 
   test('shows files uploaded metric', async ({ page }) => {
-    await expect(page.getByText('12')).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText('12').first()).toBeVisible({ timeout: 8000 });
   });
 
   test('shows AI queries metric', async ({ page }) => {
-    await expect(page.getByText('47')).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText('47').first()).toBeVisible({ timeout: 8000 });
   });
 
   test('renders recent uploads section', async ({ page }) => {
-    await expect(page.getByText(/sales_q1\.csv/i)).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText(/sales_q1\.csv/i).first()).toBeVisible({ timeout: 8000 });
   });
 
   test('renders activity chart area', async ({ page }) => {
