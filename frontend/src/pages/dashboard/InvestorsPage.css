@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 /* ═══════════════════════════════════════════════════════════════════════════
    InvestorsPage.css  –  scoped with "ip-" prefix, no effect on other pages
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -583,6 +586,7 @@
     .ip-table-row .ip-inv-focus {
         display: none;
     }
+<<<<<<< HEAD
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
@@ -1530,5 +1534,8 @@
     .ip-table-row .ip-inv-focus {
         display: none;
     }
+}
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 }
 >>>>>>> parent of ae17c912 (Update by deleting some files)

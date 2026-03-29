@@ -20,7 +20,10 @@ from app.api.endpoints.dashboard import router as dashboard_router
 from app.api.endpoints.chat import router as chat_router
 from app.api.insights import router as insights_router
 <<<<<<< HEAD
+<<<<<<< HEAD
 from app.api.endpoints.patent_firm import router as patent_firm_router
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 
@@ -31,15 +34,21 @@ app = FastAPI(
 )
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 # CORS — allow Vite frontend dev server (port 5173, etc)
 app.add_middleware(
     CORSMiddleware,
     allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1|\[::1\]|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$",
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 # CORS — allow Vite frontend dev server (port 5173)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
     allow_credentials=True,
     allow_methods=["*"],
@@ -53,7 +62,10 @@ app.include_router(dashboard_router)
 app.include_router(chat_router)
 app.include_router(insights_router)
 <<<<<<< HEAD
+<<<<<<< HEAD
 app.include_router(patent_firm_router)
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 
@@ -276,6 +288,7 @@ async def get_me(current_user=Depends(require_auth)):
             
         try:
 <<<<<<< HEAD
+<<<<<<< HEAD
             print(f"[get_me] Syncing profile for {auth_user_id} ({current_user.email})")
             create_profile(upsert_data)
         except Exception as e:
@@ -291,14 +304,23 @@ async def get_me(current_user=Depends(require_auth)):
         except Exception:
             pass # Suppress issues if the trigger already handles portions of this seamlessly
 >>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
+            create_profile(upsert_data)
+        except Exception:
+            pass # Suppress issues if the trigger already handles portions of this seamlessly
+>>>>>>> parent of ae17c912 (Update by deleting some files)
             
         profile = get_profile_by_auth_id(auth_user_id)
         is_newly_synced = True
 
     if not profile:
 <<<<<<< HEAD
+<<<<<<< HEAD
         print(f"[get_me] Profile NOT FOUND in DB for auth_id: {auth_user_id}")
         raise HTTPException(status_code=404, detail="Profile not found in our database. Please try registering again.")
+=======
+        raise HTTPException(status_code=404, detail="Profile not found.")
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
         raise HTTPException(status_code=404, detail="Profile not found.")
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -393,6 +415,7 @@ async def get_dashboard_metrics(current_user=Depends(require_auth)):
         pass
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     now = datetime.now(timezone.utc)
 
     # 2. Monthly Revenue — sum `amount` from `monthly_revenue` for current month + year.
@@ -460,6 +483,8 @@ async def get_dashboard_metrics(current_user=Depends(require_auth)):
     except Exception as e:
         print(f"[METRICS DEBUG] Error calculating growth from 'profiles': {e}")
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     # 2. Monthly Revenue (Defaulting to 0 since no payments table exists yet)
     monthly_revenue = 0
 
@@ -494,6 +519,9 @@ async def get_dashboard_metrics(current_user=Depends(require_auth)):
     except Exception as e:
         print(f"[METRICS DEBUG] Error calculating growth from 'profiles': {e}")
         pass
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 
     return {

@@ -11,7 +11,11 @@
     display: flex;
     align-items: center;
 <<<<<<< HEAD
+<<<<<<< HEAD
     justify-content: space-between; /* push decoration to the right */
+=======
+    justify-content: flex-start;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
     justify-content: flex-start;
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -26,7 +30,11 @@
     align-items: center;
     justify-content: flex-start;
 <<<<<<< HEAD
+<<<<<<< HEAD
     gap: 12px; /* user recommendation */
+=======
+    gap: 14px;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
     gap: 14px;
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -40,6 +48,10 @@
     justify-content: center;
     align-items: flex-start;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+    width: 100%;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
     width: 100%;
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -55,7 +67,12 @@
     color: #FFFFFF;
     line-height: 1;
 <<<<<<< HEAD
+<<<<<<< HEAD
     text-align: left; /* align with title */
+=======
+    text-align: center;
+    width: 100%;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
     text-align: center;
     width: 100%;
@@ -81,7 +98,11 @@
 .stat-card-gradient {
     background: linear-gradient(150deg, #00FFE5 0%, #23A7B4 45%, #0B1220 100%);
 <<<<<<< HEAD
+<<<<<<< HEAD
     border: 1px solid transparent; /* Match dimensions of dark variant */
+=======
+    border: none;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
     border: none;
 >>>>>>> parent of ae17c912 (Update by deleting some files)

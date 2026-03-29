@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -25,6 +26,8 @@ dist-ssr
 *.sln
 *.sw?
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 # =====================
 # Node / Frontend
 # =====================
@@ -76,6 +79,9 @@ ENV/
 # OS / Editor junk
 # =====================
 .DS_Store
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 Thumbs.db
 .vscode/
@@ -89,6 +95,7 @@ Thumbs.db
 # =====================
 backend/uploads
 uploads
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 # =====================
@@ -107,5 +114,7 @@ backend/init_patent_db.py
 backend/test_out*.txt
 backend/*.bat
 git_status.txt
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)

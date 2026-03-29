@@ -18,7 +18,10 @@ export const supabase = supabaseUrl && supabaseAnonKey
 const STORAGE_TOKEN_KEY = 'ascendly_token';
 const STORAGE_USER_KEY = 'ascendly_user';
 <<<<<<< HEAD
+<<<<<<< HEAD
 const STORAGE_PLAN_KEY = 'ascendly_subscription_plan';
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 
@@ -42,10 +45,14 @@ export function getCurrentUser() {
     const raw = localStorage.getItem(STORAGE_USER_KEY);
     try {
 <<<<<<< HEAD
+<<<<<<< HEAD
         if (!raw) return null;
         const user = JSON.parse(raw);
         user.plan = getSubscriptionPlan();
         return user;
+=======
+        return raw ? JSON.parse(raw) : null;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
         return raw ? JSON.parse(raw) : null;
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -55,6 +62,7 @@ export function getCurrentUser() {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 export function saveSubscriptionPlan(plan) {
     localStorage.setItem(STORAGE_PLAN_KEY, plan);
 }
@@ -63,6 +71,8 @@ export function getSubscriptionPlan() {
     return localStorage.getItem(STORAGE_PLAN_KEY) || 'Free';
 }
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 // ─── API calls ────────────────────────────────────────────────────────────────
@@ -120,6 +130,7 @@ export async function completeProfile(data) {
  */
 export async function login(data) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     let response;
     try {
         response = await fetch(`${API_URL}/auth/signin`, {
@@ -132,11 +143,16 @@ export async function login(data) {
         throw new Error('Unable to connect to the server. Please ensure the backend is running.');
     }
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     const response = await fetch(`${API_URL}/auth/signin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
     });
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 
     const body = await response.json();
@@ -204,8 +220,11 @@ export async function fetchMe() {
 
         const user = await response.json();
 <<<<<<< HEAD
+<<<<<<< HEAD
         // Merge locally stored plan info
         user.plan = getSubscriptionPlan();
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
         // Refresh stored user data with latest from server
@@ -221,6 +240,7 @@ export async function fetchMe() {
  */
 export function getRoleDashboardRoute(role) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     if (!role) return '/dashboard/startup';
     
     const r = role.toLowerCase();
@@ -235,6 +255,8 @@ export function getRoleDashboardRoute(role) {
     // Default fallback
     return '/dashboard/startup';
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     const roleRoutes = {
         'Startup Founder': '/dashboard/startup',
         'Investor': '/dashboard/investors',
@@ -244,5 +266,8 @@ export function getRoleDashboardRoute(role) {
         'Admin': '/dashboard/admin',
     };
     return roleRoutes[role] || '/dashboard/startup';
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 }

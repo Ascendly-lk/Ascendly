@@ -12,12 +12,15 @@ import time
 import uuid
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 from crewai import Agent, Task, Crew, Process
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from ai_engine.provider import get_crewai_llm as _make_llm
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 from crewai import Agent, Task, Crew, Process, LLM
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -35,6 +38,9 @@ def _make_llm() -> LLM:
             )
         return LLM(model=model, api_key=api_key, endpoint=endpoint, api_version=api_version)
     return LLM(model=model, api_key=os.getenv("OPENAI_API_KEY"))
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 
 
@@ -157,6 +163,7 @@ def run_dataset_analysis(dataset_id: str) -> dict:
     """
     Run the full AI analysis pipeline on a dataset stored in Supabase.
 <<<<<<< HEAD
+<<<<<<< HEAD
     Checks in-memory cache first — returns immediately on hit.
     Calls each step function in sequence and caches the result on miss.
     """
@@ -173,6 +180,10 @@ def run_dataset_analysis(dataset_id: str) -> dict:
             "agent_logs": [],                          # no logs on cache hit
         }
 
+=======
+    Calls each step function in sequence and returns structured results.
+    """
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
     Calls each step function in sequence and returns structured results.
     """
@@ -200,10 +211,13 @@ def run_dataset_analysis(dataset_id: str) -> dict:
         {"agent_name": "Strategist", "output": strategist_output},
     ]
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     # Strip per-request volatile fields before caching — they are regenerated on cache hit
     cacheable = {k: v for k, v in response.items() if k not in ("request_id", "agent_logs")}
     set_cached_analysis(dataset_id, cacheable)
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
     return response

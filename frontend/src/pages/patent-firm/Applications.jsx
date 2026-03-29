@@ -1,5 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useState, useEffect } from "react";
+=======
+import { useState } from "react";
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 import { useState } from "react";
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -17,7 +21,10 @@ import {
 import TopBar from "../../components/dashboard/TopBar";
 import StatCard from "../../components/dashboard/StatCard";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { fetchApplications } from "../../utils/patent-api";
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 import "./Dashboard.css";
@@ -47,7 +54,10 @@ const Tabs = ({ children, defaultValue, className = "" }) => {
 };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 // Mock data
 const applications = [
     { id: "PAT-2026-001", title: "AI-Powered Task Automation Engine", client: "TechCo AI", type: "Software", status: "Expert Review", progress: 60, lastUpdated: "March 3, 2026", assignedTo: "You", tier: "Tier 3", filingType: "Non-Provisional", priority: "high" },
@@ -57,6 +67,9 @@ const applications = [
     { id: "PAT-2026-005", title: "Solar Panel Efficiency Optimizer", client: "GreenEnergy Co", type: "Hardware", status: "Pending Review", progress: 5, lastUpdated: "March 6, 2026", assignedTo: "Unassigned", tier: "Tier 1", filingType: "Provisional", priority: "normal" },
 ];
 
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 const statusColors = {
     "Pending Review": "cl-tier-1",
@@ -84,6 +97,7 @@ const priorityColors = {
 
 export default function Applications() {
 <<<<<<< HEAD
+<<<<<<< HEAD
     const [applications, setApplications] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [activeTab, setActiveTab] = useState("all");
@@ -109,6 +123,8 @@ export default function Applications() {
         (app.client?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
         (app.id?.toLowerCase() || "").includes(searchQuery.toLowerCase())
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     const [searchQuery, setSearchQuery] = useState("");
     const [activeTab, setActiveTab] = useState("all");
 
@@ -116,6 +132,9 @@ export default function Applications() {
         app.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         app.client.toLowerCase().includes(searchQuery.toLowerCase()) ||
         app.id.toLowerCase().includes(searchQuery.toLowerCase())
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
     );
 

@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 /* ═══════════════════════════════════════════════════════════════════════════
    AdvisorsPage.css  –  scoped with "ap-" prefix, zero global impact
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -516,6 +519,7 @@
     .ap-topbar-title {
         font-size: 20px;
     }
+<<<<<<< HEAD
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
@@ -1259,5 +1263,8 @@
     .ap-topbar-title {
         font-size: 20px;
     }
+}
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 }
 >>>>>>> parent of ae17c912 (Update by deleting some files)

@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+import AIAnalyticsSidebar from '../../components/aianalytics/AIAnalyticsSidebar';
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 import AIAnalyticsSidebar from '../../components/aianalytics/AIAnalyticsSidebar';
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -69,6 +73,7 @@ const AIAnalyticsDashboard = () => {
 
     return (
 <<<<<<< HEAD
+<<<<<<< HEAD
         <div className="ai-dashboard-main">
             <AIAnalyticsTopBar />
 
@@ -113,6 +118,8 @@ const AIAnalyticsDashboard = () => {
                     <RecentUploads />
                     <QuickActions />
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
         <div className="ai-dashboard">
             <AIAnalyticsSidebar />
 
@@ -160,6 +167,9 @@ const AIAnalyticsDashboard = () => {
                         <RecentUploads />
                         <QuickActions />
                     </div>
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
                 </div>
             </div>

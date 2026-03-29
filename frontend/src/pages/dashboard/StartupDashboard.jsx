@@ -19,6 +19,7 @@ const StartupDashboard = () => {
         const fetchMetrics = async () => {
             try {
 <<<<<<< HEAD
+<<<<<<< HEAD
                 const token = localStorage.getItem("ascendly_token") || localStorage.getItem("access_token");
 
                 // Only attach Authorization header if a real token exists
@@ -40,6 +41,8 @@ const StartupDashboard = () => {
                     const errBody = await response.text();
                     console.error("Metrics fetch failed:", response.status, errBody);
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                 // ascendly_token is used in auth.js
                 const token = localStorage.getItem("ascendly_token") || localStorage.getItem("access_token");
                 const response = await fetch("http://localhost:8000/dashboard/metrics", {
@@ -52,6 +55,9 @@ const StartupDashboard = () => {
                 if (response.ok) {
                     const data = await response.json();
                     setMetrics(data);
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
                 }
             } catch (error) {
@@ -94,6 +100,7 @@ const StartupDashboard = () => {
     );
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     // Safe derived display values - always strings, always valid
     const activeUsersValue   = String(Number(metrics.active_users) || 0);
     const monthlyRevenueValue = `$${Number(metrics.monthly_revenue || 0).toLocaleString()}`;
@@ -103,12 +110,15 @@ const StartupDashboard = () => {
 
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     return (
         <>
             <TopBar />
             <div className="dashboard-content">
                 {/* Row 1: Stat Cards */}
                 <div className="dashboard-row dashboard-stats">
+<<<<<<< HEAD
 <<<<<<< HEAD
                     <StatCard title="Active users" value={activeUsersValue} icon={userIcon} variant="dark" />
 
@@ -118,6 +128,8 @@ const StartupDashboard = () => {
 
                     <StatCard title="Growth" value={growthValue} icon={null} variant="gradient" decoration={growthCurve} />
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                     <StatCard title="Active users" value={metrics.active_users.toString()} icon={userIcon} variant="dark" />
 
                     <StatCard title="Monthly Revenue" value={`$${metrics.monthly_revenue.toLocaleString()}`} icon={null} variant="dark" decoration={miniBars} />
@@ -125,6 +137,9 @@ const StartupDashboard = () => {
                     <StatCard title="Engagement Score" value={`${metrics.engagement_score}/100`} icon={analyticsIcon} variant="dark" />
 
                     <StatCard title="Growth" value={`+${metrics.growth}%`} icon={null} variant="gradient" decoration={growthCurve} />
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
                 </div>
 

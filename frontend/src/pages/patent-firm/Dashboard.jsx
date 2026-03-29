@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StatCard from "../../components/dashboard/StatCard";
@@ -9,10 +10,16 @@ import { useNavigate } from 'react-router-dom';
 import StatCard from "../../components/dashboard/StatCard";
 import TopBar from "../../components/dashboard/TopBar";
 >>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
+import { useNavigate } from 'react-router-dom';
+import StatCard from "../../components/dashboard/StatCard";
+import TopBar from "../../components/dashboard/TopBar";
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 import "./Dashboard.css";
 
 const PatentFirmDashboard = () => {
     const navigate = useNavigate();
+<<<<<<< HEAD
 <<<<<<< HEAD
     const [stats, setStats] = useState(null);
     const [activity, setActivity] = useState([]);
@@ -46,6 +53,8 @@ const PatentFirmDashboard = () => {
     useEffect(() => {
         loadDashboardData();
     }, []);
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
     // Icons
@@ -126,6 +135,7 @@ const PatentFirmDashboard = () => {
 
             <div className="dashboard-content pf-content">
 <<<<<<< HEAD
+<<<<<<< HEAD
                 {debugError && (
                     <div style={{ background: '#FECDD3', color: '#9F1239', padding: '12px', borderRadius: '8px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div><strong>Debug Error:</strong> {debugError}.</div>
@@ -134,38 +144,53 @@ const PatentFirmDashboard = () => {
                 )}
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                 {/* Row 1: Stat Cards */}
                 <div className="dashboard-row dashboard-stats">
                     <StatCard
                         title="Active Applications"
 <<<<<<< HEAD
+<<<<<<< HEAD
                         value={stats ? stats.active_applications : "..."}
                         icon={fileIcon}
                         variant="dark"
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                         value="18"
                         icon={fileIcon}
                         variant="dark"
                         decoration={<div className="pf-stat-subtitle">+3 this week</div>}
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
                     />
 
                     <StatCard
                         title="Total Clients"
 <<<<<<< HEAD
+<<<<<<< HEAD
                         value={stats ? stats.total_clients : "..."}
                         icon={usersIcon}
                         variant="dark"
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                         value="42"
                         icon={usersIcon}
                         variant="dark"
                         decoration={<div className="pf-stat-subtitle">+2 new this month</div>}
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
                     />
 
                     <StatCard
                         title="Pending Reviews"
+<<<<<<< HEAD
 <<<<<<< HEAD
                         value={stats ? stats.pending_reviews : "..."}
                         icon={clockIcon}
@@ -178,6 +203,8 @@ const PatentFirmDashboard = () => {
                         icon={dollarIcon}
                         variant="gradient"
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                         value="7"
                         icon={clockIcon}
                         variant="dark"
@@ -190,6 +217,9 @@ const PatentFirmDashboard = () => {
                         icon={dollarIcon}
                         variant="gradient"
                         decoration={<div className="pf-stat-subtitle">+12% vs last month</div>}
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
                     />
                 </div>
@@ -198,6 +228,7 @@ const PatentFirmDashboard = () => {
                 <div className="pf-urgent-card">
                     <div className="pf-urgent-header">
                         {warningIcon}
+<<<<<<< HEAD
 <<<<<<< HEAD
                         <h2>Action Required</h2>
                     </div>
@@ -225,6 +256,8 @@ const PatentFirmDashboard = () => {
                             <div style={{ color: 'var(--text-gray)', padding: '16px 0' }}>No urgent applications immediately due.</div>
                         )}
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                         <h2>Urgent: Applications Needing Attention</h2>
                     </div>
                     <p className="pf-urgent-desc">These applications have approaching deadlines</p>
@@ -253,6 +286,9 @@ const PatentFirmDashboard = () => {
                                 <span className="pf-btn-outline">Review →</span>
                             </div>
                         </button>
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
                     </div>
                 </div>
@@ -266,6 +302,10 @@ const PatentFirmDashboard = () => {
                             <h3>Application Pipeline</h3>
                         </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+                        <p className="pf-card-desc">Track the status of all client applications</p>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                         <p className="pf-card-desc">Track the status of all client applications</p>
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -275,7 +315,11 @@ const PatentFirmDashboard = () => {
                                 <div className="pf-dot dot-orange"></div>
                                 <span className="pf-pipeline-label">Pending Review</span>
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 <span className="pf-pipeline-val">{pipeline ? pipeline.pending_review : "..."}</span>
+=======
+                                <span className="pf-pipeline-val">7</span>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                                 <span className="pf-pipeline-val">7</span>
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -284,7 +328,11 @@ const PatentFirmDashboard = () => {
                                 <div className="pf-dot dot-blue"></div>
                                 <span className="pf-pipeline-label">In Progress</span>
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 <span className="pf-pipeline-val">{pipeline ? pipeline.in_progress : "..."}</span>
+=======
+                                <span className="pf-pipeline-val">8</span>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                                 <span className="pf-pipeline-val">8</span>
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -293,7 +341,11 @@ const PatentFirmDashboard = () => {
                                 <div className="pf-dot dot-purple"></div>
                                 <span className="pf-pipeline-label">Filing Ready</span>
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 <span className="pf-pipeline-val">{pipeline ? pipeline.filing_ready : "..."}</span>
+=======
+                                <span className="pf-pipeline-val">3</span>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                                 <span className="pf-pipeline-val">3</span>
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -302,7 +354,11 @@ const PatentFirmDashboard = () => {
                                 <div className="pf-dot dot-green"></div>
                                 <span className="pf-pipeline-label">Filed/Complete</span>
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 <span className="pf-pipeline-val">{pipeline ? pipeline.filed_completed : "..."}</span>
+=======
+                                <span className="pf-pipeline-val">24</span>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                                 <span className="pf-pipeline-val">24</span>
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -324,6 +380,7 @@ const PatentFirmDashboard = () => {
                             <h3>Quick Actions</h3>
                         </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
 
                         <div className="pf-quick-list">
                             <button className="pf-list-btn" onClick={() => navigate('/dashboard/patent-firm/clients')}>
@@ -331,6 +388,8 @@ const PatentFirmDashboard = () => {
                             </button>
                             <button className="pf-list-btn" onClick={() => navigate('/dashboard/patent-firm/applications?status=pending_review')}>
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                         <p className="pf-card-desc">Common tasks and shortcuts</p>
 
                         <div className="pf-quick-list">
@@ -338,6 +397,9 @@ const PatentFirmDashboard = () => {
                                 {usersIcon} View All Clients
                             </button>
                             <button className="pf-list-btn">
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
                                 {fileIcon} Review Pending Applications
                             </button>
@@ -360,6 +422,7 @@ const PatentFirmDashboard = () => {
 
                     <div className="pf-activity-list">
 <<<<<<< HEAD
+<<<<<<< HEAD
                         {activity.map((item, idx) => {
                             const actionKey = (item.action || "").toLowerCase();
                             const icon = actionKey.includes('document') ? fileIcon : actionKey.includes('review') ? checkIcon : calendarIcon;
@@ -377,6 +440,8 @@ const PatentFirmDashboard = () => {
                             );
                         })}
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                         <div className="pf-activity-item">
                             <div className="pf-icon-circle bg-blue-subtle">{fileIcon}</div>
                             <div className="pf-activity-info">
@@ -398,6 +463,9 @@ const PatentFirmDashboard = () => {
                                 <p>DataFlow Inc • 1 day ago</p>
                             </div>
                         </div>
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
                     </div>
                 </div>

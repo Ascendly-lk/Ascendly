@@ -304,7 +304,11 @@ const PatentPage = () => {
                 <div className="pp-mid-row">
                     {/* Filing Activity Forecast */}
 <<<<<<< HEAD
+<<<<<<< HEAD
                     <div className="pp-card-1 pp-chart-card">
+=======
+                    <div className="pp-card pp-chart-card">
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                     <div className="pp-card pp-chart-card">
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -331,7 +335,11 @@ const PatentPage = () => {
 
                     {/* Upcoming Renewals */}
 <<<<<<< HEAD
+<<<<<<< HEAD
                     <div className="pp-card-1 pp-renewals-card">
+=======
+                    <div className="pp-card pp-renewals-card">
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                     <div className="pp-card pp-renewals-card">
 >>>>>>> parent of ae17c912 (Update by deleting some files)

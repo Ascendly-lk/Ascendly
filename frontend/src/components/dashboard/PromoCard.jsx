@@ -1,10 +1,16 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useNavigate } from 'react-router-dom';
 import './PromoCard.css';
 
 const PromoCard = () => {
     const navigate = useNavigate();
 
+=======
+import './PromoCard.css';
+
+const PromoCard = () => {
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 import './PromoCard.css';
 
@@ -17,12 +23,16 @@ const PromoCard = () => {
                 <p>"From Idea to Impact, We help you Ascend"</p>
                 <div className="promo-buttons">
 <<<<<<< HEAD
+<<<<<<< HEAD
                     <button 
                         className="promo-button-primary" 
                         onClick={() => navigate('/dashboard/ai-analytics/upload')}
                     >
                         Try for free
                     </button>
+=======
+                    <button className="promo-button-primary">Try for free</button>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                     <button className="promo-button-primary">Try for free</button>
 >>>>>>> parent of ae17c912 (Update by deleting some files)

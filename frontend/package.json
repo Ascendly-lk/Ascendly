@@ -11,6 +11,7 @@
   },
   "dependencies": {
 <<<<<<< HEAD
+<<<<<<< HEAD
     "@supabase/supabase-js": "^2.98.0",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
@@ -21,12 +22,17 @@
     "react-router-dom": "^7.13.0",
     "recharts": "^3.8.0"
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     "lucide-react": "^0.577.0",
     "@supabase/supabase-js": "^2.98.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.13.0"
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
   },
   "devDependencies": {
@@ -41,7 +47,11 @@
     "vite": "^7.2.4"
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 }
 >>>>>>> parent of ae17c912 (Update by deleting some files)

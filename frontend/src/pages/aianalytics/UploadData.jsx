@@ -1,8 +1,13 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useLocation } from 'react-router-dom';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
 import RecentUploads from '../../components/aianalytics/RecentUploads';
+=======
+import AIAnalyticsSidebar from '../../components/aianalytics/AIAnalyticsSidebar';
+import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 import AIAnalyticsSidebar from '../../components/aianalytics/AIAnalyticsSidebar';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
@@ -45,9 +50,12 @@ const UploadData = () => {
     const fileInputRef = useRef(null);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     const location = useLocation();
     const hasAutoOpened = useRef(false);
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
     const fetchRecentFiles = useCallback(() => {
@@ -67,6 +75,7 @@ const UploadData = () => {
     useEffect(() => { fetchRecentFiles(); }, [fetchRecentFiles]);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     // Handle auto-open file browser if signaled from Quick Actions
     useEffect(() => {
         if (location.state?.autoOpen && !hasAutoOpened.current && fileInputRef.current) {
@@ -78,6 +87,8 @@ const UploadData = () => {
     }, [location.state]);
 
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
     const uploadFiles = useCallback(async (files) => {
@@ -121,6 +132,7 @@ const UploadData = () => {
     }, [uploadFiles, uploading]);
 
     return (
+<<<<<<< HEAD
 <<<<<<< HEAD
         <div className="upload-main">
             <AIAnalyticsTopBar />
@@ -178,6 +190,8 @@ const UploadData = () => {
                     <RecentUploads />
                     {/* Right side intentionally empty per Figma */}
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
         <div className="upload-page">
             <AIAnalyticsSidebar />
 
@@ -254,6 +268,9 @@ const UploadData = () => {
                         </div>
                         {/* Right side intentionally empty per Figma */}
                     </div>
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
                 </div>
             </div>

@@ -25,6 +25,7 @@ export function AuthProvider({ children }) {
                     // Listen to auth changes automatically (e.g. Google Popup / Redirect processing)
                     supabase.auth.onAuthStateChange(async (event, session) => {
 <<<<<<< HEAD
+<<<<<<< HEAD
                         console.log(`[AuthContext] Auth event: ${event}`);
                         if (session) {
                             localStorage.setItem('ascendly_token', session.access_token);
@@ -36,10 +37,15 @@ export function AuthProvider({ children }) {
                                 console.warn("[AuthContext] Failed to fetch user profile after SIGNED_IN.");
                             }
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                         if (event === 'SIGNED_IN' && session) {
                             localStorage.setItem('ascendly_token', session.access_token);
                             const updatedMe = await fetchMe();
                             if (updatedMe) setUser(updatedMe);
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
                         } else if (event === 'SIGNED_OUT') {
                             clearSession();

@@ -1,6 +1,9 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useAuth } from '../../context/AuthContext';
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 import './Sidebar.css';
@@ -26,12 +29,15 @@ const PATENT_FIRM_MENU_ITEMS = [
 ];
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 const AI_ANALYTICS_MENU_ITEMS = [
     { name: 'Dashboard', icon: 'grid', route: '/dashboard/ai-analytics' },
     { name: 'Upload Files', icon: 'upload', route: '/dashboard/ai-analytics/upload' },
     { name: 'AI Assistant', icon: 'bot', route: '/dashboard/ai-analytics/assistant' },
 ];
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 /* ── SVG icons ───────────────────────────────────────────────────────────── */
@@ -109,6 +115,7 @@ const ICONS = {
         </svg>
     ),
 <<<<<<< HEAD
+<<<<<<< HEAD
     upload: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -127,12 +134,15 @@ const ICONS = {
     ),
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 };
 
 /* ── Component ───────────────────────────────────────────────────────────── */
 const Sidebar = () => {
     const navigate = useNavigate();
     const { pathname } = useLocation();
+<<<<<<< HEAD
 <<<<<<< HEAD
     const { user } = useAuth();
 
@@ -160,6 +170,8 @@ const Sidebar = () => {
         dashboardTitle = "AI ANALYTICS DASHBOARD";
     }
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 
     // Derive active item: match exact route or prefix (for sub-routes like /ai-analytics/upload)
     const isActive = (route) => pathname === route || pathname.startsWith(route + '/');
@@ -168,11 +180,15 @@ const Sidebar = () => {
     const isPatentFirm = pathname.startsWith('/dashboard/patent-firm');
     const menuItems = isPatentFirm ? PATENT_FIRM_MENU_ITEMS : STARTUP_MENU_ITEMS;
     const dashboardTitle = isPatentFirm ? "PATENT FIRM APP" : "STARTUPS DASHBOARD";
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 
     return (
         <div className="sidebar">
             <div className="sidebar-header">
+<<<<<<< HEAD
 <<<<<<< HEAD
                 <h1 
                     className="sidebar-logo" 
@@ -181,6 +197,9 @@ const Sidebar = () => {
                 >
                     Ascendly
                 </h1>
+=======
+                <h1 className="sidebar-logo">Ascendly</h1>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                 <h1 className="sidebar-logo">Ascendly</h1>
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -203,6 +222,7 @@ const Sidebar = () => {
 
             <div className="sidebar-footer">
 <<<<<<< HEAD
+<<<<<<< HEAD
                 {!isPatentFirm && !(user?.plan === 'Standard' || user?.plan === 'Enterprise' || user?.plan === 'Pro' || user?.plan === 'Premium') && (
                     <button 
                         className="sidebar-upgrade" 
@@ -211,10 +231,15 @@ const Sidebar = () => {
                         <p>Upgrade to PRO to get access to all features!</p>
                     </button>
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                 {!isPatentFirm && (
                     <div className="sidebar-upgrade">
                         <p>Upgrade to PRO to get access to all features!</p>
                     </div>
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
                 )}
                 <a href="#" className="sidebar-help">

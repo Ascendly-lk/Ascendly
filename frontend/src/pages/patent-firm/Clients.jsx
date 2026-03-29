@@ -1,5 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useState, useEffect } from "react";
+=======
+import { useState } from "react";
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 import { useState } from "react";
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -17,7 +21,10 @@ import {
 import TopBar from "../../components/dashboard/TopBar";
 import StatCard from "../../components/dashboard/StatCard";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { fetchClients } from "../../utils/patent-api";
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 import "./Dashboard.css"; // Shared Ascendly theme styles
@@ -36,7 +43,10 @@ const Badge = ({ children, className = "" }) => <span className={`cl-badge ${cla
 const Input = ({ className = "", ...props }) => <input className={`cl-input ${className}`} {...props} />;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 const clients = [
     { id: "CL-001", name: "TechCo AI", industry: "Artificial Intelligence", tier: "Tier 3", activeApplications: 3, revenue: "$14,997", since: "Jan 2025", status: "Active", logo: "TA" },
     { id: "CL-002", name: "IoT Innovations", industry: "Hardware / IoT", tier: "Tier 2", activeApplications: 2, revenue: "$3,998", since: "Feb 2025", status: "Active", logo: "II" },
@@ -46,6 +56,9 @@ const clients = [
     { id: "CL-006", name: "FinTech Solutions", industry: "Financial Technology", tier: "Tier 2", activeApplications: 2, revenue: "$3,998", since: "Jan 2026", status: "Active", logo: "FS" },
 ];
 
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 const tierColors = {
     "Tier 1": "cl-tier-1",
@@ -54,6 +67,7 @@ const tierColors = {
 };
 
 export default function Clients() {
+<<<<<<< HEAD
 <<<<<<< HEAD
     const [clients, setClients] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -81,6 +95,8 @@ export default function Clients() {
     const totalRevenue = clients.reduce((sum, client) => sum + parseFloat(String(client.revenue || 0).replace(/[$,]/g, "")), 0);
     const totalApplications = clients.reduce((sum, client) => sum + (client.activeApplications || 0), 0);
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     const [searchQuery, setSearchQuery] = useState("");
 
     const filteredClients = clients.filter((client) =>
@@ -90,6 +106,9 @@ export default function Clients() {
 
     const totalRevenue = clients.reduce((sum, client) => sum + parseFloat(client.revenue.replace(/[$,]/g, "")), 0);
     const totalApplications = clients.reduce((sum, client) => sum + client.activeApplications, 0);
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 
     return (

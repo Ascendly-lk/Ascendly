@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useState } from 'react';
 import { getSubscriptionPlan } from '../../utils/auth';
 import BookingModal from '../../components/dashboard/BookingModal';
@@ -136,6 +137,8 @@ The market for AI-driven Enterprise apps is currently hot. Capitalize on this by
         URL.revokeObjectURL(url);
     };
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 import './InvestorsPage.css';
 
 /* ── Main Page ───────────────────────────────────────────────────────────── */
@@ -145,6 +148,9 @@ const InvestorsPage = () => {
         { name: 'Crescent Capital', meta: 'Verified • Last active: 5d', focus: 'Fintech', stage: 'Pre-Seed', match: 74, matchClass: 'mid' },
         { name: 'NorthBridge Angels', meta: 'Verified • Last active: 1w', focus: 'E-commerce', stage: 'Seed', match: 89, matchClass: 'high' },
     ];
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 
     return (
@@ -254,6 +260,7 @@ const InvestorsPage = () => {
                 <div className="ip-grid">
 
 <<<<<<< HEAD
+<<<<<<< HEAD
                     {/* LEFT – Investors table */}
                     <div className="ip-card ip-investors-card">
                         
@@ -271,10 +278,15 @@ const InvestorsPage = () => {
                             {isLimitReached && <span className="ip-tier-limit-msg">(Limit Reached)</span>}
                         </div>
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                     {/* LEFT – Recommended Investors table */}
                     <div className="ip-card ip-investors-card">
                         <h3 className="ip-card-title">Recommended Investors</h3>
                         <p className="ip-card-subtitle">AI-ranked based on your sector, traction, and stage.</p>
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 
                         <div className="ip-table-header">
@@ -282,7 +294,11 @@ const InvestorsPage = () => {
                             <span>Focus</span>
                             <span>Stage</span>
 <<<<<<< HEAD
+<<<<<<< HEAD
                             <span>Rating</span>
+=======
+                            <span>Match</span>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                             <span>Match</span>
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -290,6 +306,7 @@ const InvestorsPage = () => {
                         </div>
 
                         <div className="ip-table-body">
+<<<<<<< HEAD
 <<<<<<< HEAD
                             {availablePool.slice(0, visibleCount).map((inv) => {
                                 const isRequested = requestedIds.includes(inv.id);
@@ -339,6 +356,8 @@ const InvestorsPage = () => {
                             </div>
                         )}
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                             {investors.map((inv) => (
                                 <div key={inv.name} className="ip-table-row">
                                     <div className="ip-inv-info">
@@ -356,6 +375,9 @@ const InvestorsPage = () => {
                                 </div>
                             ))}
                         </div>
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
                     </div>
 
@@ -367,7 +389,11 @@ const InvestorsPage = () => {
                             <h3 className="ip-card-title">Deal Pipeline</h3>
                             <ul className="ip-bullet-list">
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 <li>Requested: {requestedIds.length}</li>
+=======
+                                <li>Requested: 5</li>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                                 <li>Requested: 5</li>
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -376,9 +402,13 @@ const InvestorsPage = () => {
                                 <li>Offers: 0</li>
                             </ul>
 <<<<<<< HEAD
+<<<<<<< HEAD
                             <button className="ip-export-btn" onClick={handleExport}>
                                 Export Investor Report →
                             </button>
+=======
+                            <button className="ip-export-btn">Export Investor Report →</button>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                             <button className="ip-export-btn">Export Investor Report →</button>
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -399,6 +429,7 @@ const InvestorsPage = () => {
                 </div>
 
             </div>
+<<<<<<< HEAD
 <<<<<<< HEAD
 
             {/* ── Modals ── */}
@@ -476,6 +507,8 @@ const InvestorsPage = () => {
                     </div>
                 </div>
             )}
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
         </div>

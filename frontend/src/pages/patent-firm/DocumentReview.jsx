@@ -1,5 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useState, useEffect } from 'react';
+=======
+import { useState } from 'react';
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 import { useState } from 'react';
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -19,11 +23,14 @@ import {
 } from 'lucide-react';
 import TopBar from '../../components/dashboard/TopBar';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { fetchDocuments } from '../../utils/patent-api';
 import './DocumentReview.css';
 import '../dashboard/StartupDashboard.css';
 
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 import './DocumentReview.css';
 import '../dashboard/StartupDashboard.css';
 
@@ -83,6 +90,9 @@ const mockDocuments = [
   },
 ];
 
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 const getFileIcon = (type) => {
   switch (type) {
@@ -110,6 +120,7 @@ const statusClass = (status) => {
 
 const DocumentReview = () => {
 <<<<<<< HEAD
+<<<<<<< HEAD
   const [mockDocuments, setMockDocuments] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [tab, setTab] = useState('all');
@@ -126,6 +137,10 @@ const DocumentReview = () => {
             setLoading(false);
         });
   }, []);
+=======
+  const [searchQuery, setSearchQuery] = useState('');
+  const [tab, setTab] = useState('all');
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
   const [searchQuery, setSearchQuery] = useState('');
   const [tab, setTab] = useState('all');

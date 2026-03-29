@@ -1,6 +1,9 @@
 import { useState } from 'react';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useNavigate } from 'react-router-dom';
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 import './TiersPage.css';
@@ -9,6 +12,7 @@ import './TiersPage.css';
 const plans = [
     {
 <<<<<<< HEAD
+<<<<<<< HEAD
         name: 'Free',
         tagline: 'The cheapest way to get started.',
         monthlyPrice: 0,
@@ -16,16 +20,22 @@ const plans = [
         features: ['Core Analytics', 'Limited Use User tracking', 'Simple Dashboard'],
         disabledFeatures: ['Email Support', 'AI Reports'],
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
         name: 'Starter',
         tagline: 'Perfect for individuals and small teams getting started',
         monthlyPrice: 0,
         yearlyPrice: 0,
         features: ['Core Platform Access', 'Basic Ai Analytics', 'Stranded Support'],
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
         popular: false,
     },
     {
         name: 'Pro',
+<<<<<<< HEAD
 <<<<<<< HEAD
         tagline: 'The most popular plan.',
         monthlyPrice: 20,
@@ -33,15 +43,21 @@ const plans = [
         features: ['Everything in starter', 'Funnel & drop-off analysis', 'Custom dashboards', 'Team collaboration'],
         disabledFeatures: ['Advanced integrations'],
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
         tagline: 'Perfect for Small businesses who want to expand their repertoire',
         monthlyPrice: 25,
         yearlyPrice: 25,
         features: ['Core Platform Access', 'Pro Ai Analytics', 'Extended Support'],
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
         popular: true,
     },
     {
         name: 'Premium',
+<<<<<<< HEAD
 <<<<<<< HEAD
         tagline: 'Contact us for more information.',
         monthlyPrice: 40,
@@ -49,10 +65,15 @@ const plans = [
         features: ['All Growth features', 'Unlimited tracked users', 'Dedicated account manager', 'SLA & compliance support', 'Advanced integrations'],
         disabledFeatures: [],
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
         tagline: 'Perfect for established businesses who want to expand their customer base',
         monthlyPrice: 50,
         yearlyPrice: 50,
         features: ['Core Platform Access', 'Complete Ai Analytics', 'Dedicated Support'],
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
         popular: false,
     },
@@ -62,12 +83,15 @@ const plans = [
 const TiersPage = () => {
     const [billingYearly, setBillingYearly] = useState(false);
 <<<<<<< HEAD
+<<<<<<< HEAD
     const navigate = useNavigate();
 
     const handleChoosePlan = (plan) => {
         const price = billingYearly ? plan.yearlyPrice : plan.monthlyPrice;
         navigate('/payment', { state: { plan: plan.name, price } });
     };
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 
@@ -130,7 +154,11 @@ const TiersPage = () => {
                             Yearly
                         </span>
 <<<<<<< HEAD
+<<<<<<< HEAD
                         <span className="tp-saving-badge">2 Months Free</span>
+=======
+                        <span className="tp-saving-badge">+2.45%</span>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                         <span className="tp-saving-badge">+2.45%</span>
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -151,9 +179,13 @@ const TiersPage = () => {
                                     {billingYearly ? plan.yearlyPrice : plan.monthlyPrice}
                                 </span>
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 <span className="tp-price-period">
                                     {billingYearly ? ' / year' : ' / month'}
                                 </span>
+=======
+                                <span className="tp-price-period"> / month</span>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                                 <span className="tp-price-period"> / month</span>
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -171,6 +203,7 @@ const TiersPage = () => {
                                         {feat}
                                     </li>
                                 ))}
+<<<<<<< HEAD
 <<<<<<< HEAD
                                 {plan.disabledFeatures && plan.disabledFeatures.map((feat) => (
                                     <li key={`dis-${feat}`} className="tp-feature-muted">
@@ -191,6 +224,11 @@ const TiersPage = () => {
                             >
                                 Join This Plan
                             </button>
+=======
+                            </ul>
+
+                            <button className="tp-choose-btn">Choose Plan</button>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                             </ul>
 

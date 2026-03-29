@@ -24,9 +24,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Provider config is validated at import time in ai_engine.provider
 from ai_engine.provider import get_litellm_params
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 router = APIRouter(prefix="/api", tags=["Chat"])
@@ -139,6 +142,7 @@ async def _stream_quick_response(
     """Stream quick conversational response token by token."""
     try:
 <<<<<<< HEAD
+<<<<<<< HEAD
         from cache.cache_manager import get_cached_chat, set_cached_chat
 
         # Only cache stateless requests — skip when history is present (context-dependent)
@@ -155,12 +159,17 @@ async def _stream_quick_response(
         # Get provider-specific params (model, api_key, api_base, api_version)
         llm_params = get_litellm_params()
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
         import litellm
 
         model = os.getenv("CREWAI_LLM_MODEL", "azure/gpt-4o")
         if model.startswith("azure/"):
             if not os.getenv("AZURE_API_KEY") or not os.getenv("AZURE_ENDPOINT"):
                 raise EnvironmentError("AZURE_API_KEY and AZURE_ENDPOINT must be set for Azure models.")
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 
         system_prompt = (
@@ -189,11 +198,14 @@ async def _stream_quick_response(
 
         response = await litellm.acompletion(
 <<<<<<< HEAD
+<<<<<<< HEAD
             messages=messages,
             max_tokens=512,
             stream=True,
             **llm_params,
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
             model=model,
             messages=messages,
             max_tokens=512,
@@ -201,6 +213,9 @@ async def _stream_quick_response(
             api_key=os.getenv("AZURE_API_KEY"),
             api_base=os.getenv("AZURE_ENDPOINT"),
             api_version=os.getenv("AZURE_API_VERSION"),
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
         )
 
@@ -213,8 +228,11 @@ async def _stream_quick_response(
 
         message_id = str(uuid.uuid4())
 <<<<<<< HEAD
+<<<<<<< HEAD
         if use_cache:
             set_cached_chat(message, user_id, dataset_id, full_text)
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
         yield _sse({"type": "done", "message_id": message_id})

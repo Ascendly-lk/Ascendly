@@ -1,5 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useMemo, useState, useEffect } from "react";
+=======
+import { useMemo, useState } from "react";
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 import { useMemo, useState } from "react";
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -16,11 +20,14 @@ import {
   Banknote,
 } from "lucide-react";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { fetchPayments } from '../../utils/patent-api';
 import TopBar from "../../components/dashboard/TopBar";
 import "./Payments.css";
 
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 import TopBar from "../../components/dashboard/TopBar";
 import "./Payments.css";
 
@@ -93,6 +100,9 @@ const sampleInvoices = [
   },
 ];
 
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 const statusMeta = {
   all: { label: "All", color: "cl-badge-gray" },
@@ -102,6 +112,7 @@ const statusMeta = {
 };
 
 export default function PatentFirmPayments() {
+<<<<<<< HEAD
 <<<<<<< HEAD
   const [sampleInvoices, setSampleInvoices] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -121,19 +132,30 @@ export default function PatentFirmPayments() {
   const filtered = useMemo(() => {
     if (!sampleInvoices.length) return [];
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
   const [searchQuery, setSearchQuery] = useState("");
   const [tab, setTab] = useState("all");
 
   const filtered = useMemo(() => {
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
     const normalized = searchQuery.trim().toLowerCase();
     return sampleInvoices.filter((invoice) => {
       const matchQuery =
         !normalized ||
 <<<<<<< HEAD
+<<<<<<< HEAD
         (invoice.client || "").toLowerCase().includes(normalized) ||
         (invoice.id || "").toLowerCase().includes(normalized) ||
         (invoice.applicationId || "").toLowerCase().includes(normalized);
+=======
+        invoice.client.toLowerCase().includes(normalized) ||
+        invoice.id.toLowerCase().includes(normalized) ||
+        invoice.applicationId.toLowerCase().includes(normalized);
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
         invoice.client.toLowerCase().includes(normalized) ||
         invoice.id.toLowerCase().includes(normalized) ||
@@ -144,7 +166,11 @@ export default function PatentFirmPayments() {
       return matchQuery && matchTab;
     });
 <<<<<<< HEAD
+<<<<<<< HEAD
   }, [searchQuery, tab, sampleInvoices]);
+=======
+  }, [searchQuery, tab]);
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
   }, [searchQuery, tab]);
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -153,9 +179,14 @@ export default function PatentFirmPayments() {
 
   const analytics = useMemo(() => {
 <<<<<<< HEAD
+<<<<<<< HEAD
     if (!sampleInvoices.length) return { revenueByTier: {}, paymentMethods: {}, totalRevenue: 0 };
     const revenueByTier = sampleInvoices.reduce((acc, inv) => {
       acc[inv.tier] = (acc[inv.tier] || 0) + (parseFloat(inv.amount) || 0);
+=======
+    const revenueByTier = sampleInvoices.reduce((acc, inv) => {
+      acc[inv.tier] = (acc[inv.tier] || 0) + inv.amount;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
     const revenueByTier = sampleInvoices.reduce((acc, inv) => {
       acc[inv.tier] = (acc[inv.tier] || 0) + inv.amount;
@@ -167,7 +198,11 @@ export default function PatentFirmPayments() {
       if (inv.paymentMethod) {
         acc[inv.paymentMethod] = acc[inv.paymentMethod] || { amount: 0, count: 0 };
 <<<<<<< HEAD
+<<<<<<< HEAD
         acc[inv.paymentMethod].amount += (parseFloat(inv.amount) || 0);
+=======
+        acc[inv.paymentMethod].amount += inv.amount;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
         acc[inv.paymentMethod].amount += inv.amount;
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -180,7 +215,11 @@ export default function PatentFirmPayments() {
 
     return { revenueByTier, paymentMethods, totalRevenue };
 <<<<<<< HEAD
+<<<<<<< HEAD
   }, [sampleInvoices]);
+=======
+  }, []);
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
   }, []);
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -288,7 +327,11 @@ export default function PatentFirmPayments() {
                     
                     <div className="payment-amount-group">
 <<<<<<< HEAD
+<<<<<<< HEAD
                       <div className="amount">${(parseFloat(invoice.amount) || 0).toLocaleString()}</div>
+=======
+                      <div className="amount">${invoice.amount.toLocaleString()}</div>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                       <div className="amount">${invoice.amount.toLocaleString()}</div>
 >>>>>>> parent of ae17c912 (Update by deleting some files)

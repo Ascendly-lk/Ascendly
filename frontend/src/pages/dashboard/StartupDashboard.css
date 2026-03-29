@@ -35,15 +35,21 @@
 .dashboard-stats {
     display: grid;
 <<<<<<< HEAD
+<<<<<<< HEAD
     grid-template-columns: repeat(4, 1fr);
     gap: 24px;
     width: 100%;
     margin-bottom: 8px; /* subtle space before next row */
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 24px;
     width: 100%;
     max-width: 100%;
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
     align-items: stretch;
 }

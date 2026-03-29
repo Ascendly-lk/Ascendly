@@ -6,7 +6,10 @@ Profiles table schema (existing):
 """
 import os
 <<<<<<< HEAD
+<<<<<<< HEAD
 import logging
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 from dotenv import load_dotenv
@@ -14,8 +17,11 @@ from fastapi import Header, HTTPException
 from supabase import create_client, Client
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 logger = logging.getLogger(__name__)
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 load_dotenv()
@@ -125,6 +131,7 @@ def require_auth(authorization: str = Header(...)):
         raise HTTPException(status_code=401, detail="Invalid authorization header format")
     token = authorization[7:]
 <<<<<<< HEAD
+<<<<<<< HEAD
     
     # Allow dev bypass
     if token == "BYPASS" and os.getenv("ENVIRONMENT", "dev") != "production":
@@ -135,14 +142,20 @@ def require_auth(authorization: str = Header(...)):
 
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     try:
         client = get_supabase_client()
         response = client.auth.get_user(token)
         if not response or not response.user:
 <<<<<<< HEAD
+<<<<<<< HEAD
             logger.warning("[require_auth] Token validation failed: empty or missing user object")
             raise HTTPException(status_code=401, detail="Invalid or expired token")
         logger.debug("[require_auth] Token verified")
+=======
+            raise HTTPException(status_code=401, detail="Invalid or expired token")
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
             raise HTTPException(status_code=401, detail="Invalid or expired token")
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -151,7 +164,10 @@ def require_auth(authorization: str = Header(...)):
         raise
     except Exception:
 <<<<<<< HEAD
+<<<<<<< HEAD
         logger.exception("[require_auth] Unexpected error during token verification")
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
         raise HTTPException(status_code=401, detail="Authentication failed")

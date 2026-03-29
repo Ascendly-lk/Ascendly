@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import {
   BrowserRouter as Router,
   Routes,
@@ -12,10 +13,16 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 >>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 
 import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardPlaceholder from './pages/DashboardPlaceholder';
+<<<<<<< HEAD
 <<<<<<< HEAD
 import Dashboard from './pages/BusinessAdvisory/Dashboard';
 import Clients from './pages/BusinessAdvisory/Clients';
@@ -29,6 +36,8 @@ import NotificationsPage from './pages/BusinessAdvisory/Notifications';
 import AccountPage from './pages/AccountPage';
 import DashboardLayout from './pages/BusinessAdvisory/DashboardLayout';
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 import Dashboard from './pages/Dashboard';
 import Clients from './pages/Clients';
 import Projects from './pages/Projects';
@@ -40,6 +49,9 @@ import Settings from './pages/Settings';
 import NotificationsPage from './pages/Notifications';
 import AccountPage from './pages/AccountPage';
 import DashboardLayout from './pages/DashboardLayout';
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 import StartupDashboard from './pages/dashboard/StartupDashboard';
 import AIAnalyticsDashboard from './pages/aianalytics/AIAnalyticsDashboard';
@@ -51,6 +63,7 @@ import PatentPage from './pages/dashboard/PatentPage';
 import InvestorsPage from './pages/dashboard/InvestorsPage';
 import TiersPage from './pages/dashboard/TiersPage';
 import AdvisorsPage from './pages/dashboard/AdvisorsPage';
+<<<<<<< HEAD
 <<<<<<< HEAD
 import MarketingAgency from './pages/dashboard/MarketingAgency';
 import DocumentReview from './pages/patent-firm/DocumentReview';
@@ -73,6 +86,8 @@ import Applications from "./pages/patent-firm/Applications";
 import ApplicationDetail from "./pages/patent-firm/ApplicationDetail";
 import PatentFirmPayments from "./pages/patent-firm/Payments";
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 import DocumentReview from './pages/patent-firm/DocumentReview';
 
 // Patent Firm
@@ -81,6 +96,9 @@ import PatentFirmClients from './pages/patent-firm/Clients';
 import Applications from './pages/patent-firm/Applications';
 import ApplicationDetail from './pages/patent-firm/ApplicationDetail';
 import PatentFirmPayments from './pages/patent-firm/Payments';
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 
 function App() {
@@ -92,7 +110,10 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 <<<<<<< HEAD
+<<<<<<< HEAD
           <Route path="/payment" element={<PaymentPortal />} />
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 
@@ -121,7 +142,10 @@ function App() {
             <Route path="tiers" element={<TiersPage />} />
             <Route path="advisors" element={<AdvisorsPage />} />
 <<<<<<< HEAD
+<<<<<<< HEAD
             <Route path="marketing-agency" element={<MarketingAgency />} />
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
             <Route path="clients" element={<Clients />} />
@@ -131,6 +155,7 @@ function App() {
             <Route path="profile" element={<DashboardPlaceholder />} />
             <Route path="help" element={<DashboardPlaceholder />} />
 
+<<<<<<< HEAD
 <<<<<<< HEAD
             {/* Patent Firm Dashboard Routes */}
             <Route
@@ -178,6 +203,8 @@ function App() {
               element={<MarketingAgencyProjects />}
             />
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
             <Route path="marketing-agency/projects" element={<Projects />} />
             <Route path="marketing-agency/feedbacks" element={<Feedbacks />} />
 
@@ -196,13 +223,19 @@ function App() {
             <Route path="advisor" element={<DashboardPlaceholder />} />
             <Route path="admin" element={<DashboardPlaceholder />} />
             <Route path="marketing-agency/projects" element={<MarketingAgencyProjects />} />
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
             <Route path="marketing-agency/feedbacks" element={<Feedbacks />} />
           </Route>
 
           <Route
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
             path="/dashboard/ai-analytics"
             element={
               <ProtectedRoute>
@@ -228,6 +261,9 @@ function App() {
           />
 
           <Route
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
             path="/marketing-agency/projects"
             element={
@@ -250,6 +286,7 @@ function App() {
           <Route path="/notifications" element={<NotificationsPage />} />
 
 <<<<<<< HEAD
+<<<<<<< HEAD
           <Route path="/business-advisory" element={<Dashboard />} />
           <Route path="/business-advisory/clients" element={<Clients />} />
           <Route path="/business-advisory/projects" element={<Projects />} />
@@ -261,6 +298,8 @@ function App() {
 
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
@@ -270,6 +309,10 @@ function App() {
 
 export default App;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 
 >>>>>>> parent of ae17c912 (Update by deleting some files)

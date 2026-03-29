@@ -29,7 +29,10 @@ def query_benchmarks(category: str) -> str:
     """
     try:
 <<<<<<< HEAD
+<<<<<<< HEAD
         from cache.cache_manager import get_cached_benchmark, set_cached_benchmark
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
         from database.supabase_client import get_records
@@ -41,12 +44,15 @@ def query_benchmarks(category: str) -> str:
             })
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         # Return from cache if available (TTL managed by cache_manager — 24h)
         cached = get_cached_benchmark(category)
         if cached:
             print(f"[Ascendly] Benchmark cache HIT for category='{category}'")
             return cached
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
         response = get_records("benchmarks", {"category": category})
@@ -59,6 +65,10 @@ def query_benchmarks(category: str) -> str:
             })
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+        # Return clean, agent-readable records
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
         # Return clean, agent-readable records
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -75,9 +85,13 @@ def query_benchmarks(category: str) -> str:
         ]
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         result = json.dumps(benchmarks, indent=2)
         set_cached_benchmark(category, result)
         return result
+=======
+        return json.dumps(benchmarks, indent=2)
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
         return json.dumps(benchmarks, indent=2)
 >>>>>>> parent of ae17c912 (Update by deleting some files)

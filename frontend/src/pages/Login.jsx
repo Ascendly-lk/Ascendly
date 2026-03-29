@@ -17,8 +17,11 @@ const Login = () => {
     );
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     // If user just registered, show success message
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     // If already logged in (e.g., from a mock session or valid token), redirect to dashboard
     useEffect(() => {
         if (user && user.onboarding_completed) {
@@ -26,6 +29,9 @@ const Login = () => {
             navigate(route, { replace: true });
         }
     }, [user, navigate]);
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 
 // Form state

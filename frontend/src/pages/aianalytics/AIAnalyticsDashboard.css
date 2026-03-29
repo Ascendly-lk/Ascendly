@@ -1,7 +1,10 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 /* Main content area (no longer needs fixed margin-left as it's in DashboardLayout) */
 .ai-dashboard-main {
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 /* Full-screen layout: sidebar + main side-by-side */
 .ai-dashboard {
     display: flex;
@@ -13,6 +16,9 @@
 /* Main area pushed right of the sidebar (220px wide) */
 .ai-dashboard-main {
     margin-left: 220px;
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
     flex: 1;
     display: flex;
@@ -52,13 +58,19 @@
 
 /* ── Responsive ── */
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 @media (max-width: 1024px) {
     .ai-dashboard-main {
         margin-left: 68px;
     }
 }
 
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 @media (max-width: 900px) {
     .ai-stats-row {

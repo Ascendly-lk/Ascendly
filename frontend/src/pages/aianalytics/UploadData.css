@@ -4,8 +4,11 @@
 ══════════════════════════════════════════ */
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 .upload-main {
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 .upload-page {
     display: flex;
     min-height: 100vh;
@@ -15,6 +18,9 @@
 
 .upload-main {
     margin-left: 220px;
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
     flex: 1;
     display: flex;
@@ -316,8 +322,11 @@
    Responsive
 ══════════════════════════════════════════ */
 <<<<<<< HEAD
+<<<<<<< HEAD
 @media (max-width: 768px) {
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 @media (max-width: 1024px) {
     .upload-main {
         margin-left: 68px;
@@ -328,6 +337,9 @@
     .upload-main {
         margin-left: 0;
     }
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 
     .upload-topbar,

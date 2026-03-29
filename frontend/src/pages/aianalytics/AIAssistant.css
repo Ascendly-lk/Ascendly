@@ -1,4 +1,8 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+git
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 git
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -8,8 +12,11 @@ git
 ══════════════════════════════════════════ */
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 .ai-assistant-main {
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 .ai-assistant-page {
     display: flex;
     min-height: 100vh;
@@ -19,6 +26,9 @@ git
 
 .ai-assistant-main {
     margin-left: 220px;
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
     flex: 1;
     display: flex;
@@ -417,8 +427,11 @@ git
    Responsive
 ══════════════════════════════════════════ */
 <<<<<<< HEAD
+<<<<<<< HEAD
 @media (max-width: 768px) {
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 @media (max-width: 1024px) {
     .ai-assistant-main {
         margin-left: 68px;
@@ -429,6 +442,9 @@ git
     .ai-assistant-main {
         margin-left: 0;
     }
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 
     .ai-assistant-content {
@@ -462,6 +478,7 @@ git
     border-color: #10b981;
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 /* ── Action Buttons (Insights / PDF) ── */
 .ai-chat-actions {
@@ -506,6 +523,8 @@ git
 
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 .ai-chat-file-dropdown option {
     background: #0f1a2e;
     color: #e2e8f0;
@@ -540,6 +559,7 @@ git
     opacity: 0.5;
     cursor: not-allowed;
 <<<<<<< HEAD
+<<<<<<< HEAD
 }
 
 /* ── Coming Soon Toast ── */
@@ -565,6 +585,8 @@ git
 .ai-toast-popup.visible {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 }

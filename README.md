@@ -1,6 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 #Ascendly
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 # Ascendly
 
 AI-powered financial analytics platform for startups — upload your data, get revenue forecasts, strategic recommendations, and chat with an AI assistant about your business metrics.
@@ -146,4 +149,7 @@ Dataset (uploaded to Supabase)
 
 - **Quick mode** — Conversational questions answered token-by-token via LiteLLM streaming
 - **Analysis mode** — Triggered by keywords (`analyze`, `forecast`, `trend`, etc.) with a dataset selected; runs the full 3-agent pipeline with step progress updates
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)

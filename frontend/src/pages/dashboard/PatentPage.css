@@ -170,7 +170,10 @@
     flex-shrink: 0;
     gap: 16px;
 <<<<<<< HEAD
+<<<<<<< HEAD
     width: 100%;
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 }
@@ -253,9 +256,12 @@
     gap: 24px;
     flex: 1;
 <<<<<<< HEAD
+<<<<<<< HEAD
     width: 100%;
     align-items: stretch;
     justify-content: flex-start;
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 }
@@ -291,10 +297,15 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
 <<<<<<< HEAD
+<<<<<<< HEAD
     gap: 20px;
     align-items: stretch;
     justify-items: stretch;
     width: 100%;
+=======
+    gap: 18px;
+    align-items: stretch;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
     gap: 18px;
     align-items: stretch;
@@ -309,7 +320,10 @@
     gap: 8px;
     min-height: 140px;
 <<<<<<< HEAD
+<<<<<<< HEAD
     width: 100%;
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
     transition: transform 0.2s ease-out, box-shadow 0.2s ease, filter 0.2s ease;
@@ -429,7 +443,11 @@
    GENERIC CARD — matches Dashboard AIForecastCard style
    ══════════════════════════════════════════════════════════════════════════ */
 <<<<<<< HEAD
+<<<<<<< HEAD
 .pp-card-1 {
+=======
+.pp-card {
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 .pp-card {
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -442,10 +460,16 @@
         0 20px 60px rgba(0, 0, 0, 0.55);
     transition: transform 0.2s ease-out, box-shadow 0.2s ease, border-color 0.2s ease;
 <<<<<<< HEAD
+<<<<<<< HEAD
     width: 100%;
 }
 
 .pp-card-1:hover {
+=======
+}
+
+.pp-card:hover {
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 }
 
@@ -468,20 +492,27 @@
 /* ── Middle Row ──────────────────────────────────────────────────────────── */
 .pp-mid-row {
 <<<<<<< HEAD
+<<<<<<< HEAD
     display: flex !important;
     gap: 20px;
     align-items: stretch;
     width: 100% !important;
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     display: grid;
     grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
     gap: 20px;
     align-items: start;
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 }
 
 /* ── Filing Activity Chart ───────────────────────────────────────────────── */
 .pp-chart-card {
+<<<<<<< HEAD
 <<<<<<< HEAD
     flex: 6 !important;
     min-width: 0 !important;
@@ -490,6 +521,9 @@
     width: 100% !important;
     display: flex;
     flex-direction: column;
+=======
+    min-height: 280px;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
     min-height: 280px;
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -560,6 +594,7 @@
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 .pp-renewals-card {
     flex: 6 !important;
     min-width: 0 !important;
@@ -569,6 +604,8 @@
     flex-direction: column;
 }
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 /* ── Upcoming Renewals ───────────────────────────────────────────────────── */
@@ -673,11 +710,15 @@
    ══════════════════════════════════════════════════════════════════════════ */
 .pp-filings-card {
 <<<<<<< HEAD
+<<<<<<< HEAD
     width: 100%;
     min-width: 100%;
     flex: 1;
     overflow: hidden;
     margin: 0;
+=======
+    overflow: hidden;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
     overflow: hidden;
 >>>>>>> parent of ae17c912 (Update by deleting some files)

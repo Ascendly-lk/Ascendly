@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useLocation } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
@@ -8,10 +9,15 @@ import AnalyticsPopup from '../../components/aianalytics/AnalyticsPopup';
 import { generatePDFReport } from '../../utils/pdfGenerator';
 import { BarChart2, FileDown } from 'lucide-react';
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 import ReactMarkdown from 'react-markdown';
 import AIAnalyticsSidebar from '../../components/aianalytics/AIAnalyticsSidebar';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
 import { apiFetch } from '../../api';
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 import './AIAssistant.css';
 
@@ -86,6 +92,7 @@ const AIAssistant = () => {
     const [selectedFileId, setSelectedFileId] = useState(null);
     const [showSuggestions, setShowSuggestions] = useState(true);
 <<<<<<< HEAD
+<<<<<<< HEAD
     const [showAnalyticsPopup, setShowAnalyticsPopup] = useState(false);
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false);
     const [showComingSoon, setShowComingSoon] = useState(false);
@@ -94,6 +101,10 @@ const AIAssistant = () => {
     const messagesEndRef = useRef(null);
     const textareaRef = useRef(null);
 
+=======
+    const messagesEndRef = useRef(null);
+    const textareaRef = useRef(null);
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
     const messagesEndRef = useRef(null);
     const textareaRef = useRef(null);
@@ -117,7 +128,10 @@ const AIAssistant = () => {
     }, []);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     useEffect(() => {
         fetchFiles();
         const onVisible = () => { if (document.visibilityState === 'visible') fetchFiles(); };
@@ -130,6 +144,9 @@ const AIAssistant = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
     const sendMessage = useCallback(async (overrideText) => {
         const trimmed = (overrideText || input).trim();
@@ -173,6 +190,7 @@ const AIAssistant = () => {
             const decoder = new TextDecoder();
             let buffer = '';
 
+<<<<<<< HEAD
 <<<<<<< HEAD
             const processLine = (line) => {
                 if (!line.startsWith('data: ')) return;
@@ -247,6 +265,8 @@ const AIAssistant = () => {
                         : m
                 ));
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
@@ -295,6 +315,9 @@ const AIAssistant = () => {
                         // Skip malformed SSE lines
                     }
                 }
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
             }
         } catch {
@@ -309,6 +332,7 @@ const AIAssistant = () => {
         }
     }, [input, isSending, selectedFileId, fetchFiles]);
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     useEffect(() => {
         fetchFiles();
@@ -334,6 +358,8 @@ const AIAssistant = () => {
 
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -349,6 +375,7 @@ const AIAssistant = () => {
     };
 
     return (
+<<<<<<< HEAD
 <<<<<<< HEAD
         <div className="ai-assistant-main">
             <AIAnalyticsTopBar />
@@ -501,6 +528,8 @@ const AIAssistant = () => {
                 onSuggestionClick={sendMessage} 
             />
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
         <div className="ai-assistant-page">
             <AIAnalyticsSidebar />
 
@@ -619,6 +648,9 @@ const AIAssistant = () => {
                     </div>
                 </div>
             </div>
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
         </div>
     );

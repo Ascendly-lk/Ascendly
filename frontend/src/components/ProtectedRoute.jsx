@@ -11,6 +11,7 @@ export default function ProtectedRoute({ children }) {
     const { user, loading } = useAuth();
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     // Allow an explicit, dev-only auth bypass controlled via env var.
     // In production builds, this will always be false.
     const shouldBypassAuth =
@@ -19,6 +20,8 @@ export default function ProtectedRoute({ children }) {
         import.meta.env.DEV &&
         import.meta.env.VITE_BYPASS_AUTH === 'true';
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
     if (loading) {
@@ -39,7 +42,11 @@ export default function ProtectedRoute({ children }) {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     if (!user && !shouldBypassAuth) {
+=======
+    if (!user) {
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
     if (!user) {
 >>>>>>> parent of ae17c912 (Update by deleting some files)

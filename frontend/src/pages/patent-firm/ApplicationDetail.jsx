@@ -1,5 +1,8 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useState, useEffect } from "react";
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 import { useNavigate, useParams } from "react-router-dom";
@@ -16,7 +19,10 @@ import {
 } from "lucide-react";
 import TopBar from "../../components/dashboard/TopBar";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { fetchApplicationById } from "../../utils/patent-api";
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 import "./Dashboard.css";
@@ -59,7 +65,10 @@ const StatusTracker = ({ steps }) => (
 );
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 // Mock data
 const applicationData = {
     "PAT-2026-001": {
@@ -94,11 +103,15 @@ const applicationData = {
     },
 };
 
+<<<<<<< HEAD
+>>>>>>> parent of ae17c912 (Update by deleting some files)
+=======
 >>>>>>> parent of ae17c912 (Update by deleting some files)
 export default function ApplicationDetail() {
     const navigate = useNavigate();
     const { id } = useParams();
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     const [application, setApplication] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -122,6 +135,11 @@ export default function ApplicationDetail() {
     }
 
     if (!application || application.error) {
+=======
+    const application = id ? applicationData[id] : null;
+
+    if (!application) {
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
     const application = id ? applicationData[id] : null;
 
@@ -201,6 +219,7 @@ export default function ApplicationDetail() {
                         </CardHeader>
                         <CardContent>
 <<<<<<< HEAD
+<<<<<<< HEAD
                             <StatusTracker steps={[
                                 { name: "Application Submitted", status: "completed", date: application.created_at ? new Date(application.created_at).toLocaleDateString() : 'N/A' },
                                 { name: "Pending Review", status: application.status === "pending_review" ? "current" : "completed" },
@@ -209,6 +228,9 @@ export default function ApplicationDetail() {
                                 { name: "USPTO Filed", status: ['filed', 'approved'].includes(application.status) ? "completed" : "upcoming" },
                                 { name: "Approved", status: application.status === "approved" ? "completed" : "upcoming" }
                             ]} />
+=======
+                            <StatusTracker steps={application.steps} />
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                             <StatusTracker steps={application.steps} />
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -238,7 +260,11 @@ export default function ApplicationDetail() {
                         <CardContent>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 {(application.documents || []).map((doc, i) => (
+=======
+                                {application.documents.map((doc, i) => (
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                                 {application.documents.map((doc, i) => (
 >>>>>>> parent of ae17c912 (Update by deleting some files)
@@ -268,7 +294,11 @@ export default function ApplicationDetail() {
                         <CardContent>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 {(application.notes || []).map((note, i) => (
+=======
+                                {application.notes.map((note, i) => (
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 =======
                                 {application.notes.map((note, i) => (
 >>>>>>> parent of ae17c912 (Update by deleting some files)
