@@ -6,6 +6,8 @@ import { apiFetch, getToken } from '../../api';
 import AnalyticsPopup from '../../components/aianalytics/AnalyticsPopup';
 import C1Message from '../../components/aianalytics/C1Message';
 import PricingModal from '../../components/aianalytics/PricingModal';
+import ConversationSidebar from '../../components/aianalytics/ConversationSidebar';
+import { createConversation, getMessages } from '../../api/conversations';
 import { useUsageGuard } from '../../hooks/useUsageGuard';
 import { BarChart2, FileDown } from 'lucide-react';
 import './AIAssistant.css';
@@ -89,6 +91,8 @@ const AIAssistant = () => {
     const [showAnalyticsPopup, setShowAnalyticsPopup] = useState(false);
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false);
     const [showComingSoon, setShowComingSoon] = useState(false);
+    const [activeConversationId, setActiveConversationId] = useState(null);
+    const [sidebarRefresh, setSidebarRefresh] = useState(0);
     const location = useLocation();
     const navigate = useNavigate();
     const hasAutoPrompted = useRef(false);
@@ -117,6 +121,36 @@ const AIAssistant = () => {
             .catch(() => {});
     }, []);
 
+    /* Conversation handlers */
+    const handleNewConversation = useCallback(() => {
+        setActiveConversationId(null);
+        setMessages(INITIAL_MESSAGES);
+        setShowSuggestions(true);
+        setHasAnalyticsData(false);
+        setSelectedFileId(null);
+    }, []);
+
+    const handleSelectConversation = useCallback(async (conv) => {
+        setActiveConversationId(conv.id);
+        if (conv.dataset_id) setSelectedFileId(conv.dataset_id);
+        const msgs = await getMessages(conv.id);
+        if (msgs.length === 0) {
+            setMessages(INITIAL_MESSAGES);
+        } else {
+            setMessages([
+                INITIAL_MESSAGES[0],
+                ...msgs.map((m) => ({
+                    id: m.id,
+                    role: m.role,
+                    text: m.content,
+                    time: new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                })),
+            ]);
+        }
+        setShowSuggestions(false);
+        setHasAnalyticsData(false);
+    }, []);
+
     const sendMessage = useCallback(async (overrideText, overrideDatasetId) => {
         const trimmed = (overrideText || input).trim();
         if (!trimmed || isSending) return;
@@ -135,6 +169,17 @@ const AIAssistant = () => {
         setInput('');
         setShowSuggestions(false);
         if (textareaRef.current) textareaRef.current.style.height = 'auto';
+
+        // Create a conversation on the first real message if none exists
+        let convId = activeConversationId;
+        if (!convId) {
+            const conv = await createConversation(trimmed.slice(0, 60), datasetId);
+            if (conv?.id) {
+                convId = conv.id;
+                setActiveConversationId(convId);
+                setSidebarRefresh((n) => n + 1);
+            }
+        }
 
         // No-dataset guard: analysis intent without a dataset → show inline upload zone
         // Check BEFORE appending messages to avoid duplicates
@@ -399,6 +444,12 @@ const AIAssistant = () => {
             <TopBar title="AI Assistant" />
 
             <div className="ai-assistant-content">
+                <ConversationSidebar
+                    activeId={activeConversationId}
+                    onSelect={handleSelectConversation}
+                    onNew={handleNewConversation}
+                    refreshTrigger={sidebarRefresh}
+                />
                 {/* Chat Card */}
                 <div className="ai-chat-card">
                     {/* Card Header */}
