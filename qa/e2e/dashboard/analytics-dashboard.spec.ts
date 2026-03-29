@@ -32,7 +32,7 @@ test.describe('AI Analytics Dashboard', () => {
       count: 1,
     });
 
-    await page.goto('/ai-analytics');
+    await page.goto('/dashboard/ai-analytics');
   });
 
   test('renders metric stat cards', async ({ page }) => {

@@ -24,6 +24,9 @@ async function mockSse(page: Page, url: string, events: string[]) {
   );
 }
 
+// Always mock /auth/me so tests work without real Supabase credentials in CI
+const MOCK_ME = { id: 'e2e-user-id', email: 'testuser@ascendly.test', role: 'startup' };
+
 export const test = base.extend<{
   mockApi: {
     json: typeof mockJson;
@@ -32,6 +35,7 @@ export const test = base.extend<{
   };
 }>({
   mockApi: async ({ page }, use) => {
+    await mockJson(page, `${API}/auth/me`, MOCK_ME);
     await use({ json: mockJson.bind(null, page), sse: mockSse.bind(null, page), apiBase: API });
   },
 });

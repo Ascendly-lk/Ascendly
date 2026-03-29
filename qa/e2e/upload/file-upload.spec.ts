@@ -1,5 +1,5 @@
 /**
- * E2E tests for the File Upload page (/upload or /ai-analytics/upload).
+ * E2E tests for the File Upload page (/dashboard/ai-analytics/upload).
  * Uses storageState (authenticated). Mocks the backend upload endpoint.
  */
 import { test, expect } from '../helpers/fixtures';
@@ -7,20 +7,21 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
 
+const API = process.env.BACKEND_URL ?? 'http://localhost:8000';
+const MOCK_ME = { id: 'e2e-user-id', email: 'testuser@ascendly.test', role: 'startup' };
+
 test.describe('File Upload', () => {
   test('upload page renders file input or drop zone', async ({ page }) => {
-    await page.goto('/');
-    // Navigate to upload — try common routes
-    const uploadLink = page.getByRole('link', { name: /upload|data/i }).first();
-    if (await uploadLink.isVisible()) {
-      await uploadLink.click();
-    } else {
-      await page.goto('/ai-analytics/upload');
-    }
+    // Mock /auth/me so the protected route doesn't redirect to login
+    await page.route(`${API}/auth/me`, (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_ME) })
+    );
+
+    await page.goto('/dashboard/ai-analytics/upload');
 
     // File input exists (may be hidden — use locator not visible check)
     const fileInput = page.locator('input[type="file"]');
-    await expect(fileInput).toHaveCount(1, { timeout: 5000 });
+    await expect(fileInput).toHaveCount(1, { timeout: 8000 });
   });
 
   test('can upload a CSV file and see success feedback', async ({ page, mockApi }) => {
@@ -33,7 +34,7 @@ test.describe('File Upload', () => {
       status: 'processed',
     });
 
-    await page.goto('/ai-analytics/upload');
+    await page.goto('/dashboard/ai-analytics/upload');
 
     // Create a temp CSV file
     const tmpFile = path.join(os.tmpdir(), 'sales_data.csv');
@@ -54,7 +55,7 @@ test.describe('File Upload', () => {
   test('shows error on unsupported file type', async ({ page, mockApi }) => {
     await mockApi.json(`${mockApi.apiBase}/api/upload`, { detail: 'Unsupported file type' }, 400);
 
-    await page.goto('/ai-analytics/upload');
+    await page.goto('/dashboard/ai-analytics/upload');
 
     const tmpFile = path.join(os.tmpdir(), 'malware.exe');
     fs.writeFileSync(tmpFile, 'MZ');
