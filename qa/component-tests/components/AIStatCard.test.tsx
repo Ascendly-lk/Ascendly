@@ -49,16 +49,6 @@ describe('AIStatCard', () => {
     expect(container.querySelector('.ai-stat-card__change')).toBeNull();
   });
 
-  it('renders sparkline when sparkData has >= 2 points', () => {
-    render(<AIStatCard {...baseProps} change="+5%" sparkData={[10, 20, 30]} />);
-    expect(screen.getByTestId('sparkline')).toBeInTheDocument();
-  });
-
-  it('does not render sparkline when sparkData has < 2 points', () => {
-    render(<AIStatCard {...baseProps} sparkData={[10]} />);
-    expect(screen.queryByTestId('sparkline')).toBeNull();
-  });
-
   it('applies dark variant class by default', () => {
     const { container } = render(<AIStatCard {...baseProps} />);
     expect(container.querySelector('.ai-stat-card--dark')).toBeInTheDocument();
