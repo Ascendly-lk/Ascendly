@@ -1,0 +1,234 @@
+name: QA — Full Test Suite
+
+on:
+  push:
+    branches: [main, feat/**]
+  pull_request:
+    branches: [Main]
+  workflow_dispatch:   # manual trigger from GitHub UI
+
+concurrency:
+  group: qa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ────────────────────────────────────────────────────────────────────────────
+  # Layer 1: Backend API Tests (pytest)
+  # ────────────────────────────────────────────────────────────────────────────
+  backend-tests:
+    name: Backend API Tests (pytest)
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r requirements-test.txt
+
+      - name: Create minimal .env for tests
+        run: |
+          cat > .env << 'EOF'
+          SUPABASE_URL=https://placeholder.supabase.co
+          SUPABASE_KEY=placeholder
+          SUPABASE_SERVICE_KEY=placeholder
+          AZURE_API_KEY=placeholder
+          AZURE_API_BASE=https://placeholder.openai.azure.com/
+          AZURE_API_VERSION=2024-02-01
+          CREWAI_LLM_MODEL=azure/gpt-4o
+          DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder
+          EOF
+
+      - name: Run pytest
+        run: |
+          python -m pytest \
+            --tb=short \
+            --junitxml=../qa/results/junit/pytest-results.xml \
+            -q \
+            ../qa/api-tests/
+        env:
+          PYTHONPATH: ${{ github.workspace }}/backend
+
+      - name: Upload pytest JUnit
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pytest-results
+          path: qa/results/junit/pytest-results.xml
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Layer 2: Frontend Component Tests (Vitest + RTL + MSW)
+  # ────────────────────────────────────────────────────────────────────────────
+  component-tests:
+    name: Frontend Component Tests (Vitest)
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: qa
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: qa/package-lock.json
+
+      - name: Install QA deps
+        run: npm ci --prefer-offline 2>/dev/null || npm install
+
+      - name: Run Vitest
+        run: npm run test:components
+
+      - name: Upload Vitest JUnit
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vitest-results
+          path: qa/results/junit/vitest-results.xml
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Layer 3: E2E Tests (Playwright)
+  # ────────────────────────────────────────────────────────────────────────────
+  e2e-tests:
+    name: E2E Tests (Playwright)
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: qa
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: qa/package-lock.json
+
+      - name: Install QA deps
+        run: npm ci --prefer-offline 2>/dev/null || npm install
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Start backend (background)
+        working-directory: backend
+        run: |
+          pip install -r requirements.txt -q
+          cat > .env << 'EOF'
+          SUPABASE_URL=https://placeholder.supabase.co
+          SUPABASE_KEY=placeholder
+          SUPABASE_SERVICE_KEY=placeholder
+          AZURE_API_KEY=placeholder
+          AZURE_API_BASE=https://placeholder.openai.azure.com/
+          AZURE_API_VERSION=2024-02-01
+          CREWAI_LLM_MODEL=azure/gpt-4o
+          DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder
+          EOF
+          uvicorn main:app --host 0.0.0.0 --port 8000 &
+          sleep 5
+        env:
+          PYTHONPATH: ${{ github.workspace }}/backend
+
+      - name: Start frontend (background)
+        working-directory: frontend
+        run: |
+          npm ci --prefer-offline 2>/dev/null || npm install --legacy-peer-deps
+          npm run dev &
+          sleep 8
+
+      - name: Run Playwright
+        run: |
+          npx playwright test \
+            --reporter=list,junit \
+            --project=chromium
+        env:
+          FRONTEND_URL: http://localhost:5173
+          BACKEND_URL: http://localhost:8000
+          TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+          CI: "true"
+
+      - name: Upload Playwright JUnit + report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-results
+          path: |
+            qa/results/junit/e2e-results.xml
+            qa/results/playwright-report/
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Aggregate + Publish
+  # ────────────────────────────────────────────────────────────────────────────
+  aggregate-and-publish:
+    name: Aggregate & Publish Results
+    runs-on: ubuntu-latest
+    needs: [backend-tests, component-tests, e2e-tests]
+    if: always()   # run even if tests fail so we always publish a summary
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Download all JUnit artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: qa/results/junit
+          merge-multiple: true
+
+      - name: Aggregate results → summary.json
+        working-directory: qa
+        run: node scripts/aggregate-results.js
+        continue-on-error: true   # don't fail the workflow on test failures here
+
+      - name: Upload summary.json artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-summary
+          path: qa/results/summary.json
+          retention-days: 30
+
+      - name: Publish summary to Supabase Storage
+        working-directory: qa
+        run: node scripts/upload-summary.js
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          QA_RESULTS_BUCKET: qa-results
+        continue-on-error: true   # don't fail CI if upload fails
+
+      - name: Print results summary
+        working-directory: qa
+        run: |
+          echo "=== QA Summary ==="
+          cat results/summary.json | python3 -c "
+          import json, sys
+          s = json.load(sys.stdin)
+          o = s['overall']
+          print(f\"Passed: {o['passed']}  Failed: {o['failed']}  Skipped: {o['skipped']}  Total: {o['total']}\")
+          if o['failed'] > 0:
+              print('\\nFailed tests:')
+              for t in s.get('failed_tests', []):
+                  print(f\"  [{t['suite']}] {t['name']}\")
+          "
