@@ -3,6 +3,7 @@ name: CI + CD — Deploy to Azure
 on:
   push:
     branches: ["Main"]
+  workflow_dispatch:
 
 jobs:
   # ── 1. Backend Tests (deterministic only — no LLM cost) ───────────────────
