@@ -73,6 +73,7 @@ jobs:
           action: "upload"
           app_location: "frontend"
           output_location: "dist"
+          app_build_command: "npm install --legacy-peer-deps && npm run build"
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
