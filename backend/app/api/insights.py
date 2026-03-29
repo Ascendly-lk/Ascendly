@@ -49,12 +49,15 @@ async def analyze_dataset(dataset_id: str, current_user=Depends(require_auth)):
         ("recommendation", "Strategic Advice",  data.get("strategic_advice")),
     ]
 
+    user_id = str(current_user.id)
+
     for insight_type, title, content_data in insight_types:
         if not content_data:
             continue
         try:
             record = insert_record("ai_insights", {
                 "dataset_id": dataset_id,
+                "user_id": user_id,
                 "insight_type": insight_type,
                 "title": title,
                 "content": str(content_data),
@@ -74,6 +77,7 @@ async def analyze_dataset(dataset_id: str, current_user=Depends(require_auth)):
     try:
         for log in result.get("agent_logs", []):
             insert_record("ai_logs", {
+                "user_id": user_id,
                 "request_id": request_id,
                 "agent_name": log["agent_name"],
                 "tool_output": log.get("output", ""),

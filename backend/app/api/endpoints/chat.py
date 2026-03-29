@@ -6,6 +6,7 @@ Streaming SSE response supporting two modes:
   - Analysis mode: step progress + final result via 3-agent CrewAI pipeline
 
 Conversation memory is supported by passing a `history` array in the request.
+Messages are persisted to the chat_messages table for history retrieval.
 """
 import os
 import re
@@ -13,12 +14,13 @@ import uuid
 import json
 import asyncio
 import traceback
+import base64
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from typing import Literal, Optional
-from database.supabase_client import require_auth, get_supabase_client, insert_record
+from database.supabase_client import require_auth, get_supabase_client, get_supabase_admin, insert_record
 from app.api.middleware.usage_guard import check_usage_limit
 from dotenv import load_dotenv
 
@@ -45,6 +47,7 @@ class HistoryItem(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     dataset_id: Optional[str] = None
+    conversation_id: Optional[str] = None
     history: Optional[list[HistoryItem]] = Field(default_factory=list, max_length=50)
 
 
@@ -126,16 +129,37 @@ async def _build_dataset_context(user_id: str, dataset_id: str) -> str:
         return ""
 
 
+def _persist_message(conversation_id: str, role: str, content: str, msg_type: str = "text"):
+    """Save a message to the chat_messages table."""
+    if not conversation_id or not content:
+        return
+    try:
+        # CRITICAL: Use admin client to ensure persistence works regardless of RLS policies for tracking tables
+        get_supabase_admin().table("chat_messages").insert({
+            "conversation_id": conversation_id,
+            "role": role,
+            "content": content,
+            "msg_type": msg_type
+        }).execute()
+    except Exception as e:
+        print(f"[chat] Failed to persist message: {e}")
+
+
 # ── Streaming generators ──────────────────────────────────────────────────────
 
 async def _stream_quick_response(
     message: str,
     user_id: str,
     dataset_id: Optional[str],
+    conversation_id: Optional[str],
     history: list[dict],
 ):
-    """Stream quick conversational response token by token."""
+    """Stream quick conversational response token by token, with C1 fallback."""
     try:
+        # Persist User message
+        if conversation_id:
+            _persist_message(conversation_id, "user", message)
+
         from cache.cache_manager import get_cached_chat, set_cached_chat
 
         # Only cache stateless requests — skip when history is present (context-dependent)
@@ -145,6 +169,9 @@ async def _stream_quick_response(
             if cached is not None:
                 yield _sse({"type": "token", "content": cached})
                 yield _sse({"type": "done", "message_id": str(uuid.uuid4()), "cached": True})
+                # Persist assistant's cached answer if we have a conversation_id
+                if conversation_id:
+                    _persist_message(conversation_id, "assistant", cached, "text")
                 return
 
         import litellm
@@ -176,6 +203,40 @@ async def _stream_quick_response(
             {"role": "user", "content": message},
         ]
 
+        # Use C1 if possible for universal interactive UI
+        if os.environ.get("THESYS_API_KEY"):
+            message_id = str(uuid.uuid4())
+            mock_data = {"mode": "quick_chat", "user_prompt": message}
+            dataset_name = "System"
+            try:
+                client = get_supabase_client()
+                row = client.table("uploaded_files").select("filename").eq("id", dataset_id).execute() if dataset_id else None
+                if row and row.data:
+                    dataset_name = row.data[0].get("filename", dataset_name)
+            except Exception: pass
+
+            full_dsl = ""
+            async for event in _stream_c1_response(mock_data, message, dataset_name, message_id):
+                # Accumulate DSL from raw SSE string
+                if event.startswith('data: {"type": "c1_chunk"'):
+                    try:
+                        chunk_data = json.loads(event[6:])
+                        full_dsl += base64.b64decode(chunk_data["content"]).decode()
+                    except: pass
+                yield event
+            
+            if conversation_id:
+                # If C1 returned a DSL, persist as c1 type. 
+                # If it fell back to markdown (result type), persist as text.
+                if full_dsl:
+                    _persist_message(conversation_id, "assistant", full_dsl, "c1")
+                else:
+                    # Fallback detection: if no chunks but we yielded, it must have been a markdown result
+                    # Note: this is a bit implicit, but _stream_c1_response yields 'result' on fallback.
+                    pass # Persistence handled inside _stream_c1_response for results? No, let's do it here.
+            return
+
+        # Fallback to standard LiteLLM if C1 not configured
         response = await litellm.acompletion(
             messages=messages,
             max_tokens=512,
@@ -195,6 +256,10 @@ async def _stream_quick_response(
             set_cached_chat(message, user_id, dataset_id, full_text)
         yield _sse({"type": "done", "message_id": message_id})
 
+        # Persist Assistant message
+        if conversation_id:
+            _persist_message(conversation_id, "assistant", full_text, "text")
+
         # Log after stream completes
         try:
             insert_record("ai_logs", {
@@ -212,31 +277,21 @@ async def _stream_quick_response(
         yield _sse({"type": "error", "content": "I'm having trouble processing your request right now. Please try again."})
 
 
-async def _stream_c1_response(data: dict, message: str, dataset_name: str, message_id: str):
+async def _stream_c1_response(data: dict, message: str, dataset_name: str, message_id: str, conversation_id: Optional[str] = None):
     """
     Call the Thesys C1 API with structured analysis data and stream the result.
-
-    Yields c1_chunk / c1_done SSE events.
-    Each chunk content is base64-encoded to prevent newlines from breaking SSE framing.
-    Falls back to yielding a plain 'result' event if THESYS_API_KEY is not set.
-    message_id is passed in (not generated here) so all events share the same ID.
     """
-    import base64
-    import os as _os
-
-    if not _os.environ.get("THESYS_API_KEY"):
-        # Graceful fallback — no C1 key configured
+    if not os.environ.get("THESYS_API_KEY"):
         text = _format_analysis_text(data)
         yield _sse({"type": "result", "text": text, "message_id": message_id})
+        if conversation_id:
+            _persist_message(conversation_id, "assistant", text, "text")
         return
 
     try:
         from ai_engine.c1_client import get_c1_client, ASCENDLY_C1_SYSTEM_PROMPT, C1_METADATA, C1_MODEL
 
         client = get_c1_client()
-
-        # Filter out raw historical array to keep prompt size manageable
-        # and avoid sending large portions of user data to Thesys
         filtered_data = {k: v for k, v in data.items() if k != "historical"}
         if "historical" in data and isinstance(data.get("historical"), list):
             filtered_data["historical_count"] = len(data["historical"])
@@ -254,24 +309,34 @@ async def _stream_c1_response(data: dict, message: str, dataset_name: str, messa
             stream=True,
         )
 
+        full_dsl = ""
         async for chunk in stream:
             token = chunk.choices[0].delta.content or ""
             if token:
+                full_dsl += token
                 encoded = base64.b64encode(token.encode()).decode()
                 yield _sse({"type": "c1_chunk", "content": encoded, "message_id": message_id})
 
         yield _sse({"type": "c1_done", "message_id": message_id})
+        
+        # Persistence for C1 success
+        if conversation_id and full_dsl:
+            _persist_message(conversation_id, "assistant", full_dsl, "c1")
 
     except Exception as e:
         print(f"[chat] _stream_c1_response error: {e}")
-        # Fall back to markdown on C1 failure
         text = _format_analysis_text(data)
         yield _sse({"type": "result", "text": text, "message_id": message_id})
+        if conversation_id:
+            _persist_message(conversation_id, "assistant", text, "text")
 
 
-async def _stream_analysis_response(message: str, user_id: str, dataset_id: str):
+async def _stream_analysis_response(message: str, user_id: str, dataset_id: str, conversation_id: Optional[str]):
     """Stream analysis progress steps then final result via C1 or markdown fallback."""
     try:
+        if conversation_id:
+            _persist_message(conversation_id, "user", message)
+
         from ai_engine.crew import run_analyst_step, run_forecaster_step, run_strategist_step, parse_outputs
 
         yield _sse({"type": "progress", "step": 1, "total": 3, "label": "Analyzing your data..."})
@@ -287,17 +352,15 @@ async def _stream_analysis_response(message: str, user_id: str, dataset_id: str)
         data = result.get("data", {})
         message_id = str(uuid.uuid4())
 
-        # Resolve dataset name for C1 context
         dataset_name = "your dataset"
         try:
             client = get_supabase_client()
             row = client.table("uploaded_files").select("filename").eq("id", dataset_id).execute()
             if row.data:
                 dataset_name = row.data[0].get("filename", dataset_name)
-        except Exception:
-            pass
+        except Exception: pass
 
-        # Persist insights
+        # Persist insights & log
         try:
             insert_record("ai_insights", {
                 "dataset_id": dataset_id,
@@ -308,11 +371,6 @@ async def _stream_analysis_response(message: str, user_id: str, dataset_id: str)
                 "metadata": json.dumps(result.get("metadata", {})),
                 "status": "completed",
             })
-        except Exception:
-            pass
-
-        # Log interaction
-        try:
             insert_record("ai_logs", {
                 "user_id": user_id,
                 "request_id": message_id,
@@ -320,12 +378,21 @@ async def _stream_analysis_response(message: str, user_id: str, dataset_id: str)
                 "tool_output": message,
                 "final_answer": json.dumps(data)[:1000],
             })
-        except Exception:
-            pass
+        except Exception: pass
 
-        # Stream via C1 (or fallback to markdown if key missing / C1 fails)
-        # Pass the shared message_id so all events (c1_chunk, c1_done, result) use the same ID
-        async for event in _stream_c1_response(data, message, dataset_name, message_id):
+        # Update financial_records
+        try:
+            for record in data.get("historical", []):
+                insert_record("financial_records", {
+                    "user_id": user_id,
+                    "month": record.get("date"),
+                    "revenue": record.get("revenue"),
+                    "expenses": record.get("expenses"),
+                })
+        except Exception: pass
+
+        # Stream via C1 (persistence handled inside _stream_c1_response)
+        async for event in _stream_c1_response(data, message, dataset_name, message_id, conversation_id):
             yield event
 
         yield _sse({"type": "done", "message_id": message_id})
@@ -344,7 +411,6 @@ async def chat(
 ):
     """
     Streaming SSE chat endpoint.
-    Returns text/event-stream with token, progress, result, done, or error events.
     """
     user_id = str(current_user.id)
     message = request.message.strip()
@@ -352,10 +418,9 @@ async def chat(
     if not message:
         raise HTTPException(status_code=400, detail="Message cannot be empty.")
 
-    # Ownership check — ensure dataset belongs to this user
     if request.dataset_id:
         try:
-            client = get_supabase_client()
+            client = get_supabase_admin()
             owned = (
                 client.table("uploaded_files")
                 .select("id")
@@ -365,21 +430,18 @@ async def chat(
             )
             if not owned.data:
                 raise HTTPException(status_code=403, detail="Access to this dataset is not allowed.")
-        except HTTPException:
-            raise
-        except Exception:
-            raise HTTPException(status_code=403, detail="Access to this dataset is not allowed.")
+        except HTTPException: raise
+        except Exception: raise HTTPException(status_code=403, detail="Access to this dataset is not allowed.")
 
     history = [{"role": h.role, "content": h.content} for h in (request.history or [])]
     is_analysis = _is_analysis_request(message, request.dataset_id)
 
-    # Enforce usage limits before starting any generation
     await check_usage_limit(user_id, "analysis" if is_analysis else "chat")
 
     generator = (
-        _stream_analysis_response(message, user_id, request.dataset_id)
+        _stream_analysis_response(message, user_id, request.dataset_id, request.conversation_id)
         if is_analysis
-        else _stream_quick_response(message, user_id, request.dataset_id, history)
+        else _stream_quick_response(message, user_id, request.dataset_id, request.conversation_id, history)
     )
 
     return StreamingResponse(

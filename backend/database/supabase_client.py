@@ -22,7 +22,7 @@ SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")  # Service role — byp
 ALLOWED_TABLES = {
     "financial_records", "ai_logs", "ai_insights",
     "datasets", "data_rows", "benchmarks", "profiles",
-    "uploaded_files"
+    "uploaded_files", "conversations", "chat_messages"
 }
 
 supabase: Client = None

@@ -128,6 +128,7 @@ const EditProfile = () => {
             <span style={{ fontWeight: '500' }}>Details saved successfully</span>
           </div>
         )}
+        </div>
       </main>
 
       <style>{`

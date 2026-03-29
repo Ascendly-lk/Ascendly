@@ -39,11 +39,20 @@ export const FileUploadZone = ({ allowedTypes, maxSizeMB }) => {
 
         xhr.onload = () => {
             if (xhr.status === 200) {
-                setValue('status', 'done');
-                onAction(
-                    'FileUploaded',
-                    `User uploaded file: ${file.name}. Please now analyse this dataset.`
-                );
+                try {
+                    const data = JSON.parse(xhr.responseText);
+                    const fileId = data.file_id || data.id;
+                    setValue('status', 'done');
+                    onAction(
+                        'FileUploaded',
+                        {
+                            message: `User uploaded file: ${file.name}. Please now analyse this dataset.`,
+                            file_id: fileId
+                        }
+                    );
+                } catch (e) {
+                    setValue('status', 'error');
+                }
             } else {
                 setValue('status', 'error');
             }

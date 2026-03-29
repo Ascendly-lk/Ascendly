@@ -16,7 +16,8 @@
     flex: 1;
     padding: 24px 28px 28px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    gap: 20px;
     min-height: 0;
 }
 
