@@ -43,7 +43,7 @@ app = FastAPI(
 # CORS — allow local dev + Azure Static Web Apps production domain
 ALLOWED_ORIGIN_REGEX = (
     r"^https?://(localhost|127\.0\.0\.1|\[::1\]|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$"
-    r"|^https://[a-z0-9-]+\.azurestaticapps\.net$"
+    r"|^https://[a-z0-9.-]+\.azurestaticapps\.net$"
 )
 app.add_middleware(
     CORSMiddleware,
