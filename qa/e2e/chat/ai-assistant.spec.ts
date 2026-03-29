@@ -28,7 +28,7 @@ test.describe('AI Assistant', () => {
       { id: 'conv-e2e-1', title: 'Q1 Review', created_at: '2026-03-01T10:00:00Z' },
     ]);
 
-    await page.goto('/ai-assistant');
+    await page.goto('/dashboard/ai-analytics/assistant');
   });
 
   test('renders a message input and send button', async ({ page }) => {

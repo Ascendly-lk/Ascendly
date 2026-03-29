@@ -51,7 +51,7 @@ test.describe('File Upload', () => {
     ).toBeVisible({ timeout: 10_000 });
   });
 
-  test('shows error on unsupported file type', async ({ page }) => {
+  test('shows error on unsupported file type', async ({ page, mockApi }) => {
     await mockApi.json(`${mockApi.apiBase}/api/upload`, { detail: 'Unsupported file type' }, 400);
 
     await page.goto('/ai-analytics/upload');
