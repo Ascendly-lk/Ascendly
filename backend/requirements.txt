@@ -1,5 +1,6 @@
 fastapi
 uvicorn[standard]
+pysqlite3-binary
 sqlalchemy
 psycopg2-binary
 supabase

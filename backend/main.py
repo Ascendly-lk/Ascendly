@@ -3,6 +3,15 @@ Ascendly MVP - FastAPI Backend
 Profiles table: id, email, full_name, avatar_url, is_active, created_at, updated_at,
                 auth_user_id (added), role (added)
 """
+# Patch sqlite3 with pysqlite3-binary so ChromaDB works on Azure App Service
+# (Azure Linux has sqlite3 < 3.35.0 which ChromaDB requires)
+try:
+    __import__('pysqlite3')
+    import sys
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+except ImportError:
+    pass  # local dev — system sqlite3 is fine
+
 from datetime import datetime, timezone
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
