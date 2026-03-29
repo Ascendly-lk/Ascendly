@@ -46,6 +46,7 @@ jobs:
           AZURE_API_BASE=https://placeholder.openai.azure.com/
           AZURE_API_VERSION=2024-02-01
           CREWAI_LLM_MODEL=azure/gpt-4o
+          DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder
           EOF
 
       - name: Run pytest
@@ -138,6 +139,7 @@ jobs:
           AZURE_API_BASE=https://placeholder.openai.azure.com/
           AZURE_API_VERSION=2024-02-01
           CREWAI_LLM_MODEL=azure/gpt-4o
+          DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder
           EOF
           uvicorn main:app --host 0.0.0.0 --port 8000 &
           sleep 5
