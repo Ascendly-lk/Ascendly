@@ -40,10 +40,11 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# CORS — allow local dev + Azure Static Web Apps production domain
+# CORS — allow local dev + Azure Static Web Apps + custom domain
 ALLOWED_ORIGIN_REGEX = (
     r"^https?://(localhost|127\.0\.0\.1|\[::1\]|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$"
     r"|^https://[a-z0-9.-]+\.azurestaticapps\.net$"
+    r"|^https://[a-z0-9.-]+\.ascendly\.lk$"
 )
 app.add_middleware(
     CORSMiddleware,
@@ -421,6 +422,7 @@ async def get_dashboard_metrics(current_user=Depends(require_auth)):
         from datetime import timedelta
         thirty_days_ago = (now - timedelta(days=30)).isoformat()
         res_eng = admin.table("ai_logs").select("created_at") \
+            .eq("user_id", str(current_user.id)) \
             .gte("created_at", thirty_days_ago) \
             .execute()
         recent = len(res_eng.data) if res_eng.data else 0

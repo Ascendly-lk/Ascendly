@@ -38,7 +38,7 @@ const BotIcon = () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
         <rect x="3" y="11" width="18" height="10" rx="2" />
         <circle cx="12" cy="5" r="2" />
-        <line x1="12" y1="7" x2="12" y2="11" />
+        <line x1="12" cy="7" x2="12" cy="11" />
         <line x1="8" y1="15" x2="8" y2="17" />
         <line x1="16" y1="15" x2="16" y2="17" />
     </svg>
@@ -98,16 +98,14 @@ const AIAssistant = () => {
     const hasAutoPrompted = useRef(false);
     const messagesEndRef = useRef(null);
     const textareaRef = useRef(null);
-    // Accumulates C1 DSL chunks keyed by assistantMsgId
     const c1AccumulatorRef = useRef({});
+    const abortControllerRef = useRef(null);
 
     const { guardedFetch, showPricingModal, limitError, closePricingModal } = useUsageGuard();
 
-    // Keep a ref to messages for history building without adding to sendMessage deps
     const messagesRef = useRef(messages);
     useEffect(() => { messagesRef.current = messages; }, [messages]);
 
-    /* Fetch user's uploaded files */
     const fetchFiles = useCallback(() => {
         apiFetch('/api/files/recent?limit=20')
             .then((res) => res.json())
@@ -121,7 +119,6 @@ const AIAssistant = () => {
             .catch(() => {});
     }, []);
 
-    /* Conversation handlers */
     const handleNewConversation = useCallback(() => {
         setActiveConversationId(null);
         setMessages(INITIAL_MESSAGES);
@@ -132,7 +129,6 @@ const AIAssistant = () => {
 
     const handleSelectConversation = useCallback(async (conv) => {
         setActiveConversationId(conv.id);
-        if (conv.dataset_id) setSelectedFileId(conv.dataset_id);
         const msgs = await getMessages(conv.id);
         if (msgs.length === 0) {
             setMessages(INITIAL_MESSAGES);
@@ -142,13 +138,88 @@ const AIAssistant = () => {
                 ...msgs.map((m) => ({
                     id: m.id,
                     role: m.role,
-                    text: m.content,
+                    text: m.msg_type === 'c1' ? '' : String(m.content || ''),
+                    c1Dsl: m.msg_type === 'c1' ? String(m.content || '') : null,
+                    msgType: m.msg_type,
+                    streaming: false,
                     time: new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 })),
             ]);
         }
+        if (conv.dataset_id) {
+            setSelectedFileId(conv.dataset_id);
+        } else {
+            setSelectedFileId(null);
+        }
         setShowSuggestions(false);
         setHasAnalyticsData(false);
+    }, []);
+
+    const processStream = useCallback(async (res, assistantMsgId, trimmed, targetDatasetId) => {
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        c1AccumulatorRef.current[assistantMsgId] = '';
+
+        const processLine = (line) => {
+            if (!line.startsWith('data: ')) return;
+            try {
+                const event = JSON.parse(line.slice(6));
+                if (event.type === 'token') {
+                    setMessages((prev) => prev.map((m) =>
+                        m.id === assistantMsgId ? { ...m, text: m.text + String(event.content || '') } : m
+                    ));
+                } else if (event.type === 'progress') {
+                    setMessages((prev) => prev.map((m) =>
+                        m.id === assistantMsgId ? { ...m, progress: { step: event.step, total: event.total, label: event.label } } : m
+                    ));
+                } else if (event.type === 'c1_chunk') {
+                    const binaryString = atob(event.content);
+                    const bytes = new Uint8Array(binaryString.length);
+                    for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+                    const decoded = new TextDecoder('utf-8').decode(bytes);
+                    c1AccumulatorRef.current[assistantMsgId] = (c1AccumulatorRef.current[assistantMsgId] || '') + decoded;
+                    setMessages((prev) => prev.map((m) =>
+                        m.id === assistantMsgId ? { ...m, c1Dsl: c1AccumulatorRef.current[assistantMsgId], progress: null } : m
+                    ));
+                } else if (event.type === 'c1_done' || event.type === 'result') {
+                    setMessages((prev) => prev.map((m) =>
+                        m.id === assistantMsgId ? { ...m, text: event.text ? String(event.text) : m.text, streaming: false, progress: null } : m
+                    ));
+                    if (targetDatasetId && /predict|analysis|analyse|forecast|insights|business data/i.test(trimmed)) {
+                        setHasAnalyticsData(true);
+                        setShowAnalyticsPopup(true);
+                    }
+                } else if (event.type === 'done') {
+                    setMessages((prev) => prev.map((m) =>
+                        m.id === assistantMsgId ? { ...m, streaming: false, progress: null } : m
+                    ));
+                } else if (event.type === 'error') {
+                    setMessages((prev) => prev.map((m) =>
+                        m.id === assistantMsgId ? { ...m, text: String(event.content || 'An error occurred.'), streaming: false, progress: null } : m
+                    ));
+                }
+            } catch { }
+        };
+
+        try {
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop() ?? '';
+                for (const line of lines) processLine(line);
+            }
+            if (buffer.trim()) processLine(buffer.trim());
+        } catch (e) {
+            if (e.name !== 'AbortError') throw e;
+        } finally {
+            delete c1AccumulatorRef.current[assistantMsgId];
+            setMessages((prev) => prev.map((m) =>
+                m.id === assistantMsgId && m.streaming ? { ...m, streaming: false } : m
+            ));
+        }
     }, []);
 
     const sendMessage = useCallback(async (overrideText, overrideDatasetId) => {
@@ -157,38 +228,23 @@ const AIAssistant = () => {
 
         const datasetId = overrideDatasetId ?? selectedFileId;
 
-        // Build history from all messages except the initial greeting
+        // Cancel any previous in-flight request + set 2-min timeout
+        if (abortControllerRef.current) abortControllerRef.current.abort();
+        const controller = new AbortController();
+        abortControllerRef.current = controller;
+        const timeoutId = setTimeout(() => controller.abort(), 120_000);
+
         const history = messagesRef.current.slice(1).map((m) => ({
             role: m.role,
-            content: m.text,
+            content: String(m.text || m.c1Dsl || ''),
         }));
 
-        const userMsg = { id: crypto.randomUUID(), role: 'user', text: trimmed, time: now() };
-        const assistantMsgId = crypto.randomUUID();
-
-        setInput('');
-        setShowSuggestions(false);
-        if (textareaRef.current) textareaRef.current.style.height = 'auto';
-
-        // Create a conversation on the first real message if none exists
-        let convId = activeConversationId;
-        if (!convId) {
-            const conv = await createConversation(trimmed.slice(0, 60), datasetId);
-            if (conv?.id) {
-                convId = conv.id;
-                setActiveConversationId(convId);
-                setSidebarRefresh((n) => n + 1);
-            }
-        }
-
-        // No-dataset guard: analysis intent without a dataset → show inline upload zone
-        // Check BEFORE appending messages to avoid duplicates
         if (ANALYSIS_INTENT.test(trimmed) && !datasetId) {
             setMessages((prev) => [
                 ...prev,
-                userMsg,
+                { id: crypto.randomUUID(), role: 'user', text: trimmed, time: now() },
                 {
-                    id: assistantMsgId,
+                    id: crypto.randomUUID(),
                     role: 'assistant',
                     text: '',
                     uploadPrompt: true,
@@ -197,185 +253,66 @@ const AIAssistant = () => {
                     streaming: false,
                 },
             ]);
+            setInput('');
+            setShowSuggestions(false);
             return;
         }
+
+        const userMsg = { id: crypto.randomUUID(), role: 'user', text: trimmed, time: now() };
+        const assistantMsgId = crypto.randomUUID();
+
+        setInput('');
+        setShowSuggestions(false);
+        setIsSending(true);
+        if (textareaRef.current) textareaRef.current.style.height = 'auto';
 
         setMessages((prev) => [
             ...prev,
             userMsg,
             { id: assistantMsgId, role: 'assistant', text: '', time: now(), streaming: true },
         ]);
-        setIsSending(true);
 
         try {
-            const body = { message: trimmed, history };
-            if (datasetId) body.dataset_id = datasetId;
+            let convId = activeConversationId;
+            if (!convId) {
+                const conv = await createConversation(trimmed.slice(0, 60), datasetId);
+                if (conv?.id) {
+                    convId = conv.id;
+                    setActiveConversationId(convId);
+                    setSidebarRefresh((n) => n + 1);
+                }
+            }
 
             const res = await guardedFetch('/api/chat', {
                 method: 'POST',
-                body: JSON.stringify(body),
+                body: JSON.stringify({ message: trimmed, history, dataset_id: datasetId, conversation_id: convId }),
+                signal: controller.signal,
             });
 
             if (res.status === 429) {
-                // Usage limit hit — modal already opened by guardedFetch
-                setMessages((prev) =>
-                    prev.map((m) =>
-                        m.id === assistantMsgId
-                            ? { ...m, text: "You've reached your plan limit. Please upgrade to continue.", streaming: false }
-                            : m
-                    )
-                );
+                setMessages((prev) => prev.map((m) =>
+                    m.id === assistantMsgId ? { ...m, text: "You've reached your monthly limit. Please upgrade your plan.", streaming: false } : m
+                ));
                 return;
             }
 
             if (!res.ok) {
                 const data = await res.json().catch(() => ({}));
-                throw new Error(data.detail || 'Request failed');
+                const errMsg = typeof data.detail === 'string' ? data.detail : (data.detail?.code === 'LIMIT_REACHED' ? 'Limit reached' : 'Request failed');
+                throw new Error(errMsg);
             }
 
-            const reader = res.body.getReader();
-            const decoder = new TextDecoder();
-            let buffer = '';
-
-            // Initialise C1 accumulator for this message
-            c1AccumulatorRef.current[assistantMsgId] = '';
-
-            const processLine = (line) => {
-                if (!line.startsWith('data: ')) return;
-                try {
-                    const event = JSON.parse(line.slice(6));
-
-                    if (event.type === 'token') {
-                        setMessages((prev) => prev.map((m) =>
-                            m.id === assistantMsgId
-                                ? { ...m, text: m.text + event.content }
-                                : m
-                        ));
-                    } else if (event.type === 'progress') {
-                        setMessages((prev) => prev.map((m) =>
-                            m.id === assistantMsgId
-                                ? { ...m, progress: { step: event.step, total: event.total, label: event.label } }
-                                : m
-                        ));
-                    } else if (event.type === 'c1_chunk') {
-                        // Decode base64 chunk as UTF-8 (TextDecoder avoids Latin-1 corruption from atob)
-                        const binaryString = atob(event.content);
-                        const bytes = new Uint8Array(binaryString.length);
-                        for (let i = 0; i < binaryString.length; i++) {
-                            bytes[i] = binaryString.charCodeAt(i);
-                        }
-                        const decoded = new TextDecoder('utf-8').decode(bytes);
-                        c1AccumulatorRef.current[assistantMsgId] =
-                            (c1AccumulatorRef.current[assistantMsgId] || '') + decoded;
-                        const fullDsl = c1AccumulatorRef.current[assistantMsgId];
-                        setMessages((prev) => prev.map((m) =>
-                            m.id === assistantMsgId
-                                ? { ...m, c1Dsl: fullDsl, progress: null }
-                                : m
-                        ));
-                    } else if (event.type === 'c1_done') {
-                        delete c1AccumulatorRef.current[assistantMsgId];
-                        setMessages((prev) => prev.map((m) =>
-                            m.id === assistantMsgId
-                                ? { ...m, streaming: false, progress: null }
-                                : m
-                        ));
-                        if (selectedFileId && /predict|analysis|analyse|forecast|insights|business data/i.test(trimmed)) {
-                            setHasAnalyticsData(true);
-                            setShowAnalyticsPopup(true);
-                        }
-                    } else if (event.type === 'result') {
-                        // Markdown fallback (no THESYS_API_KEY or C1 error)
-                        setMessages((prev) => prev.map((m) =>
-                            m.id === assistantMsgId
-                                ? { ...m, text: event.text, progress: null }
-                                : m
-                        ));
-                        if (selectedFileId && /predict|analysis|analyse|forecast|insights|business data/i.test(trimmed)) {
-                            setHasAnalyticsData(true);
-                            setShowAnalyticsPopup(true);
-                        }
-                    } else if (event.type === 'done') {
-                        delete c1AccumulatorRef.current[assistantMsgId];
-                        setMessages((prev) => prev.map((m) =>
-                            m.id === assistantMsgId
-                                ? { ...m, streaming: false, progress: null }
-                                : m
-                        ));
-                    } else if (event.type === 'error') {
-                        delete c1AccumulatorRef.current[assistantMsgId];
-                        setMessages((prev) => prev.map((m) =>
-                            m.id === assistantMsgId
-                                ? { ...m, text: event.content || 'An error occurred.', streaming: false, progress: null }
-                                : m
-                        ));
-                    }
-                } catch {
-                    // Skip malformed SSE lines
-                }
-            };
-
-            try {
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    buffer += decoder.decode(value, { stream: true });
-                    const lines = buffer.split('\n');
-                    buffer = lines.pop() ?? '';
-
-                    for (const line of lines) {
-                        processLine(line);
-                    }
-                }
-
-                // Process any remaining data left in the buffer after stream ends
-                if (buffer.trim()) {
-                    processLine(buffer.trim());
-                }
-            } finally {
-                // Clean up C1 accumulator to prevent memory leak in long sessions
-                delete c1AccumulatorRef.current[assistantMsgId];
-                // Always ensure the assistant message exits streaming state
-                setMessages((prev) => prev.map((m) =>
-                    m.id === assistantMsgId && m.streaming
-                        ? { ...m, streaming: false }
-                        : m
-                ));
-            }
-        } catch {
+            await processStream(res, assistantMsgId, trimmed, datasetId);
+        } catch (e) {
             setMessages((prev) => prev.map((m) =>
-                m.id === assistantMsgId
-                    ? { ...m, text: 'Sorry, something went wrong. Please try again.', streaming: false, progress: null }
-                    : m
+                m.id === assistantMsgId ? { ...m, text: String(e.message || 'Sorry, something went wrong.'), streaming: false, progress: null } : m
             ));
         } finally {
+            clearTimeout(timeoutId);
             setIsSending(false);
             fetchFiles();
         }
-    }, [input, isSending, selectedFileId, fetchFiles]);
-
-    useEffect(() => {
-        fetchFiles();
-        const onVisible = () => { if (document.visibilityState === 'visible') fetchFiles(); };
-        document.addEventListener('visibilitychange', onVisible);
-        return () => document.removeEventListener('visibilitychange', onVisible);
-    }, [fetchFiles]);
-
-    // Handle initial prompt from Quick Actions (e.g., Generate Report)
-    useEffect(() => {
-        if (location.state?.initialPrompt && !hasAutoPrompted.current) {
-            hasAutoPrompted.current = true;
-            sendMessage(location.state.initialPrompt);
-            // Clear state so it doesn't re-trigger
-            window.history.replaceState({}, document.title);
-        }
-    }, [location.state, sendMessage]);
-
-    /* Auto-scroll to latest message */
-    useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
+    }, [input, isSending, selectedFileId, activeConversationId, guardedFetch, processStream, fetchFiles]);
 
     const handleInlineUpload = useCallback((file, pendingMessage, assistantMsgId) => {
         const formData = new FormData();
@@ -394,17 +331,55 @@ const AIAssistant = () => {
                 ));
             }
         };
-        xhr.onload = () => {
+        xhr.onload = async () => {
             if (xhr.status === 200) {
                 const data = JSON.parse(xhr.responseText);
                 const newFileId = data.file_id || data.id;
+                
                 setMessages((prev) => prev.map((m) =>
-                    m.id === assistantMsgId ? { ...m, uploadPrompt: false, uploadStatus: 'done', text: '' } : m
+                    m.id === assistantMsgId ? { ...m, uploadPrompt: false, uploadStatus: 'done', streaming: true, text: '' } : m
                 ));
                 setSelectedFileId(newFileId);
                 fetchFiles();
-                // Pass newFileId explicitly to avoid stale selectedFileId closure
-                sendMessage(pendingMessage, newFileId);
+                setIsSending(true);
+
+                try {
+                    let convId = activeConversationId;
+                    if (!convId) {
+                        const conv = await createConversation(pendingMessage.slice(0, 60), newFileId);
+                        if (conv?.id) {
+                            convId = conv.id;
+                            setActiveConversationId(convId);
+                            setSidebarRefresh((n) => n + 1);
+                        }
+                    }
+
+                    const history = messagesRef.current.slice(1, -1).map((m) => ({
+                        role: m.role,
+                        content: String(m.text || m.c1Dsl || ''),
+                    }));
+
+                    const res = await guardedFetch('/api/chat', {
+                        method: 'POST',
+                        body: JSON.stringify({ message: pendingMessage, history, dataset_id: newFileId, conversation_id: convId }),
+                    });
+
+                    if (res.status === 429) {
+                        setMessages((prev) => prev.map((m) =>
+                            m.id === assistantMsgId ? { ...m, text: "You've reached your limit.", streaming: false } : m
+                        ));
+                        return;
+                    }
+
+                    if (!res.ok) throw new Error('Request failed');
+                    await processStream(res, assistantMsgId, pendingMessage, newFileId);
+                } catch (e) {
+                    setMessages((prev) => prev.map((m) =>
+                        m.id === assistantMsgId ? { ...m, text: String(e.message || 'Analysis failed after upload.'), streaming: false } : m
+                    ));
+                } finally {
+                    setIsSending(false);
+                }
             } else {
                 setMessages((prev) => prev.map((m) =>
                     m.id === assistantMsgId ? { ...m, uploadStatus: 'error' } : m
@@ -418,12 +393,50 @@ const AIAssistant = () => {
         };
         xhr.open('POST', `${API_BASE}/api/upload`);
         const token = getToken();
-        const bypassAuth = import.meta.env.DEV && import.meta.env.VITE_BYPASS_AUTH === 'true';
-        if (token && !bypassAuth) {
+        if (token && !(import.meta.env.DEV && import.meta.env.VITE_BYPASS_AUTH === 'true')) {
             xhr.setRequestHeader('Authorization', `Bearer ${token}`);
         }
         xhr.send(formData);
-    }, [fetchFiles, sendMessage]);
+    }, [activeConversationId, fetchFiles, guardedFetch, processStream]);
+
+    const handleC1Action = useCallback(({ type, params }) => {
+        if (type === 'continue_conversation' && params?.llmFriendlyMessage) {
+            sendMessage(params.llmFriendlyMessage);
+        }
+        else if (type === 'FileUploaded') {
+            const { message, file_id } = typeof params === 'string' 
+                ? { message: params, file_id: null } 
+                : params;
+            
+            if (file_id) setSelectedFileId(file_id);
+            fetchFiles();
+            sendMessage(message, file_id);
+        }
+    }, [sendMessage, fetchFiles]);
+
+    useEffect(() => {
+        fetchFiles();
+        const onVisible = () => { if (document.visibilityState === 'visible') fetchFiles(); };
+        document.addEventListener('visibilitychange', onVisible);
+        return () => document.removeEventListener('visibilitychange', onVisible);
+    }, [fetchFiles]);
+
+    // Re-show suggestion chips when file selection changes and no conversation started
+    useEffect(() => {
+        if (messages.length === 1) setShowSuggestions(true);
+    }, [selectedFileId]);
+
+    useEffect(() => {
+        if (location.state?.initialPrompt && !hasAutoPrompted.current) {
+            hasAutoPrompted.current = true;
+            sendMessage(location.state.initialPrompt);
+            window.history.replaceState({}, document.title);
+        }
+    }, [location.state, sendMessage]);
+
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -432,7 +445,6 @@ const AIAssistant = () => {
         }
     };
 
-    /* Auto-grow textarea */
     const handleInput = (e) => {
         setInput(e.target.value);
         e.target.style.height = 'auto';
@@ -442,7 +454,6 @@ const AIAssistant = () => {
     return (
         <div className="ai-assistant-main">
             <TopBar title="AI Assistant" />
-
             <div className="ai-assistant-content">
                 <ConversationSidebar
                     activeId={activeConversationId}
@@ -450,21 +461,13 @@ const AIAssistant = () => {
                     onNew={handleNewConversation}
                     refreshTrigger={sidebarRefresh}
                 />
-                {/* Chat Card */}
                 <div className="ai-chat-card">
-                    {/* Card Header */}
                     <div className="ai-chat-card-header">
-                        <div className="ai-chat-avatar">
-                            <BotIcon />
-                        </div>
+                        <div className="ai-chat-avatar"><BotIcon /></div>
                         <div className="ai-chat-header-info">
                             <span className="ai-chat-header-name">AI Assistant</span>
-                            <span className="ai-chat-status">
-                                <span className="ai-chat-status-dot" />
-                                Online
-                            </span>
+                            <span className="ai-chat-status"><span className="ai-chat-status-dot" />Online</span>
                         </div>
-                        {/* File selector */}
                         <div className="ai-chat-file-selector">
                             <select
                                 value={selectedFileId || ''}
@@ -473,177 +476,85 @@ const AIAssistant = () => {
                             >
                                 <option value="">No dataset selected</option>
                                 {files.map((f) => (
-                                    <option key={f.file_id} value={f.file_id}>
-                                        {f.name}
-                                    </option>
+                                    <option key={f.file_id} value={f.file_id}>{f.name}</option>
                                 ))}
                             </select>
                         </div>
-                        
-                        {/* Action Buttons (Insights / PDF) */}
                         {hasAnalyticsData && (
                             <div className="ai-chat-actions">
-                                <button 
-                                    className="ai-chat-action-btn"
-                                    onClick={() => setShowAnalyticsPopup(!showAnalyticsPopup)}
-                                    title={showAnalyticsPopup ? "Close Analytics" : "Open Analytics"}
-                                >
-                                    <BarChart2 size={16} />
-                                    {showAnalyticsPopup ? "Close Insights" : "Open Insights"}
+                                <button className="ai-chat-action-btn" onClick={() => setShowAnalyticsPopup(!showAnalyticsPopup)}>
+                                    <BarChart2 size={16} />{showAnalyticsPopup ? "Close Insights" : "Open Insights"}
                                 </button>
-                                <button 
-                                    className="ai-chat-action-btn pdf"
-                                    onClick={() => {
-                                        setShowComingSoon(true);
-                                        setTimeout(() => setShowComingSoon(false), 3000);
-                                    }}
-                                    title="Download Business Insights Report"
-                                >
-                                    <FileDown size={16} />
-                                    Export PDF
+                                <button className="ai-chat-action-btn pdf" onClick={() => { setShowComingSoon(true); setTimeout(() => setShowComingSoon(false), 3000); }}>
+                                    <FileDown size={16} />Export PDF
                                 </button>
                             </div>
                         )}
                     </div>
 
-                    {/* Messages area */}
                     <div className="ai-chat-messages">
                         {messages.map((msg) => (
-                            <div
-                                key={msg.id}
-                                className={`ai-chat-message ${msg.role === 'user' ? 'user' : 'assistant'}`}
-                            >
-                                {msg.role === 'assistant' && (
-                                    <div className="ai-chat-msg-avatar">
-                                        <BotIcon />
-                                    </div>
-                                )}
+                            <div key={msg.id} className={`ai-chat-message ${msg.role === 'user' ? 'user' : 'assistant'}`}>
+                                {msg.role === 'assistant' && <div className="ai-chat-msg-avatar"><BotIcon /></div>}
                                 <div className="ai-chat-bubble-wrap">
                                     {msg.uploadPrompt ? (
                                         <div className="ai-chat-bubble ai-chat-bubble--upload">
-                                            <p className="ai-upload-prompt-text">
-                                                To run an analysis, please upload a dataset first.
-                                            </p>
-                                            {msg.uploadStatus === 'uploading' && (
-                                                <p className="ai-upload-progress-text">Uploading… {msg.uploadProgress ?? 0}%</p>
-                                            )}
-                                            {msg.uploadStatus === 'error' && (
-                                                <p className="ai-upload-error-text">Upload failed. Please try again.</p>
-                                            )}
+                                            <p className="ai-upload-prompt-text">To run an analysis, please upload a dataset first.</p>
+                                            {msg.uploadStatus === 'uploading' && <p className="ai-upload-progress-text">Uploading… {msg.uploadProgress ?? 0}%</p>}
+                                            {msg.uploadStatus === 'error' && <p className="ai-upload-error-text">Upload failed. Please try again.</p>}
                                             {msg.uploadStatus !== 'uploading' && (
                                                 <label className="ai-upload-inline-btn">
                                                     Browse or drop a file
-                                                    <input
-                                                        type="file"
-                                                        hidden
-                                                        accept=".csv,.xlsx,.xls,.json"
-                                                        onChange={(e) => {
-                                                            const f = e.target.files?.[0];
-                                                            if (f) handleInlineUpload(f, msg.pendingMessage, msg.id);
-                                                            e.target.value = '';
-                                                        }}
-                                                    />
+                                                    <input type="file" hidden accept=".csv,.xlsx,.xls,.json" onChange={(e) => {
+                                                        const f = e.target.files?.[0];
+                                                        if (f) handleInlineUpload(f, msg.pendingMessage, msg.id);
+                                                        e.target.value = '';
+                                                    }} />
                                                 </label>
                                             )}
                                         </div>
                                     ) : msg.progress ? (
-                                        <div className="ai-chat-bubble">
-                                            <ProgressStep {...msg.progress} />
-                                        </div>
+                                        <div className="ai-chat-bubble"><ProgressStep {...msg.progress} /></div>
                                     ) : msg.c1Dsl ? (
-                                        // C1 interactive UI (analysis mode with Thesys)
                                         <div className="ai-chat-bubble ai-chat-bubble--c1">
-                                            <C1Message
-                                                dsl={msg.c1Dsl}
-                                                isStreaming={msg.streaming}
-                                                onAction={({ type, params }) => {
-                                                    if (type === 'continue_conversation' && params?.llmFriendlyMessage) {
-                                                        sendMessage(params.llmFriendlyMessage);
-                                                    } else if (type === 'start_chat_with_prompt' && params?.prompt) {
-                                                        navigate('/ai-analytics/assistant', { state: { initialPrompt: params.prompt } });
-                                                    }
-                                                }}
-                                            />
+                                            <C1Message dsl={msg.c1Dsl} isStreaming={msg.streaming} onAction={handleC1Action} />
                                         </div>
+                                    ) : msg.msgType === 'c1' ? (
+                                        <div className="ai-chat-bubble"><em style={{opacity: 0.5}}>Analysis visualization unavailable</em></div>
                                     ) : (
                                         <div className="ai-chat-bubble">
-                                            {msg.streaming && !msg.text ? (
-                                                <div className="ai-chat-typing">
-                                                    <span /><span /><span />
-                                                </div>
-                                            ) : msg.role === 'assistant' ? (
-                                                <ReactMarkdown>{msg.text}</ReactMarkdown>
-                                            ) : (
-                                                msg.text
-                                            )}
+                                            {msg.streaming && !msg.text ? <div className="ai-chat-typing"><span /><span /><span /></div> :
+                                             msg.role === 'assistant' ? <ReactMarkdown>{msg.text}</ReactMarkdown> : msg.text}
                                         </div>
                                     )}
                                     <span className="ai-chat-time">{msg.time}</span>
                                 </div>
                             </div>
                         ))}
-
                         <div ref={messagesEndRef} />
                     </div>
 
-                    {/* Suggestion chips */}
                     {showSuggestions && (
                         <div className="ai-chat-suggestions">
                             {(selectedFileId ? SUGGESTIONS_WITH_FILE : SUGGESTIONS_NO_FILE).map((s) => (
-                                <button
-                                    key={s}
-                                    className="ai-chat-chip"
-                                    onClick={() => sendMessage(s)}
-                                    disabled={isSending}
-                                >
-                                    {s}
-                                </button>
+                                <button key={s} className="ai-chat-chip" onClick={() => sendMessage(s)} disabled={isSending}>{s}</button>
                             ))}
                         </div>
                     )}
 
-                    {/* Composer */}
                     <div className="ai-chat-composer">
                         <div className="ai-chat-input-wrap">
-                            <textarea
-                                ref={textareaRef}
-                                className="ai-chat-input"
-                                placeholder="Ask me anything about your data..."
-                                value={input}
-                                onChange={handleInput}
-                                onKeyDown={handleKeyDown}
-                                rows={1}
-                            />
-                            <button
-                                className="ai-chat-send-btn"
-                                onClick={sendMessage}
-                                disabled={!input.trim() || isSending}
-                                aria-label="Send message"
-                            >
-                                <SendIcon />
-                            </button>
+                            <textarea ref={textareaRef} className="ai-chat-input" placeholder="Ask me anything about your data..."
+                                value={input} onChange={handleInput} onKeyDown={handleKeyDown} rows={1} />
+                            <button className="ai-chat-send-btn" onClick={sendMessage} disabled={!input.trim() || isSending}><SendIcon /></button>
                         </div>
                         <p className="ai-chat-hint">Press Enter to send, Shift + Enter for new line</p>
                     </div>
-
-                    {/* Toast Notification */}
-                    <div className={`ai-toast-popup ${showComingSoon ? 'visible' : ''}`}>
-                        This feature will come soon!
-                    </div>
+                    <div className={`ai-toast-popup ${showComingSoon ? 'visible' : ''}`}>This feature will come soon!</div>
                 </div>
             </div>
-            
-            <AnalyticsPopup
-                isOpen={showAnalyticsPopup}
-                onClose={() => setShowAnalyticsPopup(false)}
-                onSuggestionClick={sendMessage}
-            />
-
-            <PricingModal
-                isOpen={showPricingModal}
-                onClose={closePricingModal}
-                limitError={limitError}
-            />
+            <AnalyticsPopup isOpen={showAnalyticsPopup} onClose={() => setShowAnalyticsPopup(false)} onSuggestionClick={sendMessage} />
+            <PricingModal isOpen={showPricingModal} onClose={closePricingModal} limitError={limitError} />
         </div>
     );
 };
