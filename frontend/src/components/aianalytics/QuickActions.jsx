@@ -1,7 +1,12 @@
+<<<<<<< HEAD
 import { useNavigate } from 'react-router-dom';
 import './QuickActions.css';
 
 
+=======
+import './QuickActions.css';
+
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 const ACTIONS = [
     {
         icon: (
@@ -46,6 +51,7 @@ const ArrowIcon = () => (
 );
 
 const QuickActions = () => {
+<<<<<<< HEAD
     const navigate = useNavigate();
 
     const handleAction = (title) => {
@@ -60,12 +66,18 @@ const QuickActions = () => {
         }
     };
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     return (
         <div className="quick-actions-card">
             <h3 className="quick-actions-title">Quick Actions</h3>
             <ul className="quick-actions-list">
                 {ACTIONS.map((action, i) => (
+<<<<<<< HEAD
                     <li key={i} className="quick-actions-item" onClick={() => handleAction(action.title)}>
+=======
+                    <li key={i} className="quick-actions-item">
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                         <div className="quick-actions-icon">
                             {action.icon}
                         </div>
@@ -73,10 +85,14 @@ const QuickActions = () => {
                             <p className="quick-actions-name">{action.title}</p>
                             <p className="quick-actions-sub">{action.sub}</p>
                         </div>
+<<<<<<< HEAD
                         <button 
                             className="quick-actions-btn" 
                             aria-label={action.title}
                         >
+=======
+                        <button className="quick-actions-btn" aria-label={action.title}>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                             <ArrowIcon />
                         </button>
                     </li>
@@ -86,5 +102,8 @@ const QuickActions = () => {
     );
 };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 export default QuickActions;

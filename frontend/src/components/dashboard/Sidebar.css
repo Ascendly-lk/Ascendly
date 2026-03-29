@@ -95,6 +95,7 @@
     padding: 20px;
     margin-bottom: 16px;
     text-align: center;
+<<<<<<< HEAD
     border: none;
     cursor: pointer;
     width: calc(100% - 48px);
@@ -102,6 +103,8 @@
     margin-right: 24px;
     font-family: inherit;
     display: block;
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 }
 
 .sidebar-upgrade p {

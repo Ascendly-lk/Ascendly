@@ -303,7 +303,11 @@ const PatentPage = () => {
                 {/* ── Middle Row: Chart + Renewals ── */}
                 <div className="pp-mid-row">
                     {/* Filing Activity Forecast */}
+<<<<<<< HEAD
                     <div className="pp-card-1 pp-chart-card">
+=======
+                    <div className="pp-card pp-chart-card">
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                         <div className="pp-chart-header">
                             <h3 className="pp-card-title">Filing Activity Forecast</h3>
                             <div className="pp-chart-dropdown">
@@ -326,7 +330,11 @@ const PatentPage = () => {
                     </div>
 
                     {/* Upcoming Renewals */}
+<<<<<<< HEAD
                     <div className="pp-card-1 pp-renewals-card">
+=======
+                    <div className="pp-card pp-renewals-card">
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                         <h3 className="pp-card-title">Upcoming Renewals</h3>
                         <div className="pp-renewal-list">
                             {renewals.map((r) => (

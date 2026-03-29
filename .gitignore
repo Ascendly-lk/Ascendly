@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -23,6 +24,59 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+=======
+# =====================
+# Node / Frontend
+# =====================
+node_modules/
+dist/
+build/
+.next/
+out/
+.vercel
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =====================
+# Python / Backend
+# =====================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+venv/
+ENV/
+
+# =====================
+# Environment files
+# =====================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# =====================
+# OS / Editor junk
+# =====================
+.DS_Store
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 Thumbs.db
 .vscode/
 .idea/
@@ -35,6 +89,7 @@ Thumbs.db
 # =====================
 backend/uploads
 uploads
+<<<<<<< HEAD
 
 # =====================
 # Internal QA agent (local only — not for GitHub)
@@ -52,3 +107,5 @@ backend/init_patent_db.py
 backend/test_out*.txt
 backend/*.bat
 git_status.txt
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)

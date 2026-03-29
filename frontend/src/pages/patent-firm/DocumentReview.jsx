@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { useState, useEffect } from 'react';
+=======
+import { useState } from 'react';
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 import {
   Lock,
   FileText,
@@ -14,10 +18,72 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import TopBar from '../../components/dashboard/TopBar';
+<<<<<<< HEAD
 import { fetchDocuments } from '../../utils/patent-api';
 import './DocumentReview.css';
 import '../dashboard/StartupDashboard.css';
 
+=======
+import './DocumentReview.css';
+import '../dashboard/StartupDashboard.css';
+
+const mockDocuments = [
+  {
+    id: '1',
+    name: 'Technical Specifications - AI Engine.pdf',
+    type: 'pdf',
+    size: '2.4 MB',
+    uploadedDate: 'March 1, 2026',
+    client: 'TechCo AI',
+    applicationId: 'PAT-2026-001',
+    status: 'reviewed',
+    reviewer: 'Dr. Sarah Chen',
+  },
+  {
+    id: '2',
+    name: 'System Architecture Diagram.png',
+    type: 'image',
+    size: '1.1 MB',
+    uploadedDate: 'March 1, 2026',
+    client: 'TechCo AI',
+    applicationId: 'PAT-2026-001',
+    status: 'approved',
+    reviewer: 'Dr. Sarah Chen',
+  },
+  {
+    id: '3',
+    name: 'IoT Sensor Schematics.pdf',
+    type: 'pdf',
+    size: '3.2 MB',
+    uploadedDate: 'March 3, 2026',
+    client: 'IoT Innovations',
+    applicationId: 'PAT-2026-002',
+    status: 'reviewed',
+    reviewer: 'Michael Rodriguez',
+  },
+  {
+    id: '4',
+    name: 'Gene Editing Documentation.pdf',
+    type: 'pdf',
+    size: '5.8 MB',
+    uploadedDate: 'March 6, 2026',
+    client: 'BioTech Labs',
+    applicationId: 'PAT-2026-004',
+    status: 'pending',
+  },
+  {
+    id: '5',
+    name: 'Solar Panel Design.pdf',
+    type: 'pdf',
+    size: '2.1 MB',
+    uploadedDate: 'March 6, 2026',
+    client: 'GreenEnergy Co',
+    applicationId: 'PAT-2026-005',
+    status: 'pending',
+  },
+];
+
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 const getFileIcon = (type) => {
   switch (type) {
     case 'pdf':
@@ -43,6 +109,7 @@ const statusClass = (status) => {
 };
 
 const DocumentReview = () => {
+<<<<<<< HEAD
   const [mockDocuments, setMockDocuments] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [tab, setTab] = useState('all');
@@ -59,6 +126,10 @@ const DocumentReview = () => {
             setLoading(false);
         });
   }, []);
+=======
+  const [searchQuery, setSearchQuery] = useState('');
+  const [tab, setTab] = useState('all');
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 
   const filteredDocuments = mockDocuments.filter((doc) =>
     doc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

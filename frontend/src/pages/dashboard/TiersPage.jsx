@@ -1,34 +1,59 @@
 import { useState } from 'react';
+<<<<<<< HEAD
 import { useNavigate } from 'react-router-dom';
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 import './TiersPage.css';
 
 /* ── Plans data ──────────────────────────────────────────────────────────── */
 const plans = [
     {
+<<<<<<< HEAD
         name: 'Free',
         tagline: 'The cheapest way to get started.',
         monthlyPrice: 0,
         yearlyPrice: 0,
         features: ['Core Analytics', 'Limited Use User tracking', 'Simple Dashboard'],
         disabledFeatures: ['Email Support', 'AI Reports'],
+=======
+        name: 'Starter',
+        tagline: 'Perfect for individuals and small teams getting started',
+        monthlyPrice: 0,
+        yearlyPrice: 0,
+        features: ['Core Platform Access', 'Basic Ai Analytics', 'Stranded Support'],
+>>>>>>> parent of ae17c912 (Update by deleting some files)
         popular: false,
     },
     {
         name: 'Pro',
+<<<<<<< HEAD
         tagline: 'The most popular plan.',
         monthlyPrice: 20,
         yearlyPrice: 200,
         features: ['Everything in starter', 'Funnel & drop-off analysis', 'Custom dashboards', 'Team collaboration'],
         disabledFeatures: ['Advanced integrations'],
+=======
+        tagline: 'Perfect for Small businesses who want to expand their repertoire',
+        monthlyPrice: 25,
+        yearlyPrice: 25,
+        features: ['Core Platform Access', 'Pro Ai Analytics', 'Extended Support'],
+>>>>>>> parent of ae17c912 (Update by deleting some files)
         popular: true,
     },
     {
         name: 'Premium',
+<<<<<<< HEAD
         tagline: 'Contact us for more information.',
         monthlyPrice: 40,
         yearlyPrice: 400,
         features: ['All Growth features', 'Unlimited tracked users', 'Dedicated account manager', 'SLA & compliance support', 'Advanced integrations'],
         disabledFeatures: [],
+=======
+        tagline: 'Perfect for established businesses who want to expand their customer base',
+        monthlyPrice: 50,
+        yearlyPrice: 50,
+        features: ['Core Platform Access', 'Complete Ai Analytics', 'Dedicated Support'],
+>>>>>>> parent of ae17c912 (Update by deleting some files)
         popular: false,
     },
 ];
@@ -36,12 +61,15 @@ const plans = [
 /* ── Tiers Main Page (sidebar removed — provided by DashboardLayout) ─────── */
 const TiersPage = () => {
     const [billingYearly, setBillingYearly] = useState(false);
+<<<<<<< HEAD
     const navigate = useNavigate();
 
     const handleChoosePlan = (plan) => {
         const price = billingYearly ? plan.yearlyPrice : plan.monthlyPrice;
         navigate('/payment', { state: { plan: plan.name, price } });
     };
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 
     return (
         <div className="tp-main">
@@ -101,7 +129,11 @@ const TiersPage = () => {
                         <span className={billingYearly ? 'tp-toggle-label active' : 'tp-toggle-label'}>
                             Yearly
                         </span>
+<<<<<<< HEAD
                         <span className="tp-saving-badge">2 Months Free</span>
+=======
+                        <span className="tp-saving-badge">+2.45%</span>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                     </div>
                 </div>
 
@@ -118,9 +150,13 @@ const TiersPage = () => {
                                 <span className="tp-price-amount">
                                     {billingYearly ? plan.yearlyPrice : plan.monthlyPrice}
                                 </span>
+<<<<<<< HEAD
                                 <span className="tp-price-period">
                                     {billingYearly ? ' / year' : ' / month'}
                                 </span>
+=======
+                                <span className="tp-price-period"> / month</span>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                             </div>
 
                             <ul className="tp-features">
@@ -135,6 +171,7 @@ const TiersPage = () => {
                                         {feat}
                                     </li>
                                 ))}
+<<<<<<< HEAD
                                 {plan.disabledFeatures && plan.disabledFeatures.map((feat) => (
                                     <li key={`dis-${feat}`} className="tp-feature-muted">
                                         <span className="tp-minus-icon">
@@ -154,6 +191,11 @@ const TiersPage = () => {
                             >
                                 Join This Plan
                             </button>
+=======
+                            </ul>
+
+                            <button className="tp-choose-btn">Choose Plan</button>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                         </div>
                     ))}
                 </div>

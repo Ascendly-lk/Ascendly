@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+<<<<<<< HEAD
 import { useLocation } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
@@ -6,6 +7,12 @@ import { apiFetch } from '../../api';
 import AnalyticsPopup from '../../components/aianalytics/AnalyticsPopup';
 import { generatePDFReport } from '../../utils/pdfGenerator';
 import { BarChart2, FileDown } from 'lucide-react';
+=======
+import ReactMarkdown from 'react-markdown';
+import AIAnalyticsSidebar from '../../components/aianalytics/AIAnalyticsSidebar';
+import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
+import { apiFetch } from '../../api';
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 import './AIAssistant.css';
 
 /* ── Helpers ── */
@@ -78,6 +85,7 @@ const AIAssistant = () => {
     const [files, setFiles] = useState([]);
     const [selectedFileId, setSelectedFileId] = useState(null);
     const [showSuggestions, setShowSuggestions] = useState(true);
+<<<<<<< HEAD
     const [showAnalyticsPopup, setShowAnalyticsPopup] = useState(false);
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false);
     const [showComingSoon, setShowComingSoon] = useState(false);
@@ -86,6 +94,10 @@ const AIAssistant = () => {
     const messagesEndRef = useRef(null);
     const textareaRef = useRef(null);
 
+=======
+    const messagesEndRef = useRef(null);
+    const textareaRef = useRef(null);
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     // Keep a ref to messages for history building without adding to sendMessage deps
     const messagesRef = useRef(messages);
     useEffect(() => { messagesRef.current = messages; }, [messages]);
@@ -104,6 +116,21 @@ const AIAssistant = () => {
             .catch(() => {});
     }, []);
 
+<<<<<<< HEAD
+=======
+    useEffect(() => {
+        fetchFiles();
+        const onVisible = () => { if (document.visibilityState === 'visible') fetchFiles(); };
+        document.addEventListener('visibilitychange', onVisible);
+        return () => document.removeEventListener('visibilitychange', onVisible);
+    }, [fetchFiles]);
+
+    /* Auto-scroll to latest message */
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
+
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     const sendMessage = useCallback(async (overrideText) => {
         const trimmed = (overrideText || input).trim();
         if (!trimmed || isSending) return;
@@ -146,6 +173,7 @@ const AIAssistant = () => {
             const decoder = new TextDecoder();
             let buffer = '';
 
+<<<<<<< HEAD
             const processLine = (line) => {
                 if (!line.startsWith('data: ')) return;
                 try {
@@ -218,6 +246,56 @@ const AIAssistant = () => {
                         ? { ...m, streaming: false }
                         : m
                 ));
+=======
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop() ?? '';
+
+                for (const line of lines) {
+                    if (!line.startsWith('data: ')) continue;
+                    try {
+                        const event = JSON.parse(line.slice(6));
+
+                        if (event.type === 'token') {
+                            setMessages((prev) => prev.map((m) =>
+                                m.id === assistantMsgId
+                                    ? { ...m, text: m.text + event.content }
+                                    : m
+                            ));
+                        } else if (event.type === 'progress') {
+                            setMessages((prev) => prev.map((m) =>
+                                m.id === assistantMsgId
+                                    ? { ...m, progress: { step: event.step, total: event.total, label: event.label } }
+                                    : m
+                            ));
+                        } else if (event.type === 'result') {
+                            setMessages((prev) => prev.map((m) =>
+                                m.id === assistantMsgId
+                                    ? { ...m, text: event.text, progress: null }
+                                    : m
+                            ));
+                        } else if (event.type === 'done') {
+                            setMessages((prev) => prev.map((m) =>
+                                m.id === assistantMsgId
+                                    ? { ...m, streaming: false, progress: null }
+                                    : m
+                            ));
+                        } else if (event.type === 'error') {
+                            setMessages((prev) => prev.map((m) =>
+                                m.id === assistantMsgId
+                                    ? { ...m, text: event.content, streaming: false, progress: null }
+                                    : m
+                            ));
+                        }
+                    } catch {
+                        // Skip malformed SSE lines
+                    }
+                }
+>>>>>>> parent of ae17c912 (Update by deleting some files)
             }
         } catch {
             setMessages((prev) => prev.map((m) =>
@@ -231,6 +309,7 @@ const AIAssistant = () => {
         }
     }, [input, isSending, selectedFileId, fetchFiles]);
 
+<<<<<<< HEAD
     useEffect(() => {
         fetchFiles();
         const onVisible = () => { if (document.visibilityState === 'visible') fetchFiles(); };
@@ -253,6 +332,8 @@ const AIAssistant = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -268,6 +349,7 @@ const AIAssistant = () => {
     };
 
     return (
+<<<<<<< HEAD
         <div className="ai-assistant-main">
             <AIAnalyticsTopBar />
 
@@ -418,6 +500,126 @@ const AIAssistant = () => {
                 onClose={() => setShowAnalyticsPopup(false)} 
                 onSuggestionClick={sendMessage} 
             />
+=======
+        <div className="ai-assistant-page">
+            <AIAnalyticsSidebar />
+
+            <div className="ai-assistant-main">
+                <AIAnalyticsTopBar />
+
+                <div className="ai-assistant-content">
+                    {/* Chat Card */}
+                    <div className="ai-chat-card">
+                        {/* Card Header */}
+                        <div className="ai-chat-card-header">
+                            <div className="ai-chat-avatar">
+                                <BotIcon />
+                            </div>
+                            <div className="ai-chat-header-info">
+                                <span className="ai-chat-header-name">AI Assistant</span>
+                                <span className="ai-chat-status">
+                                    <span className="ai-chat-status-dot" />
+                                    Online
+                                </span>
+                            </div>
+                            {/* File selector */}
+                            <div className="ai-chat-file-selector">
+                                <select
+                                    value={selectedFileId || ''}
+                                    onChange={(e) => setSelectedFileId(e.target.value || null)}
+                                    className="ai-chat-file-dropdown"
+                                >
+                                    <option value="">No dataset selected</option>
+                                    {files.map((f) => (
+                                        <option key={f.file_id} value={f.file_id}>
+                                            {f.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Messages area */}
+                        <div className="ai-chat-messages">
+                            {messages.map((msg) => (
+                                <div
+                                    key={msg.id}
+                                    className={`ai-chat-message ${msg.role === 'user' ? 'user' : 'assistant'}`}
+                                >
+                                    {msg.role === 'assistant' && (
+                                        <div className="ai-chat-msg-avatar">
+                                            <BotIcon />
+                                        </div>
+                                    )}
+                                    <div className="ai-chat-bubble-wrap">
+                                        {msg.progress ? (
+                                            <div className="ai-chat-bubble">
+                                                <ProgressStep {...msg.progress} />
+                                            </div>
+                                        ) : (
+                                            <div className="ai-chat-bubble">
+                                                {msg.streaming && !msg.text ? (
+                                                    <div className="ai-chat-typing">
+                                                        <span /><span /><span />
+                                                    </div>
+                                                ) : msg.role === 'assistant' ? (
+                                                    <ReactMarkdown>{msg.text}</ReactMarkdown>
+                                                ) : (
+                                                    msg.text
+                                                )}
+                                            </div>
+                                        )}
+                                        <span className="ai-chat-time">{msg.time}</span>
+                                    </div>
+                                </div>
+                            ))}
+
+                            <div ref={messagesEndRef} />
+                        </div>
+
+                        {/* Suggestion chips */}
+                        {showSuggestions && (
+                            <div className="ai-chat-suggestions">
+                                {(selectedFileId ? SUGGESTIONS_WITH_FILE : SUGGESTIONS_NO_FILE).map((s) => (
+                                    <button
+                                        key={s}
+                                        className="ai-chat-chip"
+                                        onClick={() => sendMessage(s)}
+                                        disabled={isSending}
+                                    >
+                                        {s}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Composer */}
+                        <div className="ai-chat-composer">
+                            <div className="ai-chat-input-wrap">
+                                <textarea
+                                    ref={textareaRef}
+                                    className="ai-chat-input"
+                                    placeholder="Ask me anything about your data..."
+                                    value={input}
+                                    onChange={handleInput}
+                                    onKeyDown={handleKeyDown}
+                                    rows={1}
+                                />
+                                <button
+                                    className="ai-chat-send-btn"
+                                    onClick={sendMessage}
+                                    disabled={!input.trim() || isSending}
+                                    aria-label="Send message"
+                                >
+                                    <SendIcon />
+                                </button>
+                            </div>
+                            <p className="ai-chat-hint">Press Enter to send, Shift + Enter for new line</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
         </div>
     );
 };

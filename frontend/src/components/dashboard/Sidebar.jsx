@@ -1,5 +1,8 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+<<<<<<< HEAD
 import { useAuth } from '../../context/AuthContext';
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 import './Sidebar.css';
 
 /* ── Route map ───────────────────────────────────────────────────────────── */
@@ -22,12 +25,15 @@ const PATENT_FIRM_MENU_ITEMS = [
     { name: 'Payments', icon: 'dollarSign', route: '/dashboard/patent-firm/payments' },
 ];
 
+<<<<<<< HEAD
 const AI_ANALYTICS_MENU_ITEMS = [
     { name: 'Dashboard', icon: 'grid', route: '/dashboard/ai-analytics' },
     { name: 'Upload Files', icon: 'upload', route: '/dashboard/ai-analytics/upload' },
     { name: 'AI Assistant', icon: 'bot', route: '/dashboard/ai-analytics/assistant' },
 ];
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 /* ── SVG icons ───────────────────────────────────────────────────────────── */
 const ICONS = {
     grid: (
@@ -102,6 +108,7 @@ const ICONS = {
             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
         </svg>
     ),
+<<<<<<< HEAD
     upload: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -118,12 +125,15 @@ const ICONS = {
             <line x1="16" y1="15" x2="16" y2="17" />
         </svg>
     ),
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 };
 
 /* ── Component ───────────────────────────────────────────────────────────── */
 const Sidebar = () => {
     const navigate = useNavigate();
     const { pathname } = useLocation();
+<<<<<<< HEAD
     const { user } = useAuth();
 
     // Derive active item: match exact route or prefix (for sub-routes like /ai-analytics/upload)
@@ -149,10 +159,21 @@ const Sidebar = () => {
         menuItems = AI_ANALYTICS_MENU_ITEMS;
         dashboardTitle = "AI ANALYTICS DASHBOARD";
     }
+=======
+
+    // Derive active item: match exact route or prefix (for sub-routes like /ai-analytics/upload)
+    const isActive = (route) => pathname === route || pathname.startsWith(route + '/');
+
+    // Determine which menu items to use based on path
+    const isPatentFirm = pathname.startsWith('/dashboard/patent-firm');
+    const menuItems = isPatentFirm ? PATENT_FIRM_MENU_ITEMS : STARTUP_MENU_ITEMS;
+    const dashboardTitle = isPatentFirm ? "PATENT FIRM APP" : "STARTUPS DASHBOARD";
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 
     return (
         <div className="sidebar">
             <div className="sidebar-header">
+<<<<<<< HEAD
                 <h1 
                     className="sidebar-logo" 
                     onClick={() => navigate('/dashboard/startup')}
@@ -160,6 +181,9 @@ const Sidebar = () => {
                 >
                     Ascendly
                 </h1>
+=======
+                <h1 className="sidebar-logo">Ascendly</h1>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                 <p className="sidebar-subtitle">{dashboardTitle}</p>
             </div>
 
@@ -178,6 +202,7 @@ const Sidebar = () => {
             </nav>
 
             <div className="sidebar-footer">
+<<<<<<< HEAD
                 {!isPatentFirm && !(user?.plan === 'Standard' || user?.plan === 'Enterprise' || user?.plan === 'Pro' || user?.plan === 'Premium') && (
                     <button 
                         className="sidebar-upgrade" 
@@ -185,6 +210,12 @@ const Sidebar = () => {
                     >
                         <p>Upgrade to PRO to get access to all features!</p>
                     </button>
+=======
+                {!isPatentFirm && (
+                    <div className="sidebar-upgrade">
+                        <p>Upgrade to PRO to get access to all features!</p>
+                    </div>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                 )}
                 <a href="#" className="sidebar-help">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

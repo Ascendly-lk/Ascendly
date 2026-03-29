@@ -10,7 +10,11 @@
     min-width: 0;
     display: flex;
     align-items: center;
+<<<<<<< HEAD
     justify-content: space-between; /* push decoration to the right */
+=======
+    justify-content: flex-start;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     box-sizing: border-box;
     width: 100%;
 }
@@ -21,7 +25,11 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
+<<<<<<< HEAD
     gap: 12px; /* user recommendation */
+=======
+    gap: 14px;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     flex: 1;
 }
 
@@ -31,6 +39,10 @@
     gap: 4px;
     justify-content: center;
     align-items: flex-start;
+<<<<<<< HEAD
+=======
+    width: 100%;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 }
 
 .stat-card-title {
@@ -42,7 +54,12 @@
     font-weight: 700;
     color: #FFFFFF;
     line-height: 1;
+<<<<<<< HEAD
     text-align: left; /* align with title */
+=======
+    text-align: center;
+    width: 100%;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 }
 .stat-card:hover {
     transform: translateY(-2px);
@@ -63,7 +80,11 @@
 /* Gradient Variant */
 .stat-card-gradient {
     background: linear-gradient(150deg, #00FFE5 0%, #23A7B4 45%, #0B1220 100%);
+<<<<<<< HEAD
     border: 1px solid transparent; /* Match dimensions of dark variant */
+=======
+    border: none;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     box-shadow: 0 4px 12px rgba(0, 255, 239, 0.18);
 }
 

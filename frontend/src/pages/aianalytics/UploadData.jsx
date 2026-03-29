@@ -1,7 +1,12 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+<<<<<<< HEAD
 import { useLocation } from 'react-router-dom';
 import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
 import RecentUploads from '../../components/aianalytics/RecentUploads';
+=======
+import AIAnalyticsSidebar from '../../components/aianalytics/AIAnalyticsSidebar';
+import AIAnalyticsTopBar from '../../components/aianalytics/AIAnalyticsTopBar';
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 import { apiFetch } from '../../api';
 import { formatBytes, timeAgo } from '../../utils/format';
 import './UploadData.css';
@@ -39,9 +44,12 @@ const UploadData = () => {
     const [uploadMsg, setUploadMsg] = useState('');
     const fileInputRef = useRef(null);
 
+<<<<<<< HEAD
     const location = useLocation();
     const hasAutoOpened = useRef(false);
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     const fetchRecentFiles = useCallback(() => {
         apiFetch('/api/files/recent?limit=3')
             .then((res) => res.json())
@@ -58,6 +66,7 @@ const UploadData = () => {
 
     useEffect(() => { fetchRecentFiles(); }, [fetchRecentFiles]);
 
+<<<<<<< HEAD
     // Handle auto-open file browser if signaled from Quick Actions
     useEffect(() => {
         if (location.state?.autoOpen && !hasAutoOpened.current && fileInputRef.current) {
@@ -69,6 +78,8 @@ const UploadData = () => {
     }, [location.state]);
 
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     const uploadFiles = useCallback(async (files) => {
         if (!files || files.length === 0 || uploading) return;
         setUploading(true);
@@ -110,6 +121,7 @@ const UploadData = () => {
     }, [uploadFiles, uploading]);
 
     return (
+<<<<<<< HEAD
         <div className="upload-main">
             <AIAnalyticsTopBar />
 
@@ -165,6 +177,84 @@ const UploadData = () => {
                 <div className="upload-bottom-row">
                     <RecentUploads />
                     {/* Right side intentionally empty per Figma */}
+=======
+        <div className="upload-page">
+            <AIAnalyticsSidebar />
+
+            <div className="upload-main">
+                <AIAnalyticsTopBar />
+
+                {/* ── Content ── */}
+                <div className="upload-content">
+
+                    {/* Big Upload Card */}
+                    <div className="upload-card">
+                        <p className="upload-card-title">Upload Files</p>
+
+                        {/* Inner dropzone */}
+                        <div
+                            className={`upload-dropzone ${isDragging ? 'dragging' : ''}`}
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
+                        >
+                            <button
+                                className="upload-icon-btn"
+                                onClick={() => !uploading && fileInputRef.current?.click()}
+                                disabled={uploading}
+                                aria-label="Upload files"
+                            >
+                                <UploadIcon />
+                            </button>
+
+                            <p className="upload-drop-text">
+                                {uploading ? 'Uploading...' : 'Drop your files here, or browse'}
+                            </p>
+                            <p className="upload-drop-sub">Supports: CSV, Excel, PDF, JSON, TXT (Max 50MB)</p>
+                            {uploadMsg && <p className="upload-drop-sub" style={{ color: uploadMsg.startsWith('Failed') ? '#ef4444' : '#10b981' }}>{uploadMsg}</p>}
+
+                            <button
+                                className="upload-select-btn"
+                                onClick={() => fileInputRef.current?.click()}
+                                disabled={uploading}
+                            >
+                                {uploading ? 'Uploading...' : 'Select Files'}
+                            </button>
+
+                            {/* Hidden file input */}
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                multiple
+                                accept=".csv,.xlsx,.xls,.pdf,.json,.txt"
+                                className="upload-file-input"
+                                onChange={(e) => { uploadFiles(e.target.files); e.target.value = ''; }}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Bottom row */}
+                    <div className="upload-bottom-row">
+                        {/* Recent Uploads */}
+                        <div className="upload-recent-card">
+                            <h3 className="upload-recent-title">Recent Uploads</h3>
+                            <ul className="upload-recent-list">
+                                {recentFiles.map((file, i) => (
+                                    <li key={i} className="upload-recent-item">
+                                        <div className="upload-recent-icon">
+                                            <FileIcon />
+                                        </div>
+                                        <div className="upload-recent-info">
+                                            <p className="upload-recent-name">{file.name}</p>
+                                            <p className="upload-recent-meta">{file.meta}</p>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        {/* Right side intentionally empty per Figma */}
+                    </div>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                 </div>
             </div>
         </div>

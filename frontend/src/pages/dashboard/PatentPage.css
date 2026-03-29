@@ -169,7 +169,10 @@
     border-bottom: 1px solid rgba(148, 163, 184, 0.1);
     flex-shrink: 0;
     gap: 16px;
+<<<<<<< HEAD
     width: 100%;
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 }
 
 .pp-topbar-title {
@@ -249,9 +252,12 @@
     flex-direction: column;
     gap: 24px;
     flex: 1;
+<<<<<<< HEAD
     width: 100%;
     align-items: stretch;
     justify-content: flex-start;
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 }
 
 /* ── Scrollbar — same style as Dashboard ─────────────────────────────────── */
@@ -284,10 +290,15 @@
 .pp-stats-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+<<<<<<< HEAD
     gap: 20px;
     align-items: stretch;
     justify-items: stretch;
     width: 100%;
+=======
+    gap: 18px;
+    align-items: stretch;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 }
 
 .pp-stat-card {
@@ -297,7 +308,10 @@
     flex-direction: column;
     gap: 8px;
     min-height: 140px;
+<<<<<<< HEAD
     width: 100%;
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     transition: transform 0.2s ease-out, box-shadow 0.2s ease, filter 0.2s ease;
     cursor: pointer;
 }
@@ -414,7 +428,11 @@
 /* ══════════════════════════════════════════════════════════════════════════
    GENERIC CARD — matches Dashboard AIForecastCard style
    ══════════════════════════════════════════════════════════════════════════ */
+<<<<<<< HEAD
 .pp-card-1 {
+=======
+.pp-card {
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     background: linear-gradient(160deg, #0f172a 0%, #0c1527 100%);
     border: 1px solid rgba(148, 163, 184, 0.08);
     border-radius: 22px;
@@ -423,10 +441,16 @@
         0 4px 6px rgba(0, 0, 0, 0.3),
         0 20px 60px rgba(0, 0, 0, 0.55);
     transition: transform 0.2s ease-out, box-shadow 0.2s ease, border-color 0.2s ease;
+<<<<<<< HEAD
     width: 100%;
 }
 
 .pp-card-1:hover {
+=======
+}
+
+.pp-card:hover {
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     transform: translateY(-2px);
     box-shadow:
         0 4px 6px rgba(0, 0, 0, 0.3),
@@ -443,14 +467,22 @@
 
 /* ── Middle Row ──────────────────────────────────────────────────────────── */
 .pp-mid-row {
+<<<<<<< HEAD
     display: flex !important;
     gap: 20px;
     align-items: stretch;
     width: 100% !important;
+=======
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: 20px;
+    align-items: start;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 }
 
 /* ── Filing Activity Chart ───────────────────────────────────────────────── */
 .pp-chart-card {
+<<<<<<< HEAD
     flex: 6 !important;
     min-width: 0 !important;
     /* Allow flex shrinking if needed */
@@ -458,6 +490,9 @@
     width: 100% !important;
     display: flex;
     flex-direction: column;
+=======
+    min-height: 280px;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 }
 
 .pp-chart-header {
@@ -524,6 +559,7 @@
 }
 
 
+<<<<<<< HEAD
 .pp-renewals-card {
     flex: 6 !important;
     min-width: 0 !important;
@@ -533,6 +569,8 @@
     flex-direction: column;
 }
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 /* ── Upcoming Renewals ───────────────────────────────────────────────────── */
 .pp-renewal-list {
     display: flex;
@@ -634,11 +672,15 @@
    RECENT FILINGS TABLE
    ══════════════════════════════════════════════════════════════════════════ */
 .pp-filings-card {
+<<<<<<< HEAD
     width: 100%;
     min-width: 100%;
     flex: 1;
     overflow: hidden;
     margin: 0;
+=======
+    overflow: hidden;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 }
 
 .pp-filings-header {

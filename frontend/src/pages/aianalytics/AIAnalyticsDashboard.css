@@ -1,5 +1,19 @@
+<<<<<<< HEAD
 /* Main content area (no longer needs fixed margin-left as it's in DashboardLayout) */
 .ai-dashboard-main {
+=======
+/* Full-screen layout: sidebar + main side-by-side */
+.ai-dashboard {
+    display: flex;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #050B14 0%, #0B1220 100%);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Main area pushed right of the sidebar (220px wide) */
+.ai-dashboard-main {
+    margin-left: 220px;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -37,6 +51,15 @@
 }
 
 /* ── Responsive ── */
+<<<<<<< HEAD
+=======
+@media (max-width: 1024px) {
+    .ai-dashboard-main {
+        margin-left: 68px;
+    }
+}
+
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 @media (max-width: 900px) {
     .ai-stats-row {
         flex-wrap: wrap;

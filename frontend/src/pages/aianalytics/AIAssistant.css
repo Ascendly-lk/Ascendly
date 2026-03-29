@@ -1,9 +1,25 @@
+<<<<<<< HEAD
+=======
+git
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 /* ══════════════════════════════════════════
    AI Assistant — Page Layout
    Sidebar: 220px fixed (from AIAnalyticsSidebar.css)
 ══════════════════════════════════════════ */
 
+<<<<<<< HEAD
 .ai-assistant-main {
+=======
+.ai-assistant-page {
+    display: flex;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #050B14 0%, #0B1220 100%);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.ai-assistant-main {
+    margin-left: 220px;
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -400,7 +416,20 @@
 /* ══════════════════════════════════════════
    Responsive
 ══════════════════════════════════════════ */
+<<<<<<< HEAD
 @media (max-width: 768px) {
+=======
+@media (max-width: 1024px) {
+    .ai-assistant-main {
+        margin-left: 68px;
+    }
+}
+
+@media (max-width: 768px) {
+    .ai-assistant-main {
+        margin-left: 0;
+    }
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 
     .ai-assistant-content {
         padding: 14px;
@@ -433,6 +462,7 @@
     border-color: #10b981;
 }
 
+<<<<<<< HEAD
 /* ── Action Buttons (Insights / PDF) ── */
 .ai-chat-actions {
     display: flex;
@@ -474,6 +504,8 @@
     box-shadow: 0 0 10px rgba(16, 185, 129, 0.1);
 }
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 .ai-chat-file-dropdown option {
     background: #0f1a2e;
     color: #e2e8f0;
@@ -507,6 +539,7 @@
 .ai-chat-chip:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+<<<<<<< HEAD
 }
 
 /* ── Coming Soon Toast ── */
@@ -532,4 +565,6 @@
 .ai-toast-popup.visible {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 }

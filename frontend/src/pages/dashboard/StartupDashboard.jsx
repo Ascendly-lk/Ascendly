@@ -18,6 +18,7 @@ const StartupDashboard = () => {
     useEffect(() => {
         const fetchMetrics = async () => {
             try {
+<<<<<<< HEAD
                 const token = localStorage.getItem("ascendly_token") || localStorage.getItem("access_token");
 
                 // Only attach Authorization header if a real token exists
@@ -38,6 +39,20 @@ const StartupDashboard = () => {
                 } else {
                     const errBody = await response.text();
                     console.error("Metrics fetch failed:", response.status, errBody);
+=======
+                // ascendly_token is used in auth.js
+                const token = localStorage.getItem("ascendly_token") || localStorage.getItem("access_token");
+                const response = await fetch("http://localhost:8000/dashboard/metrics", {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+                console.log("Metrics fetch status:", response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    setMetrics(data);
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                 }
             } catch (error) {
                 console.error("Error fetching metrics:", error);
@@ -78,6 +93,7 @@ const StartupDashboard = () => {
         </svg>
     );
 
+<<<<<<< HEAD
     // Safe derived display values - always strings, always valid
     const activeUsersValue   = String(Number(metrics.active_users) || 0);
     const monthlyRevenueValue = `$${Number(metrics.monthly_revenue || 0).toLocaleString()}`;
@@ -85,12 +101,15 @@ const StartupDashboard = () => {
     const growthNum = Number(metrics.growth) || 0;
     const growthValue = `${growthNum > 0 ? '+' : ''}${growthNum}%`;
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     return (
         <>
             <TopBar />
             <div className="dashboard-content">
                 {/* Row 1: Stat Cards */}
                 <div className="dashboard-row dashboard-stats">
+<<<<<<< HEAD
                     <StatCard title="Active users" value={activeUsersValue} icon={userIcon} variant="dark" />
 
                     <StatCard title="Monthly Revenue" value={monthlyRevenueValue} icon={null} variant="dark" decoration={miniBars} />
@@ -98,6 +117,15 @@ const StartupDashboard = () => {
                     <StatCard title="Engagement Score" value={engagementScoreValue} icon={analyticsIcon} variant="dark" />
 
                     <StatCard title="Growth" value={growthValue} icon={null} variant="gradient" decoration={growthCurve} />
+=======
+                    <StatCard title="Active users" value={metrics.active_users.toString()} icon={userIcon} variant="dark" />
+
+                    <StatCard title="Monthly Revenue" value={`$${metrics.monthly_revenue.toLocaleString()}`} icon={null} variant="dark" decoration={miniBars} />
+
+                    <StatCard title="Engagement Score" value={`${metrics.engagement_score}/100`} icon={analyticsIcon} variant="dark" />
+
+                    <StatCard title="Growth" value={`+${metrics.growth}%`} icon={null} variant="gradient" decoration={growthCurve} />
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                 </div>
 
                 {/* Row 2: AI Forecast & Advisors */}

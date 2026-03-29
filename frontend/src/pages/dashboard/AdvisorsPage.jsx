@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState } from 'react';
 import BookingModal from '../../components/dashboard/BookingModal';
 import { getSubscriptionPlan } from '../../utils/auth';
@@ -85,6 +86,24 @@ const AdvisorsPage = () => {
 
     return (
         <div className="ap-main">
+=======
+import './AdvisorsPage.css';
+
+
+/* ── Data ────────────────────────────────────────────────────────────────── */
+const advisors = [
+    { name: 'Ajith de Costa', specialty: 'Scaling • Operational • KPI review', rating: '4.8/5' },
+    { name: 'Gayani de Alwis', specialty: 'Marketing • Positioning • Growth', rating: '4.2/5' },
+    { name: 'John Keels PLC', specialty: 'Enterprise Marketing • Partnerships', rating: '4.9/5' },
+    { name: 'Nuwan Perera', specialty: 'Finance • Pricing • Unit economics', rating: null },
+    { name: 'Shalini Fernando', specialty: 'Product • Roadmaps • UX strategy', rating: null },
+    { name: 'Maya Senanayake', specialty: 'Legal • IP • Compliance', rating: null },
+];
+
+/* ── Main Page ───────────────────────────────────────────────────────────── */
+const AdvisorsPage = () => (
+    <div className="ap-main">
+>>>>>>> parent of ae17c912 (Update by deleting some files)
         {/* ── Top Bar ── */}
         <div className="ap-topbar">
             <h2 className="ap-topbar-title">Advisor Network</h2>
@@ -134,6 +153,7 @@ const AdvisorsPage = () => {
                         <h3 className="ap-section-title">AI Suggested Advisors</h3>
                         <p className="ap-section-meta">Matched based on your growth stage and KPIs.</p>
                     </div>
+<<<<<<< HEAD
                     <button
                         className={`ap-request-session-btn ${showPanel ? 'active' : ''}`}
                         onClick={handleRequestSession}
@@ -200,6 +220,12 @@ const AdvisorsPage = () => {
                 )}
 
                 {/* ── Existing advisor cards grid (UNCHANGED) ── */}
+=======
+                    <button className="ap-request-session-btn">Request Advisor Session →</button>
+                </div>
+
+                {/* ── Advisor cards grid (THE STAT CARDS THE USER MENTIONED) ── */}
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                 <div className="ap-cards-grid">
                     {advisors.map((adv) => (
                         <div key={adv.name} className="ap-advisor-card">
@@ -210,12 +236,16 @@ const AdvisorsPage = () => {
                             {adv.rating && (
                                 <div className="ap-rating-badge">{adv.rating}</div>
                             )}
+<<<<<<< HEAD
                             <button
                                 className="ap-request-btn"
                                 onClick={() => setSelectedAdvisor(adv)}
                             >
                                 Request Session
                             </button>
+=======
+                            <button className="ap-request-btn">Request Session</button>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                         </div>
                     ))}
                 </div>
@@ -235,6 +265,7 @@ const AdvisorsPage = () => {
                 </ul>
             </div>
 
+<<<<<<< HEAD
             </div>
 
             {selectedAdvisor && (
@@ -246,5 +277,10 @@ const AdvisorsPage = () => {
         </div>
     );
 };
+=======
+        </div>
+    </div>
+);
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 
 export default AdvisorsPage;

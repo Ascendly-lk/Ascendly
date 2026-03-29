@@ -19,7 +19,10 @@ from app.api.endpoints.analysis import router as analysis_router
 from app.api.endpoints.dashboard import router as dashboard_router
 from app.api.endpoints.chat import router as chat_router
 from app.api.insights import router as insights_router
+<<<<<<< HEAD
 from app.api.endpoints.patent_firm import router as patent_firm_router
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 
 app = FastAPI(
     title="Ascendly API",
@@ -27,10 +30,17 @@ app = FastAPI(
     version="1.0.0",
 )
 
+<<<<<<< HEAD
 # CORS — allow Vite frontend dev server (port 5173, etc)
 app.add_middleware(
     CORSMiddleware,
     allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1|\[::1\]|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$",
+=======
+# CORS — allow Vite frontend dev server (port 5173)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -42,7 +52,10 @@ app.include_router(analysis_router)
 app.include_router(dashboard_router)
 app.include_router(chat_router)
 app.include_router(insights_router)
+<<<<<<< HEAD
 app.include_router(patent_firm_router)
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 
 
 # ============ SCHEMAS ============
@@ -262,6 +275,7 @@ async def get_me(current_user=Depends(require_auth)):
             upsert_data["created_at"] = datetime.now(timezone.utc).isoformat()
             
         try:
+<<<<<<< HEAD
             print(f"[get_me] Syncing profile for {auth_user_id} ({current_user.email})")
             create_profile(upsert_data)
         except Exception as e:
@@ -272,13 +286,22 @@ async def get_me(current_user=Depends(require_auth)):
             # the user can still log in with that record.
             if not profile:
                 raise HTTPException(status_code=500, detail=f"Profile synchronization failed: {str(e)}")
+=======
+            create_profile(upsert_data)
+        except Exception:
+            pass # Suppress issues if the trigger already handles portions of this seamlessly
+>>>>>>> parent of ae17c912 (Update by deleting some files)
             
         profile = get_profile_by_auth_id(auth_user_id)
         is_newly_synced = True
 
     if not profile:
+<<<<<<< HEAD
         print(f"[get_me] Profile NOT FOUND in DB for auth_id: {auth_user_id}")
         raise HTTPException(status_code=404, detail="Profile not found in our database. Please try registering again.")
+=======
+        raise HTTPException(status_code=404, detail="Profile not found.")
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 
     full_name = profile.get("full_name", "")
     name_parts = full_name.split(" ", 1) if full_name else ["", ""]
@@ -369,6 +392,7 @@ async def get_dashboard_metrics(current_user=Depends(require_auth)):
         print(f"[METRICS DEBUG] Error fetching users from 'profiles': {e}")
         pass
 
+<<<<<<< HEAD
     now = datetime.now(timezone.utc)
 
     # 2. Monthly Revenue — sum `amount` from `monthly_revenue` for current month + year.
@@ -435,6 +459,42 @@ async def get_dashboard_metrics(current_user=Depends(require_auth)):
         print(f"[METRICS DEBUG] Growth: {growth}% (this_month={cur_signups}, last_month={prev_signups})")
     except Exception as e:
         print(f"[METRICS DEBUG] Error calculating growth from 'profiles': {e}")
+=======
+    # 2. Monthly Revenue (Defaulting to 0 since no payments table exists yet)
+    monthly_revenue = 0
+
+    # 3. Engagement Score
+    engagement_score = 0
+    if total_users > 0:
+        engagement_score = min(int((active_users / total_users) * 100), 100)
+    
+    # 4. Growth (Defaulting to simple logic to prevent crashing)
+    # Ideally compare this month's registrants with last month
+    growth = 0
+    try:
+        now = datetime.now(timezone.utc)
+        current_month_start = datetime(now.year, now.month, 1, tzinfo=timezone.utc).isoformat()
+        
+        last_month = now.month - 1 if now.month > 1 else 12
+        last_year = now.year if now.month > 1 else now.year - 1
+        last_month_start = datetime(last_year, last_month, 1, tzinfo=timezone.utc).isoformat()
+        
+        current_month_res = admin.table("profiles").select("id", count="exact").gte("created_at", current_month_start).execute()
+        current_month_signups = current_month_res.count if current_month_res.count is not None else len(current_month_res.data)
+
+        last_month_res = admin.table("profiles").select("id", count="exact").gte("created_at", last_month_start).lt("created_at", current_month_start).execute()
+        last_month_signups = last_month_res.count if last_month_res.count is not None else len(last_month_res.data)
+        
+        if last_month_signups > 0:
+            growth = round(((current_month_signups - last_month_signups) / last_month_signups) * 100, 1)
+        elif current_month_signups > 0:
+            growth = 100.0  # arbitrary representation for first month growth
+            
+        print(f"[METRICS DEBUG] Growth calculated: current_month={current_month_signups}, last_month={last_month_signups}, growth={growth}%")
+    except Exception as e:
+        print(f"[METRICS DEBUG] Error calculating growth from 'profiles': {e}")
+        pass
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 
     return {
         "active_users": active_users,

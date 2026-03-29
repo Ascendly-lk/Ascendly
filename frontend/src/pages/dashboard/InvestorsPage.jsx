@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState } from 'react';
 import { getSubscriptionPlan } from '../../utils/auth';
 import BookingModal from '../../components/dashboard/BookingModal';
@@ -134,6 +135,17 @@ The market for AI-driven Enterprise apps is currently hot. Capitalize on this by
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     };
+=======
+import './InvestorsPage.css';
+
+/* ── Main Page ───────────────────────────────────────────────────────────── */
+const InvestorsPage = () => {
+    const investors = [
+        { name: 'BluePeak Ventures', meta: 'Verified • Last active: 2d', focus: 'SaaS, AI', stage: 'Seed', match: 96, matchClass: 'high' },
+        { name: 'Crescent Capital', meta: 'Verified • Last active: 5d', focus: 'Fintech', stage: 'Pre-Seed', match: 74, matchClass: 'mid' },
+        { name: 'NorthBridge Angels', meta: 'Verified • Last active: 1w', focus: 'E-commerce', stage: 'Seed', match: 89, matchClass: 'high' },
+    ];
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 
     return (
         <div className="ip-main">
@@ -241,6 +253,7 @@ The market for AI-driven Enterprise apps is currently hot. Capitalize on this by
                 {/* ── Main Grid ── */}
                 <div className="ip-grid">
 
+<<<<<<< HEAD
                     {/* LEFT – Investors table */}
                     <div className="ip-card ip-investors-card">
                         
@@ -257,16 +270,27 @@ The market for AI-driven Enterprise apps is currently hot. Capitalize on this by
                             <span className="ip-tier-msg">{limits.message}</span>
                             {isLimitReached && <span className="ip-tier-limit-msg">(Limit Reached)</span>}
                         </div>
+=======
+                    {/* LEFT – Recommended Investors table */}
+                    <div className="ip-card ip-investors-card">
+                        <h3 className="ip-card-title">Recommended Investors</h3>
+                        <p className="ip-card-subtitle">AI-ranked based on your sector, traction, and stage.</p>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 
                         <div className="ip-table-header">
                             <span>Investor</span>
                             <span>Focus</span>
                             <span>Stage</span>
+<<<<<<< HEAD
                             <span>Rating</span>
+=======
+                            <span>Match</span>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                             <span>Action</span>
                         </div>
 
                         <div className="ip-table-body">
+<<<<<<< HEAD
                             {availablePool.slice(0, visibleCount).map((inv) => {
                                 const isRequested = requestedIds.includes(inv.id);
                                 return (
@@ -314,6 +338,25 @@ The market for AI-driven Enterprise apps is currently hot. Capitalize on this by
                                 </button>
                             </div>
                         )}
+=======
+                            {investors.map((inv) => (
+                                <div key={inv.name} className="ip-table-row">
+                                    <div className="ip-inv-info">
+                                        <div className="ip-inv-name">{inv.name}</div>
+                                        <div className="ip-inv-meta">{inv.meta}</div>
+                                    </div>
+                                    <div className="ip-inv-focus">{inv.focus}</div>
+                                    <div className="ip-inv-stage">{inv.stage}</div>
+                                    <div className="ip-inv-match">
+                                        <span className={`ip-match-badge ip-match-badge--${inv.matchClass}`}>{inv.match}%</span>
+                                    </div>
+                                    <div className="ip-inv-action">
+                                        <button className="ip-request-btn">Request</button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                     </div>
 
                     {/* RIGHT ─ two stacked cards */}
@@ -323,14 +366,22 @@ The market for AI-driven Enterprise apps is currently hot. Capitalize on this by
                         <div className="ip-card ip-pipeline-card">
                             <h3 className="ip-card-title">Deal Pipeline</h3>
                             <ul className="ip-bullet-list">
+<<<<<<< HEAD
                                 <li>Requested: {requestedIds.length}</li>
+=======
+                                <li>Requested: 5</li>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                                 <li>NDA Signed: 2</li>
                                 <li>Meetings Scheduled: 1</li>
                                 <li>Offers: 0</li>
                             </ul>
+<<<<<<< HEAD
                             <button className="ip-export-btn" onClick={handleExport}>
                                 Export Investor Report →
                             </button>
+=======
+                            <button className="ip-export-btn">Export Investor Report →</button>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                         </div>
 
                         {/* AI Recommendations */}
@@ -348,6 +399,7 @@ The market for AI-driven Enterprise apps is currently hot. Capitalize on this by
                 </div>
 
             </div>
+<<<<<<< HEAD
 
             {/* ── Modals ── */}
             {selectedInvestor && (
@@ -424,6 +476,8 @@ The market for AI-driven Enterprise apps is currently hot. Capitalize on this by
                     </div>
                 </div>
             )}
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
         </div>
     );
 };

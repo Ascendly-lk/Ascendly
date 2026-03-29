@@ -1,12 +1,19 @@
+<<<<<<< HEAD
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StatCard from "../../components/dashboard/StatCard";
 import TopBar from "../../components/dashboard/TopBar";
 import { fetchDashboardStats, fetchActivities, fetchDashboardPipeline, fetchUrgentActions } from '../../utils/patent-api';
+=======
+import { useNavigate } from 'react-router-dom';
+import StatCard from "../../components/dashboard/StatCard";
+import TopBar from "../../components/dashboard/TopBar";
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 import "./Dashboard.css";
 
 const PatentFirmDashboard = () => {
     const navigate = useNavigate();
+<<<<<<< HEAD
     const [stats, setStats] = useState(null);
     const [activity, setActivity] = useState([]);
     const [pipeline, setPipeline] = useState(null);
@@ -39,6 +46,8 @@ const PatentFirmDashboard = () => {
     useEffect(() => {
         loadDashboardData();
     }, []);
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
     // Icons
     const fileIcon = (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" strokeWidth="2">
@@ -116,30 +125,48 @@ const PatentFirmDashboard = () => {
             </div> */}
 
             <div className="dashboard-content pf-content">
+<<<<<<< HEAD
                 {debugError && (
                     <div style={{ background: '#FECDD3', color: '#9F1239', padding: '12px', borderRadius: '8px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div><strong>Debug Error:</strong> {debugError}.</div>
                         <button onClick={loadDashboardData} style={{ background: '#9F1239', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}>Retry Fetch</button>
                     </div>
                 )}
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                 {/* Row 1: Stat Cards */}
                 <div className="dashboard-row dashboard-stats">
                     <StatCard
                         title="Active Applications"
+<<<<<<< HEAD
                         value={stats ? stats.active_applications : "..."}
                         icon={fileIcon}
                         variant="dark"
+=======
+                        value="18"
+                        icon={fileIcon}
+                        variant="dark"
+                        decoration={<div className="pf-stat-subtitle">+3 this week</div>}
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                     />
 
                     <StatCard
                         title="Total Clients"
+<<<<<<< HEAD
                         value={stats ? stats.total_clients : "..."}
                         icon={usersIcon}
                         variant="dark"
+=======
+                        value="42"
+                        icon={usersIcon}
+                        variant="dark"
+                        decoration={<div className="pf-stat-subtitle">+2 new this month</div>}
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                     />
 
                     <StatCard
                         title="Pending Reviews"
+<<<<<<< HEAD
                         value={stats ? stats.pending_reviews : "..."}
                         icon={clockIcon}
                         variant="dark"
@@ -150,6 +177,20 @@ const PatentFirmDashboard = () => {
                         value={stats ? stats.revenue_formatted : "..."}
                         icon={dollarIcon}
                         variant="gradient"
+=======
+                        value="7"
+                        icon={clockIcon}
+                        variant="dark"
+                        decoration={<div className="pf-stat-subtitle text-orange">Needs attention</div>}
+                    />
+
+                    <StatCard
+                        title="Revenue (MTD)"
+                        value="$85K"
+                        icon={dollarIcon}
+                        variant="gradient"
+                        decoration={<div className="pf-stat-subtitle">+12% vs last month</div>}
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                     />
                 </div>
 
@@ -157,6 +198,7 @@ const PatentFirmDashboard = () => {
                 <div className="pf-urgent-card">
                     <div className="pf-urgent-header">
                         {warningIcon}
+<<<<<<< HEAD
                         <h2>Action Required</h2>
                     </div>
 
@@ -182,6 +224,36 @@ const PatentFirmDashboard = () => {
                         {urgent.length === 0 && (
                             <div style={{ color: 'var(--text-gray)', padding: '16px 0' }}>No urgent applications immediately due.</div>
                         )}
+=======
+                        <h2>Urgent: Applications Needing Attention</h2>
+                    </div>
+                    <p className="pf-urgent-desc">These applications have approaching deadlines</p>
+
+                    <div className="pf-urgent-list">
+                        <button type="button" className="pf-urgent-item pf-urgent-link" onClick={() => { window.location.href = '/dashboard/patent-firm/applications'; }}>
+                            <div className="pf-urgent-info">
+                                <h3>AI-Powered Task Automation</h3>
+                                <p>TechCo AI • PAT-2026-018</p>
+                                <span className="pf-status-text">Pending Review</span>
+                            </div>
+                            <div className="pf-urgent-actions">
+                                <span className="pf-badge pf-orange-badge">2 days left</span>
+                                <span className="pf-btn-outline">Review →</span>
+                            </div>
+                        </button>
+
+                        <button type="button" className="pf-urgent-item pf-urgent-link" onClick={() => { window.location.href = '/dashboard/patent-firm/applications'; }}>
+                            <div className="pf-urgent-info">
+                                <h3>Smart IoT Sensor System</h3>
+                                <p>IoT Innovations • PAT-2026-015</p>
+                                <span className="pf-status-text">Draft Due</span>
+                            </div>
+                            <div className="pf-urgent-actions">
+                                <span className="pf-badge pf-orange-badge">4 days left</span>
+                                <span className="pf-btn-outline">Review →</span>
+                            </div>
+                        </button>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                     </div>
                 </div>
 
@@ -193,27 +265,47 @@ const PatentFirmDashboard = () => {
                             {fileIcon}
                             <h3>Application Pipeline</h3>
                         </div>
+<<<<<<< HEAD
+=======
+                        <p className="pf-card-desc">Track the status of all client applications</p>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 
                         <div className="pf-pipeline-list">
                             <div className="pf-pipeline-item">
                                 <div className="pf-dot dot-orange"></div>
                                 <span className="pf-pipeline-label">Pending Review</span>
+<<<<<<< HEAD
                                 <span className="pf-pipeline-val">{pipeline ? pipeline.pending_review : "..."}</span>
+=======
+                                <span className="pf-pipeline-val">7</span>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                             </div>
                             <div className="pf-pipeline-item">
                                 <div className="pf-dot dot-blue"></div>
                                 <span className="pf-pipeline-label">In Progress</span>
+<<<<<<< HEAD
                                 <span className="pf-pipeline-val">{pipeline ? pipeline.in_progress : "..."}</span>
+=======
+                                <span className="pf-pipeline-val">8</span>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                             </div>
                             <div className="pf-pipeline-item">
                                 <div className="pf-dot dot-purple"></div>
                                 <span className="pf-pipeline-label">Filing Ready</span>
+<<<<<<< HEAD
                                 <span className="pf-pipeline-val">{pipeline ? pipeline.filing_ready : "..."}</span>
+=======
+                                <span className="pf-pipeline-val">3</span>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                             </div>
                             <div className="pf-pipeline-item">
                                 <div className="pf-dot dot-green"></div>
                                 <span className="pf-pipeline-label">Filed/Complete</span>
+<<<<<<< HEAD
                                 <span className="pf-pipeline-val">{pipeline ? pipeline.filed_completed : "..."}</span>
+=======
+                                <span className="pf-pipeline-val">24</span>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                             </div>
                         </div>
 
@@ -231,12 +323,22 @@ const PatentFirmDashboard = () => {
                         <div className="pf-card-header no-icon">
                             <h3>Quick Actions</h3>
                         </div>
+<<<<<<< HEAD
 
                         <div className="pf-quick-list">
                             <button className="pf-list-btn" onClick={() => navigate('/dashboard/patent-firm/clients')}>
                                 {usersIcon} View All Clients
                             </button>
                             <button className="pf-list-btn" onClick={() => navigate('/dashboard/patent-firm/applications?status=pending_review')}>
+=======
+                        <p className="pf-card-desc">Common tasks and shortcuts</p>
+
+                        <div className="pf-quick-list">
+                            <button className="pf-list-btn">
+                                {usersIcon} View All Clients
+                            </button>
+                            <button className="pf-list-btn">
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                                 {fileIcon} Review Pending Applications
                             </button>
                             <button className="pf-list-btn">
@@ -257,6 +359,7 @@ const PatentFirmDashboard = () => {
                     <p className="pf-card-desc">Latest updates from your clients and team</p>
 
                     <div className="pf-activity-list">
+<<<<<<< HEAD
                         {activity.map((item, idx) => {
                             const actionKey = (item.action || "").toLowerCase();
                             const icon = actionKey.includes('document') ? fileIcon : actionKey.includes('review') ? checkIcon : calendarIcon;
@@ -273,6 +376,29 @@ const PatentFirmDashboard = () => {
                                 </div>
                             );
                         })}
+=======
+                        <div className="pf-activity-item">
+                            <div className="pf-icon-circle bg-blue-subtle">{fileIcon}</div>
+                            <div className="pf-activity-info">
+                                <h4>New application submitted by TechCo AI</h4>
+                                <p>TechCo AI • 2 hours ago</p>
+                            </div>
+                        </div>
+                        <div className="pf-activity-item">
+                            <div className="pf-icon-circle bg-green-subtle">{checkIcon}</div>
+                            <div className="pf-activity-info">
+                                <h4>Completed novelty assessment for IoT Innovations</h4>
+                                <p>IoT Innovations • 5 hours ago</p>
+                            </div>
+                        </div>
+                        <div className="pf-activity-item">
+                            <div className="pf-icon-circle bg-purple-subtle">{calendarIcon}</div>
+                            <div className="pf-activity-info">
+                                <h4>Scheduled consultation with DataFlow Inc</h4>
+                                <p>DataFlow Inc • 1 day ago</p>
+                            </div>
+                        </div>
+>>>>>>> parent of ae17c912 (Update by deleting some files)
                     </div>
                 </div>
 

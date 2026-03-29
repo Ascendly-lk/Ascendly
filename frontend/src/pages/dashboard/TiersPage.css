@@ -473,6 +473,7 @@
     flex-shrink: 0;
 }
 
+<<<<<<< HEAD
 .tp-feature-muted {
     color: #64748B !important;
 }
@@ -484,6 +485,8 @@
     flex-shrink: 0;
 }
 
+=======
+>>>>>>> parent of ae17c912 (Update by deleting some files)
 /* ── Choose Plan button ──────────────────────────────────────────────────── */
 .tp-choose-btn {
     width: 100%;
