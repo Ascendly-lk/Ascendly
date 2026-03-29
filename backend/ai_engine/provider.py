@@ -68,12 +68,17 @@ def get_litellm_params() -> dict:
         )
 
     if AI_PROVIDER == "azure":
-        return {
-            "model": f"azure/{os.getenv('AZURE_DEPLOYMENT_NAME')}",
+        endpoint = os.getenv("AZURE_ENDPOINT", "")
+        # Azure AI Foundry /v1 endpoints don't accept api-version as a query param
+        uses_v1_path = endpoint.rstrip("/").endswith("/v1")
+        params = {
+            "model": f"openai/{os.getenv('AZURE_DEPLOYMENT_NAME')}" if uses_v1_path else f"azure/{os.getenv('AZURE_DEPLOYMENT_NAME')}",
             "api_key": os.getenv("AZURE_API_KEY"),
-            "api_base": os.getenv("AZURE_ENDPOINT"),
-            "api_version": os.getenv("AZURE_API_VERSION"),
+            "api_base": endpoint,
         }
+        if not uses_v1_path:
+            params["api_version"] = os.getenv("AZURE_API_VERSION")
+        return params
 
     # OpenAI (default)
     return {
@@ -99,10 +104,18 @@ def get_crewai_llm():
         )
 
     if AI_PROVIDER == "azure":
+        endpoint = os.getenv("AZURE_ENDPOINT", "")
+        uses_v1_path = endpoint.rstrip("/").endswith("/v1")
+        if uses_v1_path:
+            return LLM(
+                model=f"openai/{os.getenv('AZURE_DEPLOYMENT_NAME')}",
+                api_key=os.getenv("AZURE_API_KEY"),
+                base_url=endpoint,
+            )
         return LLM(
             model=f"azure/{os.getenv('AZURE_DEPLOYMENT_NAME')}",
             api_key=os.getenv("AZURE_API_KEY"),
-            endpoint=os.getenv("AZURE_ENDPOINT"),
+            endpoint=endpoint,
             api_version=os.getenv("AZURE_API_VERSION"),
         )
 

@@ -7,6 +7,8 @@ import RevenueTrendCard from "../../components/dashboard/RevenueTrendCard";
 import TopBar from "../../components/dashboard/TopBar";
 import "./StartupDashboard.css";
 
+const API_BASE = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:8000`;
+
 const StartupDashboard = () => {
     const [metrics, setMetrics] = useState({
         active_users: 0,
@@ -23,7 +25,7 @@ const StartupDashboard = () => {
                 // Only attach Authorization header if a real token exists
                 const headers = token ? { "Authorization": `Bearer ${token}` } : {};
 
-                const response = await fetch("http://localhost:8000/dashboard/metrics", { headers });
+                const response = await fetch(`${API_BASE}/dashboard/metrics`, { headers });
                 console.log("Metrics fetch status:", response.status);
 
                 if (response.ok) {

@@ -118,7 +118,11 @@ async def check_usage_limit(user_id: str, action: str) -> None:
         now = datetime.now(timezone.utc)
         billing_start = datetime(now.year, now.month, 1, tzinfo=timezone.utc).isoformat()
 
-    used = _count_usage(admin, user_id, action, billing_start)
+    try:
+        used = _count_usage(admin, user_id, action, billing_start)
+    except Exception as e:
+        print(f"[usage_guard] Could not count usage (schema issue?): {e} — allowing request")
+        used = 0
 
     if used >= limit:
         raise HTTPException(

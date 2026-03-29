@@ -9,17 +9,8 @@ from ai_engine.tools.benchmark_tool import query_benchmarks
 
 
 def _make_llm() -> LLM:
-    model = os.getenv("CREWAI_LLM_MODEL", "azure/gpt-4o")
-    if model.startswith("azure/"):
-        api_key = os.getenv("AZURE_API_KEY")
-        endpoint = os.getenv("AZURE_ENDPOINT")
-        api_version = os.getenv("AZURE_API_VERSION")
-        if not api_key or not endpoint:
-            raise EnvironmentError(
-                "AZURE_API_KEY and AZURE_ENDPOINT must be set for Azure models."
-            )
-        return LLM(model=model, api_key=api_key, endpoint=endpoint, api_version=api_version)
-    return LLM(model=model, api_key=os.getenv("OPENAI_API_KEY"))
+    from ai_engine.provider import get_crewai_llm
+    return get_crewai_llm()
 
 
 def create_data_analyst() -> Agent:

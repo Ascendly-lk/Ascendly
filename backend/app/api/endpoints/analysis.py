@@ -86,6 +86,7 @@ async def analyze_financial_data(
         request_id = result.get("request_id", str(uuid.uuid4()))
         for log in result.get("agent_logs", []):
             insert_record("ai_logs", {
+                "user_id": user_id,
                 "request_id": request_id,
                 "agent_name": log["agent_name"],
                 "tool_output": log.get("output", ""),
