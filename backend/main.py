@@ -115,7 +115,7 @@ async def register(payload: RegisterRequest):
     1. Create Supabase Auth user
     2. Insert row into existing profiles table (auth_user_id, email, full_name, role)
     """
-    valid_roles = {"Startup Founder", "Investor", "Marketing Agency", "Business Advisor", "Admin"}
+    valid_roles = {"Startup Founder", "Investor", "Marketing Agency", "Business Advisor", "Admin", "Patent Firm"}
     if payload.role not in valid_roles:
         raise HTTPException(
             status_code=422,
@@ -331,7 +331,7 @@ async def complete_profile(payload: ProfileCompleteRequest, current_user=Depends
     Called after Google Signup/Signin if the onboarding_completed flag is false.
     Assigns the newly onboarded user their role.
     """
-    valid_roles = {"Startup Founder", "Investor", "Marketing Agency", "Business Advisor", "Admin"}
+    valid_roles = {"Startup Founder", "Investor", "Marketing Agency", "Business Advisor", "Admin", "Patent Firm"}
     if payload.role not in valid_roles:
         raise HTTPException(
             status_code=422,

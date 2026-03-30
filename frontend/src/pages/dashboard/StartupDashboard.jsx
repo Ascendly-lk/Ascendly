@@ -7,7 +7,7 @@ import RevenueTrendCard from "../../components/dashboard/RevenueTrendCard";
 import TopBar from "../../components/dashboard/TopBar";
 import "./StartupDashboard.css";
 
-const API_BASE = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:8000`;
+const API_BASE = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:8000`;
 
 const StartupDashboard = () => {
     const [metrics, setMetrics] = useState({
