@@ -455,7 +455,7 @@ async def chat(
     await check_usage_limit(user_id, "analysis" if is_analysis else "chat")
 
     generator = (
-        _stream_analysis_response(message, user_id, request.dataset_id, request.conversation_id)
+        _stream_analysis_response(message, user_id, str(request.dataset_id), request.conversation_id)
         if is_analysis
         else _stream_quick_response(message, user_id, request.dataset_id, request.conversation_id, history)
     )
