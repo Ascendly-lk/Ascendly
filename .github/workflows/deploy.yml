@@ -49,12 +49,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies into backend folder
+        working-directory: backend
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: ascendly-backend
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: ./backend
+          startup-command: "python3 -m uvicorn main:app --host 0.0.0.0 --port 8000"
 
   # ── 3. Build + Deploy Frontend → Azure Static Web Apps ───────────────────
   deploy-frontend:
