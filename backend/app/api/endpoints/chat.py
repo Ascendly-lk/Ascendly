@@ -216,6 +216,7 @@ async def _stream_quick_response(
             except Exception: pass
 
             full_dsl = ""
+            fallback_text = ""
             async for event in _stream_c1_response(mock_data, message, dataset_name, message_id):
                 # Accumulate DSL from raw SSE string
                 if event.startswith('data: {"type": "c1_chunk"'):
@@ -223,17 +224,17 @@ async def _stream_quick_response(
                         chunk_data = json.loads(event[6:])
                         full_dsl += base64.b64decode(chunk_data["content"]).decode()
                     except: pass
+                elif event.startswith('data: {"type": "result"'):
+                    try:
+                        fallback_text = json.loads(event[6:]).get("text", "")
+                    except: pass
                 yield event
-            
+
             if conversation_id:
-                # If C1 returned a DSL, persist as c1 type. 
-                # If it fell back to markdown (result type), persist as text.
                 if full_dsl:
                     _persist_message(conversation_id, "assistant", full_dsl, "c1")
-                else:
-                    # Fallback detection: if no chunks but we yielded, it must have been a markdown result
-                    # Note: this is a bit implicit, but _stream_c1_response yields 'result' on fallback.
-                    pass # Persistence handled inside _stream_c1_response for results? No, let's do it here.
+                elif fallback_text:
+                    _persist_message(conversation_id, "assistant", fallback_text, "text")
             return
 
         # Fallback to standard LiteLLM if C1 not configured
@@ -432,6 +433,21 @@ async def chat(
                 raise HTTPException(status_code=403, detail="Access to this dataset is not allowed.")
         except HTTPException: raise
         except Exception: raise HTTPException(status_code=403, detail="Access to this dataset is not allowed.")
+
+    if request.conversation_id:
+        try:
+            client = get_supabase_admin()
+            owned_conv = (
+                client.table("conversations")
+                .select("id")
+                .eq("id", request.conversation_id)
+                .eq("user_id", user_id)
+                .execute()
+            )
+            if not owned_conv.data:
+                raise HTTPException(status_code=403, detail="Access to this conversation is not allowed.")
+        except HTTPException: raise
+        except Exception: raise HTTPException(status_code=403, detail="Access to this conversation is not allowed.")
 
     history = [{"role": h.role, "content": h.content} for h in (request.history or [])]
     is_analysis = _is_analysis_request(message, request.dataset_id)
